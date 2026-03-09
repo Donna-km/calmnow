@@ -530,7 +530,14 @@
   </div><!-- Main Screen -->
   <main id="mainScreen" class="relative h-full flex flex-col items-center justify-center px-6">
    <!-- Title -->
-   <h1 id="appTitle" class="font-display text-6xl md:text-8xl font-light tracking-wider mb-16 opacity-0 animate-fade-in" style="color: #8B7355; letter-spacing: 0.08em;">Calm Now</h1><!-- Main Button --> <button id="takeAMomentBtn" class="calm-button opacity-0 animate-fade-in delay-200"> <span id="mainButtonText">Take a Moment</span> </button> <!-- Navigation -->
+   <h1 id="appTitle" class="font-display text-6xl md:text-8xl font-light tracking-wider mb-16 opacity-0 animate-fade-in" style="color: #8B7355; letter-spacing: 0.08em;">Calm Now</h1>
+   <!-- Main Button --> 
+ <button id="takeAMomentBtn" class="calm-button opacity-0 animate-fade-in delay-200"> <span id="mainButtonText">Take a Moment</span> </button> 
+   <audio id="calmAudio" loop>
+  <source src="https://lvtdqeerzxpznnayccmb.supabase.co/storage/v1/object/public/test-pics/mindset.therapy%20(2).m4a" type="audio/mp4">
+</audio>
+   
+   <!-- Navigation -->
    <nav class="absolute bottom-8 flex gap-2 opacity-0 animate-fade-in delay-400">
     <button class="nav-item active" data-section="home">Home</button> <button class="nav-item" data-section="sleep">Sleep</button> <button class="nav-item" data-section="personal">Personal</button> <button class="nav-item" data-section="focus">Focus</button>
    </nav>
@@ -864,6 +871,14 @@
     let messageInterval;
 
     takeAMomentBtn.addEventListener('click', () => {
+      const sound = document.getElementById("calmAudio");
+  if(sound){
+    sound.play();
+  }
+
+  momentOverlay.classList.add('active');
+  messageIndex = 0;
+});
       momentOverlay.classList.add('active');
       messageIndex = 0;
       
@@ -888,6 +903,11 @@
     });
 
     closeMoment.addEventListener('click', () => {
+     const sound = document.getElementById("calmAudio");
+if(sound){
+  sound.pause();
+  sound.currentTime = 0;
+}
       momentOverlay.classList.remove('active');
       clearTimeout(momentTimeout);
       clearInterval(messageInterval);
@@ -952,3 +972,4 @@
   </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d9a0e0ad49ed32d',t:'MTc3MzA1OTA0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
+
