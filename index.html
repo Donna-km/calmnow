@@ -539,9 +539,13 @@
   </main><!-- Moment Overlay -->
   <div id="momentOverlay" class="moment-overlay">
    <div class="breathing-circle">
-    <div class="breathing-inner"></div>
-   </div>
-   <p id="momentMessage" class="moment-message px-8">Take a quiet moment.</p><button id="closeMoment" class="close-moment">Return</button>
+  <div class="breathing-inner"></div>
+
+  <div id="momentMessage" class="breathing-text">
+    Inhale
+  </div>
+
+</div><button id="closeMoment" class="close-moment">Return</button>
   </div><!-- Sleep Section -->
   <section id="sleepSection" class="section-panel">
    <button class="back-button" data-back>
@@ -889,15 +893,24 @@
   momentMessage.textContent = currentMessages[messageIndex];
 
   clearInterval(messageInterval);
-  messageInterval = setInterval(() => {
-    messageIndex = (messageIndex + 1) % currentMessages.length;
-    momentMessage.style.opacity = '0';
-    setTimeout(() => {
-      momentMessage.textContent = currentMessages[messageIndex];
-      momentMessage.style.opacity = '1';
-    }, 500);
-  }, 8000);
-});
+  const breatheCycle = ["Inhale", "Hold", "Exhale"];
+let breatheIndex = 0;
+
+momentMessage.textContent = breatheCycle[breatheIndex];
+
+clearInterval(messageInterval);
+
+messageInterval = setInterval(() => {
+  breatheIndex = (breatheIndex + 1) % breatheCycle.length;
+
+  momentMessage.style.opacity = "0";
+
+  setTimeout(() => {
+    momentMessage.textContent = breatheCycle[breatheIndex];
+    momentMessage.style.opacity = "1";
+  }, 400);
+
+}, 4000);
 
     closeMoment.addEventListener('click', () => {
   const sound = document.getElementById('calmAudio');
@@ -972,3 +985,4 @@
  </body>
 
 </html>
+
