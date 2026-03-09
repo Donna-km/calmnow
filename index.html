@@ -268,17 +268,22 @@
       box-shadow: 0 0 50px rgba(150, 200, 235, 0.3), inset 0 0 40px rgba(180, 220, 245, 0.2);
     }
     
-    /* Breathing text */
-    .breathing-text {
-      text-align: center;
-      opacity: 0;
-      transition: opacity 1s ease 1s;
-      z-index: 2;
-    }
-    
-    .moment-overlay.active .breathing-text {
-      opacity: 1;
-    }
+   /* Breathing text */
+.breathing-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 1s ease 1s;
+  z-index: 3;
+}
+
+.moment-overlay.active .breathing-text {
+  opacity: 1;
+}
     
     .breathing-title {
       font-family: 'Cormorant Garamond', Georgia, serif;
@@ -537,12 +542,23 @@
     <button class="nav-item active" data-section="home">Home</button> <button class="nav-item" data-section="sleep">Sleep</button> <button class="nav-item" data-section="personal">Personal</button> <button class="nav-item" data-section="focus">Focus</button>
    </nav>
   </main><!-- Moment Overlay -->
-  <div id="momentOverlay" class="moment-overlay">
-   <div class="breathing-circle">
+ <div id="momentOverlay" class="moment-overlay">
+
+  <div class="breathing-circle">
+
     <div class="breathing-inner"></div>
-   </div>
-   <p id="momentMessage" class="moment-message px-8">Take a quiet moment.</p><button id="closeMoment" class="close-moment">Return</button>
-  </div><!-- Sleep Section -->
+
+    <div class="breathing-text">
+      <p id="momentMessage" class="moment-message">
+        Take a quiet moment.
+      </p>
+    </div>
+
+  </div>
+
+  <button id="closeMoment" class="close-moment">Return</button>
+
+</div><!-- Sleep Section -->
   <section id="sleepSection" class="section-panel">
    <button class="back-button" data-back>
     <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="#8B7355" stroke-width="1.5">
@@ -972,3 +988,4 @@
  </body>
 
 </html>
+
