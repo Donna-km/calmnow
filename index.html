@@ -969,33 +969,60 @@ if(sound){
         momentMessage.textContent = 'Your personal calm awaits...';
       });
     }
+   // Take a Moment functionality
+let momentTimeout;
+let messageInterval;
+
+takeAMomentBtn.addEventListener('click', async () => {
+  const sound = document.getElementById('calmAudio');
+
+  try {
+    if (sound) {
+      await sound.play();
+    }
+  } catch (err) {
+    console.log('Audio play blocked:', err);
+  }
+
+  momentOverlay.classList.add('active');
+  messageIndex = 0;
+
+  const currentMessages = messages.length > 0 ? messages : [
+    defaultConfig.moment_message_1,
+    defaultConfig.moment_message_2,
+    defaultConfig.moment_message_3
+  ];
+
+  momentMessage.textContent = currentMessages[messageIndex];
+
+  clearInterval(messageInterval);
+  messageInterval = setInterval(() => {
+    messageIndex = (messageIndex + 1) % currentMessages.length;
+    momentMessage.style.opacity = '0';
+
+    setTimeout(() => {
+      momentMessage.textContent = currentMessages[messageIndex];
+      momentMessage.style.opacity = '1';
+    }, 500);
+  }, 8000);
+});
+
+closeMoment.addEventListener('click', () => {
+  const sound = document.getElementById('calmAudio');
+
+  if (sound) {
+    sound.pause();
+    sound.currentTime = 0;
+  }
+
+  momentOverlay.classList.remove('active');
+  clearTimeout(momentTimeout);
+  clearInterval(messageInterval);
+});
   </script>
-  <script>
-
-const button = document.getElementById("takeAMomentBtn");
-const sound = document.getElementById("calmAudio");
-const overlay = document.getElementById("momentOverlay");
-const closeBtn = document.getElementById("closeMoment");
-
-button.addEventListener("click", () => {
-
-  sound.play();   // เล่นเสียง
-
-  overlay.classList.add("active");  // เปิดหน้า breathing
-
-});
-
-closeBtn.addEventListener("click", () => {
-
-  sound.pause();        // หยุดเสียง
-  sound.currentTime = 0;
-
-  overlay.classList.remove("active"); // ปิด overlay
-
-});
-
-</script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d9a0e0ad49ed32d',t:'MTc3MzA1OTA0OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ 
+ </body>
 </html>
+
 
 
