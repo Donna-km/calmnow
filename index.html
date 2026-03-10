@@ -1870,7 +1870,19 @@ if (stage.text === 'HoldBig') {
     const affirmationCard = document.getElementById('affirmationCard');
     const affirmationText = document.getElementById('affirmationText');
     const cardSound = document.getElementById('cardSound');
-    
+
+cardSound.addEventListener("timeupdate", () => {
+
+  if (!cardSound.duration) return; // กัน duration = NaN
+
+  const fadeDuration = 2; // เฟด 2 วินาที
+  const timeLeft = cardSound.duration - cardSound.currentTime;
+
+  if (timeLeft <= fadeDuration) {
+    cardSound.volume = timeLeft / fadeDuration;
+  }
+
+});
     
     function getRandomAffirmation() {
       return affirmations[Math.floor(Math.random() * affirmations.length)];
@@ -1880,6 +1892,7 @@ if (stage.text === 'HoldBig') {
 
   // เล่นเสียง
   if (cardSound) {
+    cardSound.volume = 0.2;   // รีเซ็ตความดังทุกครั้งก่อนเล่น
     cardSound.currentTime = 0;
     cardSound.play();
   }
@@ -1900,6 +1913,7 @@ if (stage.text === 'HoldBig') {
    </script>
  </body>
 </html>
+
 
 
 
