@@ -855,6 +855,28 @@
     .delay-200 { animation-delay: 0.2s; }
     .delay-300 { animation-delay: 0.3s; }
     .delay-400 { animation-delay: 0.4s; }
+
+   /* Sounds tab bar */
+.sound-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 1rem 0.5rem 1rem;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+}
+
+.sound-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.sound-tabs .category-btn {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
   </style>
   <style>body { box-sizing: border-box; }</style>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
@@ -887,7 +909,7 @@
    <div class="max-w-2xl mx-auto pt-16">
     <h2 class="font-display text-3xl font-light text-center mb-2" style="color: #8B7355;">Sounds</h2>
     <p class="text-center text-sm mb-8" style="color: #A89880;">Choose your perfect soundscape</p><!-- Category Navigation -->
-    <div class="flex gap-2 mb-8 overflow-x-auto pb-2 justify-center"><button class="category-btn active" data-category="sleep-deep" style="background: rgba(255, 252, 247, 0.8); border: 1px solid rgba(180, 165, 145, 0.4); padding: 0.6rem 1.2rem; border-radius: 20px; font-size: 0.85rem; color: #8B7355; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;">Sleep Deep</button> <button class="category-btn" data-category="focus" style="background: rgba(255, 252, 247, 0.6); border: 1px solid rgba(180, 165, 145, 0.3); padding: 0.6rem 1.2rem; border-radius: 20px; font-size: 0.85rem; color: #A89880; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;">Focus</button> <button class="category-btn" data-category="nature" style="background: rgba(255, 252, 247, 0.6); border: 1px solid rgba(180, 165, 145, 0.3); padding: 0.6rem 1.2rem; border-radius: 20px; font-size: 0.85rem; color: #A89880; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;">Nature</button> <button class="category-btn" data-category="meditation" style="background: rgba(255, 252, 247, 0.6); border: 1px solid rgba(180, 165, 145, 0.3); padding: 0.6rem 1.2rem; border-radius: 20px; font-size: 0.85rem; color: #A89880; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;">Meditation</button> <button class="category-btn" data-category="your-mix" style="background: rgba(255, 252, 247, 0.6); border: 1px solid rgba(180, 165, 145, 0.3); padding: 0.6rem 1.2rem; border-radius: 20px; font-size: 0.85rem; color: #A89880; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;">Your Mix</button>
+    <div class="sound-tabs"><button class="category-btn active" data-category="sleep-deep" style="background: rgba(255, 252, 247, 0.8); border: 1px solid rgba(180, 165, 145, 0.4); padding: 0.6rem 1.2rem; border-radius: 20px; font-size: 0.85rem; color: #8B7355; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;">Sleep Deep</button> <button class="category-btn" data-category="focus" style="background: rgba(255, 252, 247, 0.6); border: 1px solid rgba(180, 165, 145, 0.3); padding: 0.6rem 1.2rem; border-radius: 20px; font-size: 0.85rem; color: #A89880; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;">Focus</button> <button class="category-btn" data-category="nature" style="background: rgba(255, 252, 247, 0.6); border: 1px solid rgba(180, 165, 145, 0.3); padding: 0.6rem 1.2rem; border-radius: 20px; font-size: 0.85rem; color: #A89880; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;">Nature</button> <button class="category-btn" data-category="meditation" style="background: rgba(255, 252, 247, 0.6); border: 1px solid rgba(180, 165, 145, 0.3); padding: 0.6rem 1.2rem; border-radius: 20px; font-size: 0.85rem; color: #A89880; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;">Meditation</button> <button class="category-btn" data-category="your-mix" style="background: rgba(255, 252, 247, 0.6); border: 1px solid rgba(180, 165, 145, 0.3); padding: 0.6rem 1.2rem; border-radius: 20px; font-size: 0.85rem; color: #A89880; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;">Your Mix</button>
     </div><!-- Sounds Grid -->
     <div id="soundsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4"><!-- Sleep Deep Category -->
      <div class="sound-item" data-category="sleep-deep" data-sound="deep-sleep-1" style="display: none;">
@@ -2116,6 +2138,7 @@ cardSound.addEventListener("timeupdate", () => {
    </script>
  </body>
 </html>
+
 
 
 
