@@ -371,18 +371,18 @@
       background: radial-gradient(circle at 35% 35%, rgba(180, 220, 245, 0.5) 0%, rgba(150, 200, 235, 0.3) 30%, rgba(120, 180, 220, 0.15) 60%, transparent 100%);
       box-shadow: inset 0 0 60px rgba(150, 200, 235, 0.4), inset 0 0 30px rgba(180, 220, 245, 0.3);
     }
-    .nav-item {
-      padding: 0.75rem 1.5rem;
-      color: #A89880;
-      font-family: 'Jost', system-ui, sans-serif;
-      font-weight: 300;
-      font-size: 0.85rem;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: all 0.4s ease;
-      position: relative;
-    }
+   .nav-item {
+  padding: 0.55rem 0.45rem;
+  color: #A89880;
+  font-family: 'Jost', system-ui, sans-serif;
+  font-weight: 300;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  position: relative;
+}
     
     .nav-item::after {
       content: '';
@@ -691,7 +691,7 @@
   </div><!-- Main Screen -->
   <main id="mainScreen" class="relative h-full flex flex-col items-center justify-center px-6"><!-- Title -->
    <h1 id="appTitle" class="font-display text-6xl md:text-8xl font-light tracking-wider mb-16 opacity-0 animate-fade-in" style="color: #8B7355; letter-spacing: 0.08em;">Calm Now</h1><!-- Main Button --> <button id="takeAMomentBtn" class="calm-button opacity-0 animate-fade-in delay-200"> <span id="mainButtonText">Take a Moment</span> </button> <!-- Navigation -->
-   <nav class="absolute bottom-8 flex gap-2 opacity-0 animate-fade-in delay-400"><button class="nav-item active" data-section="home">Home</button> <button class="nav-item" data-section="sounds">Sounds</button> <button class="nav-item" data-section="personal">Personal</button> <button class="nav-item" data-section="affirmations">Cards</button>
+   <nav class="bottom-nav absolute bottom-6 left-1/2 -translate-x-1/2 w-full max-w-sm flex justify-center opacity-0 animate-fade-in delay-400"><button class="nav-item active" data-section="home">Home</button> <button class="nav-item" data-section="sounds">Sounds</button> <button class="nav-item" data-section="personal">Personal</button> <button class="nav-item" data-section="affirmations">Cards</button>
    </nav>
   </main><!-- Moment Overlay -->
   <div id="momentOverlay" class="moment-overlay">
@@ -1913,6 +1913,7 @@ cardSound.addEventListener("timeupdate", () => {
    </script>
  </body>
 </html>
+
 
 
 
