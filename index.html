@@ -1055,7 +1055,7 @@
   <audio id="breathingSound" preload="auto" loop>
   <source src="https://lvtdqeerzxpznnayccmb.supabase.co/storage/v1/object/public/test-pics/mindsettherapy-2_FiYezlb6.mp3" type="audio/mp4">
 </audio> 
-  <audio id="cardSound" preload="auto">
+  <audio id="cardSound" preload="auto" loop>
   <source src="https://lvtdqeerzxpznnayccmb.supabase.co/storage/v1/object/public/test-pics/sssreels.com_downloader.mp3" type="audio/mp4">
 </audio>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
@@ -1529,7 +1529,12 @@ if (stage.text === 'HoldBig') {
     breathingSound.pause();
     breathingSound.currentTime = 0;
   }
-
+     
+// หยุดเสียง card
+  if (cardSound) {
+    cardSound.pause();
+    cardSound.currentTime = 0;
+  }
   momentOverlay.classList.remove('active');
   
   // Clear all pending timers
@@ -1894,6 +1899,7 @@ if (stage.text === 'HoldBig') {
    </script>
  </body>
 </html>
+
 
 
 
