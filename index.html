@@ -1043,7 +1043,7 @@
         <p class="affirmation-text" id="affirmationText">I trust the timing of my life.</p>
        </div>
       </div>
-     </div><button class="reveal-button" id="revealBtn">Reveal a Message</button>
+     </div>
     </div>
    </div>
   </section>
@@ -1855,7 +1855,7 @@ if (stage.text === 'HoldBig') {
     
     const affirmationCard = document.getElementById('affirmationCard');
     const affirmationText = document.getElementById('affirmationText');
-    const revealBtn = document.getElementById('revealBtn');
+    
     
     function getRandomAffirmation() {
       return affirmations[Math.floor(Math.random() * affirmations.length)];
@@ -1875,11 +1875,10 @@ if (stage.text === 'HoldBig') {
     // Card click to flip
     affirmationCard.addEventListener('click', revealAffirmation);
     
-    // Button click to reveal
-    revealBtn.addEventListener('click', revealAffirmation);
-  </script>
+   </script>
  </body>
 </html>
+
 
 
 
