@@ -333,6 +333,12 @@
         box-shadow: inset 0 0 60px rgba(150, 200, 235, 0.6), inset 0 0 30px rgba(180, 220, 245, 0.5);
       }
     }
+   @keyframes breatheHoldSmall {
+  from, to {
+    transform: scale(1);
+    box-shadow: inset 0 0 60px rgba(150, 200, 235, 0.2), inset 0 0 30px rgba(180, 220, 245, 0.15);
+  }
+}
     
     @keyframes breatheExhale {
       from {
@@ -1438,12 +1444,12 @@
         clearInterval(breathingCycleInterval);
       }
       
-      const stages = [
-        { text: 'Inhale', duration: 4 },
-        { text: 'Hold', duration: 2 },
-        { text: 'Exhale', duration: 6 },
-        { text: 'Hold', duration: 2 }
-      ];
+     const stages = [
+  { text: 'Inhale', duration: 4 },
+  { text: 'HoldBig', duration: 2 },
+  { text: 'Exhale', duration: 6 },
+  { text: 'HoldSmall', duration: 2 }
+];
       
       let stageIndex = 0;
       let timeoutIds = [];
@@ -1456,13 +1462,24 @@
         
         const fadeId = setTimeout(() => {
           // Update text
-          breathingInstruction.textContent = stage.text;
+          breathingInstruction.textContent =
+  stage.text === 'HoldBig' || stage.text === 'HoldSmall'
+    ? 'Hold'
+    : stage.text;
           
           // Fade in new text
           breathingInstruction.classList.add('active');
           
           // Apply animation to circle based on stage
-          const animationName = `breathe${stage.text}`;
+          let animationName;
+
+if (stage.text === 'HoldBig') {
+  animationName = 'breatheHold';
+} else if (stage.text === 'HoldSmall') {
+  animationName = 'breatheHoldSmall';
+} else {
+  animationName = `breathe${stage.text}`;
+}
           const animationDuration = `${stage.duration}s`;
           breathingCircle.style.animation = 'none';
           // Force reflow to restart animation
@@ -1862,6 +1879,7 @@
   </script>
  </body>
 </html>
+
 
 
 
