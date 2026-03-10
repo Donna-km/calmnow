@@ -1863,6 +1863,7 @@ if (stage.text === 'HoldBig') {
     
     const affirmationCard = document.getElementById('affirmationCard');
     const affirmationText = document.getElementById('affirmationText');
+    const cardSound = document.getElementById('cardSound');
     
     
     function getRandomAffirmation() {
@@ -1870,15 +1871,22 @@ if (stage.text === 'HoldBig') {
     }
     
     function revealAffirmation() {
-      // Reset card
-      affirmationCard.classList.remove('flipped');
-      
-      // Small delay to allow reset
-      setTimeout(() => {
-        affirmationText.textContent = getRandomAffirmation();
-        affirmationCard.classList.add('flipped');
-      }, 100);
-    }
+
+  // เล่นเสียง
+  if (cardSound) {
+    cardSound.currentTime = 0;
+    cardSound.play();
+  }
+
+  // Reset card
+  affirmationCard.classList.remove('flipped');
+
+  setTimeout(() => {
+    affirmationText.textContent = getRandomAffirmation();
+    affirmationCard.classList.add('flipped');
+  }, 100);
+
+}
     
     // Card click to flip
     affirmationCard.addEventListener('click', revealAffirmation);
@@ -1886,6 +1894,7 @@ if (stage.text === 'HoldBig') {
    </script>
  </body>
 </html>
+
 
 
 
