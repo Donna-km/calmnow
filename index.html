@@ -382,6 +382,7 @@
   cursor: pointer;
   transition: all 0.4s ease;
   position: relative;
+  white-space: nowrap;
 }
     
     .nav-item::after {
@@ -691,7 +692,7 @@
   </div><!-- Main Screen -->
   <main id="mainScreen" class="relative h-full flex flex-col items-center justify-center px-6"><!-- Title -->
    <h1 id="appTitle" class="font-display text-6xl md:text-8xl font-light tracking-wider mb-16 opacity-0 animate-fade-in" style="color: #8B7355; letter-spacing: 0.08em;">Calm Now</h1><!-- Main Button --> <button id="takeAMomentBtn" class="calm-button opacity-0 animate-fade-in delay-200"> <span id="mainButtonText">Take a Moment</span> </button> <!-- Navigation -->
-   <nav class="bottom-nav absolute bottom-6 left-1/2 -translate-x-1/2 w-full max-w-sm flex justify-center opacity-0 animate-fade-in delay-400"><button class="nav-item active" data-section="home">Home</button> <button class="nav-item" data-section="sounds">Sounds</button> <button class="nav-item" data-section="personal">Personal</button> <button class="nav-item" data-section="affirmations">Cards</button>
+   <nav class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 opacity-0 animate-fade-in delay-400"><button class="nav-item active" data-section="home">Home</button> <button class="nav-item" data-section="sounds">Sounds</button> <button class="nav-item" data-section="personal">Personal</button> <button class="nav-item" data-section="affirmations">Cards</button>
    </nav>
   </main><!-- Moment Overlay -->
   <div id="momentOverlay" class="moment-overlay">
@@ -1913,6 +1914,7 @@ cardSound.addEventListener("timeupdate", () => {
    </script>
  </body>
 </html>
+
 
 
 
