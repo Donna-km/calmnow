@@ -1393,6 +1393,7 @@
 
     // DOM Elements
     const takeAMomentBtn = document.getElementById('takeAMomentBtn');
+    const breathingSound = document.getElementById("breathingSound");
     const momentOverlay = document.getElementById('momentOverlay');
     const momentMessage = document.getElementById('momentMessage');
     const closeMoment = document.getElementById('closeMoment');
@@ -1481,17 +1482,30 @@
     }
 
     takeAMomentBtn.addEventListener('click', () => {
-      momentOverlay.classList.add('active');
-      startBreathingGuide();
-    });
+  momentOverlay.classList.add('active');
+
+  if (breathingSound) {
+    breathingSound.currentTime = 0;
+    breathingSound.play();
+  }
+
+  startBreathingGuide();
+});
 
     closeMoment.addEventListener('click', () => {
-      momentOverlay.classList.remove('active');
-      
-      // Clear all pending timers
-      if (breathingCycleInterval && breathingCycleInterval.timeoutIds) {
-        breathingCycleInterval.timeoutIds.forEach(id => clearTimeout(id));
-      }
+
+  // หยุดเสียง
+  if (breathingSound) {
+    breathingSound.pause();
+    breathingSound.currentTime = 0;
+  }
+
+  momentOverlay.classList.remove('active');
+  
+  // Clear all pending timers
+  if (breathingCycleInterval && breathingCycleInterval.timeoutIds) {
+    breathingCycleInterval.timeoutIds.forEach(id => clearTimeout(id));
+  }
       
       // Reset based on current mode
       if (currentMode === 'breathing') {
@@ -1842,5 +1856,9 @@
     // Button click to reveal
     revealBtn.addEventListener('click', revealAffirmation);
   </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9d9f7c8be7707b54',t:'MTc3MzExNjAwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+  <audio id="breathingSound" preload="auto">
+  <source src="https://lvtdqeerzxpznnayccmb.supabase.co/storage/v1/object/public/test-pics/mindset.therapy%20(2).m4a" type="audio/mp4">
+</audio>
+ </body>
 </html>
+
