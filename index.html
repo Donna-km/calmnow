@@ -581,6 +581,60 @@
       box-shadow: 0 20px 60px rgba(180, 165, 145, 0.12);
       backdrop-filter: blur(10px);
     }
+
+   /* ✨ glowing border animation */
+.affirmation-front {
+  position: relative;
+  overflow: hidden;
+}
+
+/* เส้นวิบวับ */
+.affirmation-front::after {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 24px;
+
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    transparent 40%,
+    rgba(212,175,55,0.6) 50%,
+    transparent 60%,
+    transparent 100%
+  );
+
+  animation: cardShimmer 4s linear infinite;
+}
+
+/* mask ให้เห็นเฉพาะขอบ */
+.affirmation-front::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  background: rgba(255,252,247,0.95);
+  z-index: 1;
+}
+
+/* ให้ content อยู่บนสุด */
+.card-front-content {
+  position: relative;
+  z-index: 2;
+}
+
+/* animation */
+@keyframes cardShimmer {
+
+  0% {
+    transform: translateX(-120%) translateY(-120%) rotate(25deg);
+  }
+
+  100% {
+    transform: translateX(120%) translateY(120%) rotate(25deg);
+  }
+
+}
    .card-front-content {
   position: relative;
   width: 100%;
@@ -2067,6 +2121,7 @@ cardSound.addEventListener("timeupdate", () => {
    </script>
  </body>
 </html>
+
 
 
 
