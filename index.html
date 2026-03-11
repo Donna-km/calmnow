@@ -882,8 +882,13 @@
   backdrop-filter: blur(12px);
   padding-top: 0.5rem;
   padding-bottom: 0.75rem;
+ overflow: hidden; 
 }
-
+.sound-card{
+  position: relative;
+  z-index: 1;
+}
+   
 .sounds-sticky-header::after {
   content: "";
   position: absolute;
@@ -2185,6 +2190,7 @@ cardSound.addEventListener("timeupdate", () => {
    </script>
  </body>
 </html>
+
 
 
 
