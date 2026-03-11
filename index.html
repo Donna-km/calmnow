@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Calm Now</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="/_sdk/element_sdk.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -948,7 +949,7 @@
     <p class="text-center text-sm mb-6" style="color: #A89880;">Choose your perfect soundscape</p>
 
     <!-- Category Navigation -->
-    <div class="sound-tabs">
+    <div class="sound-tabs" id="soundTabs">
       <button class="category-btn active" data-category="sleep-deep" style="background: rgba(255, 252, 247, 0.8); border: 1px solid rgba(180, 165, 145, 0.4); padding: 0.6rem 1.2rem; border-radius: 20px; font-size: 0.85rem; color: #8B7355; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;">Sleep Deep</button>
       <button class="category-btn" data-category="focus" style="background: rgba(255, 252, 247, 0.6); border: 1px solid rgba(180, 165, 145, 0.3); padding: 0.6rem 1.2rem; border-radius: 20px; font-size: 0.85rem; color: #A89880; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;">Focus</button>
       <button class="category-btn" data-category="nature" style="background: rgba(255, 252, 247, 0.6); border: 1px solid rgba(180, 165, 145, 0.3); padding: 0.6rem 1.2rem; border-radius: 20px; font-size: 0.85rem; color: #A89880; cursor: pointer; transition: all 0.3s ease; white-space: nowrap;">Nature</button>
@@ -958,267 +959,7 @@
   </div>
 
   <!-- Sounds Grid -->
-  <div id="soundsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6"><!-- Sleep Deep Category -->
-     <div class="sound-item" data-category="sleep-deep" data-sound="deep-sleep-1" style="display: none;">
-      <div class="sound-card">
-       <div class="flex items-center justify-between mb-3">
-        <div>
-         <h3 class="font-display text-lg" style="color: #8B7355;">Delta Waves</h3>
-         <p class="text-xs mt-1" style="color: #A89880;">Deep sleep rhythm</p>
-        </div>
-        <div class="text-2xl">
-         🌊
-        </div>
-       </div>
-       <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
-       <div class="flex items-center justify-between text-xs" style="color: #A89880;"><span>Binaural • 8 hours</span> <span>♪</span>
-       </div>
-      </div>
-     </div>
-     <div class="sound-item" data-category="sleep-deep" data-sound="deep-sleep-2" style="display: none;">
-      <div class="sound-card">
-       <div class="flex items-center justify-between mb-3">
-        <div>
-         <h3 class="font-display text-lg" style="color: #8B7355;">Thunderstorm</h3>
-         <p class="text-xs mt-1" style="color: #A89880;">Gentle distant storm</p>
-        </div>
-        <div class="text-2xl">
-         ⛈️
-        </div>
-       </div>
-       <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
-       <div class="flex items-center justify-between text-xs" style="color: #A89880;"><span>Nature • 10 hours</span> <span>♪</span>
-       </div>
-      </div>
-     </div>
-     <div class="sound-item" data-category="sleep-deep" data-sound="deep-sleep-3" style="display: none;">
-      <div class="sound-card">
-       <div class="flex items-center justify-between mb-3">
-        <div>
-         <h3 class="font-display text-lg" style="color: #8B7355;">White Noise</h3>
-         <p class="text-xs mt-1" style="color: #A89880;">Calming static</p>
-        </div>
-        <div class="text-2xl">
-         🔇
-        </div>
-       </div>
-       <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
-       <div class="flex items-center justify-between text-xs" style="color: #A89880;"><span>Ambient • Unlimited</span> <span>♪</span>
-       </div>
-      </div>
-     </div>
-     <div class="sound-item" data-category="sleep-deep" data-sound="deep-sleep-4" style="display: none;">
-      <div class="sound-card">
-       <div class="flex items-center justify-between mb-3">
-        <div>
-         <h3 class="font-display text-lg" style="color: #8B7355;">Forest Night</h3>
-         <p class="text-xs mt-1" style="color: #A89880;">Crickets and leaves</p>
-        </div>
-        <div class="text-2xl">
-         🌲
-        </div>
-       </div>
-       <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
-       <div class="flex items-center justify-between text-xs" style="color: #A89880;"><span>Nature • 12 hours</span> <span>♪</span>
-       </div>
-      </div>
-     </div><!-- Focus Category -->
-     <div class="sound-item" data-category="focus" data-sound="focus-1" style="display: none;">
-      <div class="sound-card">
-       <div class="flex items-center justify-between mb-3">
-        <div>
-         <h3 class="font-display text-lg" style="color: #8B7355;">Lofi Study</h3>
-         <p class="text-xs mt-1" style="color: #A89880;">Beats to focus</p>
-        </div>
-        <div class="text-2xl">
-         🎧
-        </div>
-       </div>
-       <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
-       <div class="flex items-center justify-between text-xs" style="color: #A89880;"><span>Music • 2 hours</span> <span>♪</span>
-       </div>
-      </div>
-     </div>
-     <div class="sound-item" data-category="focus" data-sound="focus-2" style="display: none;">
-      <div class="sound-card">
-       <div class="flex items-center justify-between mb-3">
-        <div>
-         <h3 class="font-display text-lg" style="color: #8B7355;">Café Ambiance</h3>
-         <p class="text-xs mt-1" style="color: #A89880;">Coffee shop vibes</p>
-        </div>
-        <div class="text-2xl">
-         ☕
-        </div>
-       </div>
-       <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
-       <div class="flex items-center justify-between text-xs" style="color: #A89880;"><span>Ambient • Unlimited</span> <span>♪</span>
-       </div>
-      </div>
-     </div>
-     <div class="sound-item" data-category="focus" data-sound="focus-3" style="display: none;">
-      <div class="sound-card">
-       <div class="flex items-center justify-between mb-3">
-        <div>
-         <h3 class="font-display text-lg" style="color: #8B7355;">Pomodoro</h3>
-         <p class="text-xs mt-1" style="color: #A89880;">Timed work sessions</p>
-        </div>
-        <div class="text-2xl">
-         ⏱️
-        </div>
-       </div>
-       <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
-       <div class="flex items-center justify-between text-xs" style="color: #A89880;"><span>Productivity • 25 min</span> <span>♪</span>
-       </div>
-      </div>
-     </div>
-     <div class="sound-item" data-category="focus" data-sound="focus-4" style="display: none;">
-      <div class="sound-card">
-       <div class="flex items-center justify-between mb-3">
-        <div>
-         <h3 class="font-display text-lg" style="color: #8B7355;">Rain Focus</h3>
-         <p class="text-xs mt-1" style="color: #A89880;">Steady rainfall</p>
-        </div>
-        <div class="text-2xl">
-         🌧️
-        </div>
-       </div>
-       <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
-       <div class="flex items-center justify-between text-xs" style="color: #A89880;"><span>Nature • Unlimited</span> <span>♪</span>
-       </div>
-      </div>
-     </div><!-- Nature Category -->
-     <div class="sound-item" data-category="nature" data-sound="nature-1" style="display: none;">
-      <div class="sound-card">
-       <div class="flex items-center justify-between mb-3">
-        <div>
-         <h3 class="font-display text-lg" style="color: #8B7355;">Ocean Waves</h3>
-         <p class="text-xs mt-1" style="color: #A89880;">Coastal rhythms</p>
-        </div>
-        <div class="text-2xl">
-         🌊
-        </div>
-       </div>
-       <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
-       <div class="flex items-center justify-between text-xs" style="color: #A89880;"><span>Nature • Unlimited</span> <span>♪</span>
-       </div>
-      </div>
-     </div>
-     <div class="sound-item" data-category="nature" data-sound="nature-2" style="display: none;">
-      <div class="sound-card">
-       <div class="flex items-center justify-between mb-3">
-        <div>
-         <h3 class="font-display text-lg" style="color: #8B7355;">Bird Songs</h3>
-         <p class="text-xs mt-1" style="color: #A89880;">Morning chorus</p>
-        </div>
-        <div class="text-2xl">
-         🐦
-        </div>
-       </div>
-       <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
-       <div class="flex items-center justify-between text-xs" style="color: #A89880;"><span>Nature • 3 hours</span> <span>♪</span>
-       </div>
-      </div>
-     </div>
-     <div class="sound-item" data-category="nature" data-sound="nature-3" style="display: none;">
-      <div class="sound-card">
-       <div class="flex items-center justify-between mb-3">
-        <div>
-         <h3 class="font-display text-lg" style="color: #8B7355;">Flowing River</h3>
-         <p class="text-xs mt-1" style="color: #A89880;">Water streams</p>
-        </div>
-        <div class="text-2xl">
-         🏞️
-        </div>
-       </div>
-       <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
-       <div class="flex items-center justify-between text-xs" style="color: #A89880;"><span>Nature • Unlimited</span> <span>♪</span>
-       </div>
-      </div>
-     </div>
-     <div class="sound-item" data-category="nature" data-sound="nature-4" style="display: none;">
-      <div class="sound-card">
-       <div class="flex items-center justify-between mb-3">
-        <div>
-         <h3 class="font-display text-lg" style="color: #8B7355;">Wind Chimes</h3>
-         <p class="text-xs mt-1" style="color: #A89880;">Gentle breeze</p>
-        </div>
-        <div class="text-2xl">
-         🍃
-        </div>
-       </div>
-       <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
-       <div class="flex items-center justify-between text-xs" style="color: #A89880;"><span>Nature • Unlimited</span> <span>♪</span>
-       </div>
-      </div>
-     </div><!-- Meditation Category -->
-     <div class="sound-item" data-category="meditation" data-sound="meditation-1" style="display: none;">
-      <div class="sound-card">
-       <div class="flex items-center justify-between mb-3">
-        <div>
-         <h3 class="font-display text-lg" style="color: #8B7355;">Tibetan Bowls</h3>
-         <p class="text-xs mt-1" style="color: #A89880;">Healing frequencies</p>
-        </div>
-        <div class="text-2xl">
-         🔔
-        </div>
-       </div>
-       <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
-       <div class="flex items-center justify-between text-xs" style="color: #A89880;"><span>Spiritual • 1 hour</span> <span>♪</span>
-       </div>
-      </div>
-     </div>
-     <div class="sound-item" data-category="meditation" data-sound="meditation-2" style="display: none;">
-      <div class="sound-card">
-       <div class="flex items-center justify-between mb-3">
-        <div>
-         <h3 class="font-display text-lg" style="color: #8B7355;">Chakra Tones</h3>
-         <p class="text-xs mt-1" style="color: #A89880;">Energy balance</p>
-        </div>
-        <div class="text-2xl">
-         ✨
-        </div>
-       </div>
-       <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
-       <div class="flex items-center justify-between text-xs" style="color: #A89880;"><span>Spiritual • 45 min</span> <span>♪</span>
-       </div>
-      </div>
-     </div>
-     <div class="sound-item" data-category="meditation" data-sound="meditation-3" style="display: none;">
-      <div class="sound-card">
-       <div class="flex items-center justify-between mb-3">
-        <div>
-         <h3 class="font-display text-lg" style="color: #8B7355;">Zen Garden</h3>
-         <p class="text-xs mt-1" style="color: #A89880;">Peace and stillness</p>
-        </div>
-        <div class="text-2xl">
-         🌸
-        </div>
-       </div>
-       <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
-       <div class="flex items-center justify-between text-xs" style="color: #A89880;"><span>Ambient • Unlimited</span> <span>♪</span>
-       </div>
-      </div>
-     </div>
-     <div class="sound-item" data-category="meditation" data-sound="meditation-4" style="display: none;">
-      <div class="sound-card">
-       <div class="flex items-center justify-between mb-3">
-        <div>
-         <h3 class="font-display text-lg" style="color: #8B7355;">Gong Baths</h3>
-         <p class="text-xs mt-1" style="color: #A89880;">Vibrational healing</p>
-        </div>
-        <div class="text-2xl">
-         🔊
-        </div>
-       </div>
-       <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
-       <div class="flex items-center justify-between text-xs" style="color: #A89880;"><span>Spiritual • 30 min</span> <span>♪</span>
-       </div>
-      </div>
-     </div>
-    </div>
-    <div class="mt-8 p-4 rounded-2xl" style="background: rgba(255, 252, 247, 0.5);">
-     <p class="text-xs text-center" style="color: #A89880;">Note: Audio playback is simulated in this demo</p>
-    </div>
+  <div id="soundsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
    </div>
   </section><!-- Personal Calm Section --> <!-- Save Mix Modal -->
   <div id="saveMixModal" style="position: fixed; inset: 0; background: rgba(0,0,0,0.3); display: none; align-items: center; justify-content: center; z-index: 200;">
@@ -1359,11 +1100,249 @@
   <audio id="cardSound" preload="auto">
   <source src="https://lvtdqeerzxpznnayccmb.supabase.co/storage/v1/object/public/test-pics/sssreels.com_downloader%20(1).mp3" type="audio/mp4">
 </audio>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  
   <script>
     // Data SDK initialization
     let savedMixes = [];
-    
+    // ===== Supabase =====
+const SUPABASE_URL = 'https://foizrwegmdnekaxsahxu.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvaXpyd2VnbWRuZWtheHNhaHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMjQwODEsImV4cCI6MjA4ODgwMDA4MX0._RbaB-OQd7AS48A3O50-CdQ7UaJZ6KGR8NCz56TUFtA';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// sounds state
+let dbSounds = [];
+let currentCategory = 'sleep';
+let currentSoundAudio = null;
+
+function getAudioUrl(audioPath) {
+  if (!audioPath) return '';
+  const { data } = supabase.storage.from('sounds').getPublicUrl(audioPath);
+  return data.publicUrl;
+}
+
+function getImageUrl(imagePath) {
+  if (!imagePath) return '';
+  const { data } = supabase.storage.from('sound-images').getPublicUrl(imagePath);
+  return data.publicUrl;
+}
+
+async function loadSoundsFromSupabase() {
+  const { data, error } = await supabase
+    .from('sounds')
+    .select('*')
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true });
+
+  if (error) {
+    console.error('loadSoundsFromSupabase error:', error);
+    return [];
+  }
+
+  return data || [];
+}
+
+function renderSoundTabs() {
+  const tabs = document.getElementById('soundTabs');
+  if (!tabs) return;
+
+  const categories = [
+    { key: 'sleep', label: 'Sleep' },
+    { key: 'focus', label: 'Focus' },
+    { key: 'nature', label: 'Nature' },
+    { key: 'meditation', label: 'Meditation' },
+    { key: 'your-mix', label: 'Your Mix' }
+  ];
+
+  tabs.innerHTML = categories.map(cat => `
+    <button
+      class="category-btn ${cat.key === currentCategory ? 'active' : ''}"
+      data-category="${cat.key}"
+      style="
+        background: ${cat.key === currentCategory ? 'rgba(255, 252, 247, 0.8)' : 'rgba(255, 252, 247, 0.6)'};
+        border: 1px solid ${cat.key === currentCategory ? 'rgba(180, 165, 145, 0.4)' : 'rgba(180, 165, 145, 0.3)'};
+        padding: 0.6rem 1.2rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        color: ${cat.key === currentCategory ? '#8B7355' : '#A89880'};
+        cursor: pointer;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+      "
+    >
+      ${cat.label}
+    </button>
+  `).join('');
+
+  tabs.querySelectorAll('.category-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentCategory = btn.dataset.category;
+      renderSoundTabs();
+
+      if (currentCategory === 'your-mix') {
+        renderYourMixOnly();
+      } else {
+        renderSoundsFromDb(currentCategory);
+      }
+    });
+  });
+}
+
+function renderSoundsFromDb(category) {
+  const soundsGrid = document.getElementById('soundsGrid');
+  if (!soundsGrid) return;
+
+  const filtered = dbSounds.filter(sound => sound.category === category);
+
+  if (filtered.length === 0) {
+    soundsGrid.innerHTML = `
+      <div class="col-span-full p-5 rounded-2xl text-center" style="background: rgba(255,252,247,0.6); color:#A89880;">
+        No sounds found in this category.
+      </div>
+    `;
+    return;
+  }
+
+  soundsGrid.innerHTML = filtered.map(sound => `
+    <div class="sound-item" data-id="${sound.id}">
+      <div class="sound-card">
+        ${sound.image_path ? `
+          <img
+            src="${getImageUrl(sound.image_path)}"
+            alt="${sound.title}"
+            style="width:100%; height:180px; object-fit:cover; border-radius:16px; margin-bottom:1rem;"
+          >
+        ` : ''}
+
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="font-display text-lg" style="color: #8B7355;">${sound.title || ''}</h3>
+            <p class="text-xs mt-1" style="color: #A89880;">${sound.subtitle || ''}</p>
+          </div>
+          <div class="text-2xl">${sound.emoji || '🎵'}</div>
+        </div>
+
+        <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
+
+        <div class="flex items-center justify-between text-xs" style="color: #A89880;">
+          <span>${sound.tag || '-'} • ${sound.duration_text || '-'}</span>
+          <span>♪</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  soundsGrid.querySelectorAll('.sound-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const id = Number(item.dataset.id);
+      const sound = dbSounds.find(s => s.id === id);
+      if (sound) openSoundDetailFromDb(sound);
+    });
+  });
+}
+
+function openSoundDetailFromDb(sound) {
+  document.getElementById('detailTitle').textContent = sound.title || '';
+  document.getElementById('detailSubtitle').textContent = sound.subtitle || '';
+  document.getElementById('detailEmoji').textContent = sound.emoji || '🎵';
+  document.getElementById('detailTag').textContent = sound.tag || '-';
+  document.getElementById('detailDuration').textContent = sound.duration_text || '-';
+  document.getElementById('detailDescription').textContent = sound.description || '';
+
+  Object.values(sections).forEach(s => s.classList.remove('active'));
+  sections.soundDetail.classList.add('active');
+
+  navItems.forEach(nav => nav.classList.remove('active'));
+  document.querySelector('.nav-item[data-section="sounds"]').classList.add('active');
+
+  document.getElementById('detailPlayBtn').onclick = async () => {
+    const audioUrl = getAudioUrl(sound.audio_path);
+
+    if (!audioUrl) {
+      alert('No audio file found');
+      return;
+    }
+
+    if (currentSoundAudio) {
+      currentSoundAudio.pause();
+      currentSoundAudio.currentTime = 0;
+    }
+
+    currentSoundAudio = new Audio(audioUrl);
+    currentSoundAudio.loop = true;
+    currentSoundAudio.play();
+  };
+}
+
+function renderYourMixOnly() {
+  const soundsGrid = document.getElementById('soundsGrid');
+  if (!soundsGrid) return;
+
+  soundsGrid.innerHTML = '';
+
+  savedMixes.forEach((mix, index) => {
+    const mixItem = document.createElement('div');
+    mixItem.className = 'sound-item';
+    mixItem.setAttribute('data-category', 'your-mix');
+    mixItem.setAttribute('data-mix-index', index);
+
+    mixItem.innerHTML = `
+      <div class="sound-card">
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="font-display text-lg" style="color: #8B7355;">${mix.mix_name}</h3>
+            <p class="text-xs mt-1" style="color: #A89880;">Your custom mix</p>
+          </div>
+          <div class="text-2xl">🎵</div>
+        </div>
+        <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
+        <div class="text-xs mb-2" style="color: #A89880;">
+          🌧️ ${mix.rain}% • 🍃 ${mix.wind}% • 🏞️ ${mix.river}% • 🔔 ${mix.bowl}% • 💨 ${mix.breath}%
+        </div>
+      </div>
+    `;
+
+    soundsGrid.appendChild(mixItem);
+
+    mixItem.querySelector('.sound-card').addEventListener('click', () => {
+      if (sliders.rain) sliders.rain.value = mix.rain;
+      if (sliders.wind) sliders.wind.value = mix.wind;
+      if (sliders.river) sliders.river.value = mix.river;
+      if (sliders.bowl) sliders.bowl.value = mix.bowl;
+      if (sliders.breath) sliders.breath.value = mix.breath;
+
+      if (sliderValues.rain) sliderValues.rain.textContent = `${mix.rain}%`;
+      if (sliderValues.wind) sliderValues.wind.textContent = `${mix.wind}%`;
+      if (sliderValues.river) sliderValues.river.textContent = `${mix.river}%`;
+      if (sliderValues.bowl) sliderValues.bowl.textContent = `${mix.bowl}%`;
+      if (sliderValues.breath) sliderValues.breath.textContent = `${mix.breath}%`;
+
+      Object.values(sections).forEach(s => s.classList.remove('active'));
+      sections.personal.classList.add('active');
+
+      navItems.forEach(nav => nav.classList.remove('active'));
+      document.querySelector('.nav-item[data-section="personal"]').classList.add('active');
+    });
+  });
+
+  if (savedMixes.length === 0) {
+    soundsGrid.innerHTML = `
+      <div class="col-span-full p-5 rounded-2xl text-center" style="background: rgba(255,252,247,0.6); color:#A89880;">
+        No saved mixes yet.
+      </div>
+    `;
+  }
+}
+
+async function initSoundsPage() {
+  dbSounds = await loadSoundsFromSupabase();
+  renderSoundTabs();
+
+  if (currentCategory === 'your-mix') {
+    renderYourMixOnly();
+  } else {
+    renderSoundsFromDb(currentCategory);
+  }
+}
     const dataHandler = {
       onDataChanged(data) {
         savedMixes = data;
@@ -1724,139 +1703,6 @@
   affirmations: document.getElementById('affirmationsSection')
 };
     const backButtons = document.querySelectorAll('[data-back]');
-    const soundCards = document.querySelectorAll('.sound-card');
-    const soundDetails = {
-  "deep-sleep-1": {
-    title: "Delta Waves",
-    subtitle: "Deep sleep rhythm",
-    emoji: "🌊",
-    tag: "Binaural",
-    duration: "8 hours",
-    description: "A calming deep-sleep frequency designed to slow your mind and help you settle into a restful night."
-  },
-  "deep-sleep-2": {
-    title: "Thunderstorm",
-    subtitle: "Gentle distant storm",
-    emoji: "⛈️",
-    tag: "Nature",
-    duration: "10 hours",
-    description: "Soft rolling thunder and distant rain to create a cozy, safe atmosphere for sleep."
-  },
-  "deep-sleep-3": {
-    title: "White Noise",
-    subtitle: "Calming static",
-    emoji: "🔇",
-    tag: "Ambient",
-    duration: "Unlimited",
-    description: "A steady neutral sound that helps block distractions and supports uninterrupted rest."
-  },
-  "deep-sleep-4": {
-    title: "Forest Night",
-    subtitle: "Crickets and leaves",
-    emoji: "🌲",
-    tag: "Nature",
-    duration: "12 hours",
-    description: "Night forest ambience with soft crickets and leaves moving in the dark."
-  },
-
-  "focus-1": {
-    title: "Lofi Study",
-    subtitle: "Beats to focus",
-    emoji: "🎧",
-    tag: "Music",
-    duration: "2 hours",
-    description: "Gentle lo-fi beats to help you stay calm, focused, and in flow."
-  },
-  "focus-2": {
-    title: "Café Ambiance",
-    subtitle: "Coffee shop vibes",
-    emoji: "☕",
-    tag: "Ambient",
-    duration: "Unlimited",
-    description: "Warm background café sounds for working, journaling, or reading."
-  },
-  "focus-3": {
-    title: "Pomodoro",
-    subtitle: "Timed work sessions",
-    emoji: "⏱️",
-    tag: "Productivity",
-    duration: "25 min",
-    description: "A structured focus sound made for short, intentional work sessions."
-  },
-  "focus-4": {
-    title: "Rain Focus",
-    subtitle: "Steady rainfall",
-    emoji: "🌧️",
-    tag: "Nature",
-    duration: "Unlimited",
-    description: "Consistent rainfall to help quiet mental noise and support concentration."
-  },
-
-  "nature-1": {
-    title: "Ocean Waves",
-    subtitle: "Coastal rhythms",
-    emoji: "🌊",
-    tag: "Nature",
-    duration: "Unlimited",
-    description: "Slow ocean waves washing in and out with a peaceful natural rhythm."
-  },
-  "nature-2": {
-    title: "Bird Songs",
-    subtitle: "Morning chorus",
-    emoji: "🐦",
-    tag: "Nature",
-    duration: "3 hours",
-    description: "Fresh morning birdsong to make the space feel bright and alive."
-  },
-  "nature-3": {
-    title: "Flowing River",
-    subtitle: "Water streams",
-    emoji: "🏞️",
-    tag: "Nature",
-    duration: "Unlimited",
-    description: "Smooth flowing water to bring a grounded and peaceful atmosphere."
-  },
-  "nature-4": {
-    title: "Wind Chimes",
-    subtitle: "Gentle breeze",
-    emoji: "🍃",
-    tag: "Nature",
-    duration: "Unlimited",
-    description: "Soft wind and chime tones for a light, airy, meditative mood."
-  },
-
-  "meditation-1": {
-    title: "Tibetan Bowls",
-    subtitle: "Healing frequencies",
-    emoji: "🔔",
-    tag: "Spiritual",
-    duration: "1 hour",
-    description: "Resonant bowl tones for stillness, grounding, and inner calm."
-  },
-  "meditation-2": {
-    title: "Chakra Tones",
-    subtitle: "Energy balance",
-    emoji: "✨",
-    tag: "Spiritual",
-    duration: "45 min",
-    description: "Gentle frequency-based tones created for balance and reflection."
-  },
-  "meditation-3": {
-    title: "Zen Garden",
-    subtitle: "Peace and stillness",
-    emoji: "🌸",
-    tag: "Ambient",
-    duration: "Unlimited",
-    description: "A minimal peaceful soundscape for quiet sitting and breath awareness."
-  },
-  "meditation-4": {
-    title: "Gong Baths",
-    subtitle: "Vibrational healing",
-    emoji: "🔊",
-    tag: "Spiritual",
-    duration: "30 min",
-    description: "Deep gong resonance for immersion, release, and meditative rest."
-  }
 };
     // Sliders
     const sliders = {
@@ -2048,7 +1894,6 @@ if (stage.text === 'HoldBig') {
 document.querySelectorAll('[data-back]').forEach(btn => {
   btn.addEventListener('click', () => {
     Object.values(sections).forEach(s => s.classList.remove('active'));
-    document.getElementById('homeSection').classList.add('active');
 
     navItems.forEach(nav => nav.classList.remove('active'));
     document.querySelector('.nav-item[data-section="home"]').classList.add('active');
@@ -2068,99 +1913,8 @@ if (soundDetailBack) {
     document.querySelector('.nav-item[data-section="sounds"]').classList.add('active');
   });
 }
-    // Sound cards
-    function openSoundDetail(soundId) {
-  const detail = soundDetails[soundId];
-  if (!detail) return;
-
-  document.getElementById('detailTitle').textContent = detail.title;
-  document.getElementById('detailSubtitle').textContent = detail.subtitle;
-  document.getElementById('detailEmoji').textContent = detail.emoji;
-  document.getElementById('detailTag').textContent = detail.tag;
-  document.getElementById('detailDuration').textContent = detail.duration;
-  document.getElementById('detailDescription').textContent = detail.description;
-
-  Object.values(sections).forEach(s => s.classList.remove('active'));
-  sections.soundDetail.classList.add('active');
-
-  navItems.forEach(nav => nav.classList.remove('active'));
-  document.querySelector('.nav-item[data-section="sounds"]').classList.add('active');
-
-  document.getElementById('detailPlayBtn').onclick = () => {
-    alert(`Play: ${detail.title}`);
-  };
-}
-
-document.querySelectorAll('.sound-item').forEach(item => {
-  item.addEventListener('click', () => {
-    const soundId = item.dataset.sound;
-    openSoundDetail(soundId);
-  });
-});
-    
-    // Category filtering
-    function setupCategoryButtons() {
-      const categoryBtns = document.querySelectorAll('.category-btn');
-      const soundItems = document.querySelectorAll('.sound-item');
-      
-      // Initially show only sleep-deep items
-      soundItems.forEach(item => {
-        if (item.dataset.category === 'sleep-deep') {
-          item.style.display = '';
-        } else {
-          item.style.display = 'none';
-        }
-      });
-      
-      // Set sleep-deep as active
-      categoryBtns.forEach(btn => {
-        if (btn.dataset.category === 'sleep-deep') {
-          btn.style.background = 'rgba(255, 252, 247, 0.8)';
-          btn.style.borderColor = 'rgba(180, 165, 145, 0.4)';
-          btn.style.color = '#8B7355';
-          btn.classList.add('active');
-        } else {
-          btn.style.background = 'rgba(255, 252, 247, 0.6)';
-          btn.style.borderColor = 'rgba(180, 165, 145, 0.3)';
-          btn.style.color = '#A89880';
-          btn.classList.remove('active');
-        }
-      });
-      
-      categoryBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          const category = btn.dataset.category;
-          
-          // Update active button
-          categoryBtns.forEach(b => {
-            b.style.background = 'rgba(255, 252, 247, 0.6)';
-            b.style.borderColor = 'rgba(180, 165, 145, 0.3)';
-            b.style.color = '#A89880';
-            b.classList.remove('active');
-          });
-          btn.style.background = 'rgba(255, 252, 247, 0.8)';
-          btn.style.borderColor = 'rgba(180, 165, 145, 0.4)';
-          btn.style.color = '#8B7355';
-          btn.classList.add('active');
-          
-          // Show/hide items
-          soundItems.forEach(item => {
-            if (item.dataset.category === category) {
-              item.style.display = '';
-            } else {
-              item.style.display = 'none';
-            }
-          });
-        });
-      });
-    }
-    
-    // Re-setup category buttons when DOM updates
-    function reinitializeCategoryButtons() {
-      setupCategoryButtons();
-    }
-    
-    setupCategoryButtons();
+     
+   
 
     // Sliders
     Object.keys(sliders).forEach(key => {
@@ -2396,10 +2150,13 @@ cardSound.addEventListener("timeupdate", () => {
     
     // Card click to flip
     affirmationCard.addEventListener('click', revealAffirmation);
-    
+   
+    initSoundsPage();
+   
    </script>
  </body>
 </html>
+
 
 
 
