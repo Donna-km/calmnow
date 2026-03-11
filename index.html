@@ -1242,6 +1242,45 @@
       }
     }
   </style>
+
+  <!-- Sound Detail Section -->
+<section id="soundDetailSection" class="section-panel">
+  <button class="back-button" id="soundDetailBack">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8B7355" stroke-width="1.5">
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+  </button>
+
+  <div class="max-w-xl mx-auto pt-16">
+    <div class="rounded-[28px] p-6 md:p-8" style="background: rgba(255, 252, 247, 0.78); border: 1px solid rgba(180,165,145,0.25); box-shadow: 0 20px 60px rgba(180,165,145,0.12);">
+      
+      <div class="text-5xl text-center mb-4" id="detailEmoji">🌊</div>
+
+      <h2 class="font-display text-3xl text-center mb-2" id="detailTitle" style="color:#8B7355;">
+        Delta Waves
+      </h2>
+
+      <p class="text-center text-sm mb-6" id="detailSubtitle" style="color:#A89880;">
+        Deep sleep rhythm
+      </p>
+
+      <div class="rounded-2xl p-5 mb-6" style="background: rgba(245, 241, 235, 0.7);">
+        <div class="flex justify-between text-sm mb-3" style="color:#8B7355;">
+          <span id="detailTag">Binaural</span>
+          <span id="detailDuration">8 hours</span>
+        </div>
+        <div style="height:1px; background: rgba(180,165,145,0.18);"></div>
+        <p class="text-sm mt-4 leading-7" id="detailDescription" style="color:#A89880;">
+          A calming soundscape designed to help your mind slow down and drift into deeper rest.
+        </p>
+      </div>
+
+      <button id="detailPlayBtn" class="calm-button w-full">
+        Play This Sound
+      </button>
+    </div>
+  </div>
+</section>
   <section id="personalSection" class="section-panel"><button class="back-button" data-back>
     <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="#8B7355" stroke-width="1.5"><path d="M15 18l-6-6 6-6" />
     </svg></button>
@@ -1679,13 +1718,146 @@
     const closeMoment = document.getElementById('closeMoment');
     const navItems = document.querySelectorAll('.nav-item');
     const sections = {
-      sounds: document.getElementById('soundsSection'),
-      personal: document.getElementById('personalSection'),
-      affirmations: document.getElementById('affirmationsSection')
-    };
+  sounds: document.getElementById('soundsSection'),
+  soundDetail: document.getElementById('soundDetailSection'),
+  personal: document.getElementById('personalSection'),
+  affirmations: document.getElementById('affirmationsSection')
+};
     const backButtons = document.querySelectorAll('[data-back]');
     const soundCards = document.querySelectorAll('.sound-card');
-    
+    const soundDetails = {
+  "deep-sleep-1": {
+    title: "Delta Waves",
+    subtitle: "Deep sleep rhythm",
+    emoji: "🌊",
+    tag: "Binaural",
+    duration: "8 hours",
+    description: "A calming deep-sleep frequency designed to slow your mind and help you settle into a restful night."
+  },
+  "deep-sleep-2": {
+    title: "Thunderstorm",
+    subtitle: "Gentle distant storm",
+    emoji: "⛈️",
+    tag: "Nature",
+    duration: "10 hours",
+    description: "Soft rolling thunder and distant rain to create a cozy, safe atmosphere for sleep."
+  },
+  "deep-sleep-3": {
+    title: "White Noise",
+    subtitle: "Calming static",
+    emoji: "🔇",
+    tag: "Ambient",
+    duration: "Unlimited",
+    description: "A steady neutral sound that helps block distractions and supports uninterrupted rest."
+  },
+  "deep-sleep-4": {
+    title: "Forest Night",
+    subtitle: "Crickets and leaves",
+    emoji: "🌲",
+    tag: "Nature",
+    duration: "12 hours",
+    description: "Night forest ambience with soft crickets and leaves moving in the dark."
+  },
+
+  "focus-1": {
+    title: "Lofi Study",
+    subtitle: "Beats to focus",
+    emoji: "🎧",
+    tag: "Music",
+    duration: "2 hours",
+    description: "Gentle lo-fi beats to help you stay calm, focused, and in flow."
+  },
+  "focus-2": {
+    title: "Café Ambiance",
+    subtitle: "Coffee shop vibes",
+    emoji: "☕",
+    tag: "Ambient",
+    duration: "Unlimited",
+    description: "Warm background café sounds for working, journaling, or reading."
+  },
+  "focus-3": {
+    title: "Pomodoro",
+    subtitle: "Timed work sessions",
+    emoji: "⏱️",
+    tag: "Productivity",
+    duration: "25 min",
+    description: "A structured focus sound made for short, intentional work sessions."
+  },
+  "focus-4": {
+    title: "Rain Focus",
+    subtitle: "Steady rainfall",
+    emoji: "🌧️",
+    tag: "Nature",
+    duration: "Unlimited",
+    description: "Consistent rainfall to help quiet mental noise and support concentration."
+  },
+
+  "nature-1": {
+    title: "Ocean Waves",
+    subtitle: "Coastal rhythms",
+    emoji: "🌊",
+    tag: "Nature",
+    duration: "Unlimited",
+    description: "Slow ocean waves washing in and out with a peaceful natural rhythm."
+  },
+  "nature-2": {
+    title: "Bird Songs",
+    subtitle: "Morning chorus",
+    emoji: "🐦",
+    tag: "Nature",
+    duration: "3 hours",
+    description: "Fresh morning birdsong to make the space feel bright and alive."
+  },
+  "nature-3": {
+    title: "Flowing River",
+    subtitle: "Water streams",
+    emoji: "🏞️",
+    tag: "Nature",
+    duration: "Unlimited",
+    description: "Smooth flowing water to bring a grounded and peaceful atmosphere."
+  },
+  "nature-4": {
+    title: "Wind Chimes",
+    subtitle: "Gentle breeze",
+    emoji: "🍃",
+    tag: "Nature",
+    duration: "Unlimited",
+    description: "Soft wind and chime tones for a light, airy, meditative mood."
+  },
+
+  "meditation-1": {
+    title: "Tibetan Bowls",
+    subtitle: "Healing frequencies",
+    emoji: "🔔",
+    tag: "Spiritual",
+    duration: "1 hour",
+    description: "Resonant bowl tones for stillness, grounding, and inner calm."
+  },
+  "meditation-2": {
+    title: "Chakra Tones",
+    subtitle: "Energy balance",
+    emoji: "✨",
+    tag: "Spiritual",
+    duration: "45 min",
+    description: "Gentle frequency-based tones created for balance and reflection."
+  },
+  "meditation-3": {
+    title: "Zen Garden",
+    subtitle: "Peace and stillness",
+    emoji: "🌸",
+    tag: "Ambient",
+    duration: "Unlimited",
+    description: "A minimal peaceful soundscape for quiet sitting and breath awareness."
+  },
+  "meditation-4": {
+    title: "Gong Baths",
+    subtitle: "Vibrational healing",
+    emoji: "🔊",
+    tag: "Spiritual",
+    duration: "30 min",
+    description: "Deep gong resonance for immersion, release, and meditative rest."
+  }
+};
     // Sliders
     const sliders = {
       rain: document.getElementById('rainSlider'),
@@ -1871,17 +2043,60 @@ if (stage.text === 'HoldBig') {
         });
       });
     });
+   
+// Back buttons
+document.querySelectorAll('[data-back]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    Object.values(sections).forEach(s => s.classList.remove('active'));
+    document.getElementById('homeSection').classList.add('active');
 
+    navItems.forEach(nav => nav.classList.remove('active'));
+    document.querySelector('.nav-item[data-section="home"]').classList.add('active');
+  });
+});
+
+
+/* SOUND DETAIL BACK */
+const soundDetailBack = document.getElementById('soundDetailBack');
+
+if (soundDetailBack) {
+  soundDetailBack.addEventListener('click', () => {
+    Object.values(sections).forEach(s => s.classList.remove('active'));
+    sections.sounds.classList.add('active');
+
+    navItems.forEach(nav => nav.classList.remove('active'));
+    document.querySelector('.nav-item[data-section="sounds"]').classList.add('active');
+  });
+}
     // Sound cards
-    soundCards.forEach(card => {
-      card.addEventListener('click', () => {
-        const wasPlaying = card.classList.contains('playing');
-        soundCards.forEach(c => c.classList.remove('playing'));
-        if (!wasPlaying) {
-          card.classList.add('playing');
-        }
-      });
-    });
+    function openSoundDetail(soundId) {
+  const detail = soundDetails[soundId];
+  if (!detail) return;
+
+  document.getElementById('detailTitle').textContent = detail.title;
+  document.getElementById('detailSubtitle').textContent = detail.subtitle;
+  document.getElementById('detailEmoji').textContent = detail.emoji;
+  document.getElementById('detailTag').textContent = detail.tag;
+  document.getElementById('detailDuration').textContent = detail.duration;
+  document.getElementById('detailDescription').textContent = detail.description;
+
+  Object.values(sections).forEach(s => s.classList.remove('active'));
+  sections.soundDetail.classList.add('active');
+
+  navItems.forEach(nav => nav.classList.remove('active'));
+  document.querySelector('.nav-item[data-section="sounds"]').classList.add('active');
+
+  document.getElementById('detailPlayBtn').onclick = () => {
+    alert(`Play: ${detail.title}`);
+  };
+}
+
+document.querySelectorAll('.sound-item').forEach(item => {
+  item.addEventListener('click', () => {
+    const soundId = item.dataset.sound;
+    openSoundDetail(soundId);
+  });
+});
     
     // Category filtering
     function setupCategoryButtons() {
@@ -2185,6 +2400,7 @@ cardSound.addEventListener("timeupdate", () => {
    </script>
  </body>
 </html>
+
 
 
 
