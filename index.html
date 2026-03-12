@@ -1935,7 +1935,7 @@ if (stage.text === 'HoldBig') {
 });
 
     closeMoment.addEventListener('click', () => {
-
+ stopCurrentMix();
   // หยุดเสียง
   if (breathingSound) {
     breathingSound.pause();
@@ -2025,7 +2025,7 @@ if (stage.text === 'HoldBig') {
 // Back buttons
 document.querySelectorAll('[data-back]').forEach(btn => {
   btn.addEventListener('click', () => {
-
+ stopCurrentMix();
    if (currentSoundAudio) {
   currentSoundAudio.pause();
   currentSoundAudio.currentTime = 0;
@@ -2305,6 +2305,7 @@ cardSound.addEventListener("timeupdate", () => {
    </script>
  </body>
 </html>
+
 
 
 
