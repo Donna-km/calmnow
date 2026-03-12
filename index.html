@@ -6,7 +6,6 @@
   <title>Calm Now</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="/_sdk/element_sdk.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&amp;family=Jost:wght@300;400&amp;display=swap" rel="stylesheet">
@@ -916,7 +915,7 @@
 }
   </style>
   <style>body { box-sizing: border-box; }</style>
-  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ 
  </head>
  <body class="h-full font-body" style="background: linear-gradient(180deg, #FAF7F2 0%, #F5F1EB 50%, #EBE4DA 100%);"><!-- Flowing Curtain Background -->
   <div class="curtain-bg">
@@ -1422,41 +1421,42 @@ async function initSoundsPage() {
     }
 
     async function saveMix() {
-      const input = document.getElementById('mixNameInput');
-      const mixName = input.value.trim();
-      
-      if (!mixName) {
-        showNotification('โปรดป้อนชื่อ mix');
-        return;
-      }
-      
-      // Disable button during save
-      const confirmBtn = document.getElementById('confirmSaveBtn');
-      confirmBtn.disabled = true;
-      confirmBtn.textContent = 'กำลังบันทึก...';
-      
-      const mixData = {
-        mix_name: mixName,
-        rain: parseInt(sliders.rain?.value || 0),
-        wind: parseInt(sliders.wind?.value || 0),
-        river: parseInt(sliders.river?.value || 0),
-        bowl: parseInt(sliders.bowl?.value || 0),
-        breath: parseInt(sliders.breath?.value || 0)
-      };
-      
-      const result = await window.dataSdk.create(mixData);
-      
-      // Re-enable button
-      confirmBtn.disabled = false;
-      confirmBtn.textContent = 'Save Mix';
-      
-      if (result.isOk) {
-        showNotification(`✓ บันทึก "${mixName}" สำเร็จ!`);
-        hideSaveModal();
-      } else {
-        showNotification('เกิดข้อผิดพลาด กรุณาลองใหม่');
-      }
-    }
+  const input = document.getElementById('mixNameInput');
+  const mixName = input.value.trim();
+
+  if (!mixName) {
+    showNotification('Please give your mix a name');
+    return;
+  }
+
+  const confirmBtn = document.getElementById('confirmSaveBtn');
+  confirmBtn.disabled = true;
+  confirmBtn.textContent = 'Saving...';
+
+  const mixData = {
+    mix_name: mixName,
+    rain: parseInt(sliders.rain?.value || 0),
+    wind: parseInt(sliders.wind?.value || 0),
+    river: parseInt(sliders.river?.value || 0),
+    bowl: parseInt(sliders.bowl?.value || 0),
+    breath: parseInt(sliders.breath?.value || 0)
+  };
+
+  const { error } = await supabaseClient
+    .from('user_mixes')
+    .insert([mixData]);
+
+  confirmBtn.disabled = false;
+  confirmBtn.textContent = 'Save Mix';
+
+  if (!error) {
+    showNotification(`✓ บันทึก "${mixName}"saved`);
+    hideSaveModal();
+  } else {
+    console.error(error);
+    showNotification('Something went wrong. Please try again.');
+  }
+}
 
     // Modal button handlers
     document.getElementById('cancelSaveBtn').addEventListener('click', hideSaveModal);
@@ -2203,6 +2203,7 @@ cardSound.addEventListener("timeupdate", () => {
    </script>
  </body>
 </html>
+
 
 
 
