@@ -1450,7 +1450,7 @@ async function initSoundsPage() {
   confirmBtn.textContent = 'Save Mix';
 
   if (!error) {
-    showNotification(`✓ บันทึก "${mixName}"saved`);
+    showNotification(`✓"${mixName}"saved`);
     hideSaveModal();
   } else {
     console.error(error);
@@ -2203,6 +2203,7 @@ cardSound.addEventListener("timeupdate", () => {
    </script>
  </body>
 </html>
+
 
 
 
