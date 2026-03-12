@@ -1131,7 +1131,105 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_
 let dbSounds = [];
 let currentCategory = 'sleep';
 let currentSoundAudio = null;
+let mixAudios = {
+  rain: null,
+  wind: null,
+  river: null,
+  bowl: null,
+  breath: null
+};
 
+let savedMixes = [];
+
+function findSoundByTitle(title) {
+  return dbSounds.find(
+    s => (s.title || '').trim().toLowerCase() === title.toLowerCase()
+  );
+}
+
+function getMixSoundMap() {
+  return {
+    rain: findSoundByTitle('Rain'),
+    wind: findSoundByTitle('Wind'),
+    river: findSoundByTitle('River'),
+    bowl: findSoundByTitle('Singing Bowl') || findSoundByTitle('Bowl'),
+    breath: findSoundByTitle('Breath')
+  };
+}
+
+async function ensureMixAudiosReady() {
+  const soundMap = getMixSoundMap();
+
+  for (const key of Object.keys(soundMap)) {
+    const sound = soundMap[key];
+    if (!sound || !sound.audio_path) continue;
+
+    const audioUrl = getAudioUrl(sound.audio_path);
+    if (!audioUrl) continue;
+
+    if (!mixAudios[key]) {
+      mixAudios[key] = new Audio(audioUrl);
+      mixAudios[key].loop = true;
+      mixAudios[key].preload = 'auto';
+    } else if (mixAudios[key].src !== audioUrl) {
+      mixAudios[key].pause();
+      mixAudios[key].currentTime = 0;
+      mixAudios[key] = new Audio(audioUrl);
+      mixAudios[key].loop = true;
+      mixAudios[key].preload = 'auto';
+    }
+  }
+}
+
+function applyCurrentSliderVolumes() {
+  Object.keys(mixAudios).forEach(key => {
+    if (mixAudios[key] && sliders[key]) {
+      mixAudios[key].volume = (parseInt(sliders[key].value || 0, 10)) / 100;
+    }
+  });
+}
+
+async function playCurrentMix() {
+  await ensureMixAudiosReady();
+  applyCurrentSliderVolumes();
+
+  for (const key of Object.keys(mixAudios)) {
+    const audio = mixAudios[key];
+    if (!audio) continue;
+
+    try {
+      if (audio.paused) {
+        await audio.play();
+      }
+    } catch (err) {
+      console.error(`Play error (${key}):`, err);
+    }
+  }
+}
+
+function stopCurrentMix() {
+  Object.values(mixAudios).forEach(audio => {
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+  });
+}
+
+async function loadSavedMixes() {
+  const { data, error } = await supabaseClient
+    .from('user_mixes')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('loadSavedMixes error:', error);
+    savedMixes = [];
+    return;
+  }
+
+  savedMixes = data || [];
+}
 function getAudioUrl(audioPath) {
   if (!audioPath) return '';
   const { data } = supabaseClient.storage.from('sounds').getPublicUrl(audioPath);
@@ -1369,6 +1467,8 @@ function renderYourMixOnly() {
 
 async function initSoundsPage() {
   dbSounds = await loadSoundsFromSupabase();
+  await loadSavedMixes();
+
   renderSoundTabs();
 
   if (currentCategory === 'your-mix') {
@@ -1377,22 +1477,7 @@ async function initSoundsPage() {
     renderSoundsFromDb(currentCategory);
   }
 }
-    const dataHandler = {
-      onDataChanged(data) {
-        savedMixes = data;
-        updateYourMixCategory();
-      }
-    };
-    
-    // Initialize Data SDK
-    if (window.dataSdk) {
-      window.dataSdk.init(dataHandler).then(result => {
-        if (!result.isOk) {
-          console.error('Failed to init data SDK');
-        }
-      });
-    }
-    
+      
     // Show save modal
     function showSaveModal() {
       const modal = document.getElementById('saveMixModal');
@@ -1435,11 +1520,11 @@ async function initSoundsPage() {
 
   const mixData = {
     mix_name: mixName,
-    rain: parseInt(sliders.rain?.value || 0),
-    wind: parseInt(sliders.wind?.value || 0),
-    river: parseInt(sliders.river?.value || 0),
-    bowl: parseInt(sliders.bowl?.value || 0),
-    breath: parseInt(sliders.breath?.value || 0)
+    rain: parseInt(sliders.rain?.value || 0, 10),
+    wind: parseInt(sliders.wind?.value || 0, 10),
+    river: parseInt(sliders.river?.value || 0, 10),
+    bowl: parseInt(sliders.bowl?.value || 0, 10),
+    breath: parseInt(sliders.breath?.value || 0, 10)
   };
 
   const { error } = await supabaseClient
@@ -1449,10 +1534,18 @@ async function initSoundsPage() {
   confirmBtn.disabled = false;
   confirmBtn.textContent = 'Save Mix';
 
-  if (!error) {
-    showNotification(`✓"${mixName}"saved`);
-    hideSaveModal();
-  } else {
+  if (error) {
+    console.error('saveMix error:', error);
+    showNotification('Something went wrong. Please try again.');
+    return;
+  }
+
+  await loadSavedMixes();
+  updateYourMixCategory();
+
+  showNotification(`✓ "${mixName}" saved`);
+  hideSaveModal();
+} else {
     console.error(error);
     showNotification('Something went wrong. Please try again.');
   }
@@ -1553,10 +1646,19 @@ async function initSoundsPage() {
           `;
           
           card.querySelector('.confirm-delete-btn').addEventListener('click', async () => {
-            const result = await window.dataSdk.delete(mixToDelete);
-            if (result.isOk) {
-              showNotification('✓ ลบเรียบร้อย!');
-            }
+           const { error } = await supabaseClient
+  .from('user_mixes')
+  .delete()
+  .eq('id', mixToDelete.id);
+
+if (!error) {
+  showNotification('✓ Deleted!');
+  await loadSavedMixes();
+  updateYourMixCategory();
+} else {
+  console.error(error);
+  showNotification('Delete failed');
+}
           });
           
           card.querySelector('.cancel-delete-btn').addEventListener('click', () => {
@@ -1965,22 +2067,27 @@ if (soundDetailBack) {
 
     // Sliders
     Object.keys(sliders).forEach(key => {
-      if (sliders[key] && sliderValues[key]) {
-        sliders[key].addEventListener('input', (e) => {
-          sliderValues[key].textContent = `${e.target.value}%`;
-        });
+  if (sliders[key] && sliderValues[key]) {
+    sliders[key].addEventListener('input', (e) => {
+      const value = parseInt(e.target.value || 0, 10);
+      sliderValues[key].textContent = `${value}%`;
+
+      if (mixAudios[key]) {
+        mixAudios[key].volume = value / 100;
       }
     });
+  }
+});
 
     // Play Mix button
     const playMixBtn = document.getElementById('playMixBtn');
     let currentMode = 'breathing'; // Track which mode we're in
     
     if (playMixBtn) {
-      playMixBtn.addEventListener('click', () => {
+      playMixBtn.addEventListener('click', async () => {
         currentMode = 'mix';
         momentOverlay.classList.add('active');
-        
+        await playCurrentMix();
         // Hide the blue breathing circle
         const blueCircle = document.querySelector('.breathing-circle');
         if (blueCircle) {
@@ -2203,6 +2310,7 @@ cardSound.addEventListener("timeupdate", () => {
    </script>
  </body>
 </html>
+
 
 
 
