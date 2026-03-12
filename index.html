@@ -1418,23 +1418,70 @@ function renderYourMixOnly() {
 
     mixItem.innerHTML = `
       <div class="sound-card">
+
         <div class="flex items-center justify-between mb-3">
           <div>
             <h3 class="font-display text-lg" style="color: #8B7355;">${mix.mix_name}</h3>
             <p class="text-xs mt-1" style="color: #A89880;">Your custom mix</p>
           </div>
-          <div class="text-2xl">🎵</div>
+
+          <div class="flex items-center gap-2">
+            <button class="delete-mix-btn"
+              style="
+                font-size:12px;
+                padding:4px 10px;
+                border-radius:20px;
+                border:1px solid rgba(180,165,145,0.3);
+                color:#B07A7A;
+                background:rgba(255,255,255,0.7);
+                cursor:pointer;
+              ">
+              Delete
+            </button>
+
+            <div class="text-2xl">🎵</div>
+          </div>
         </div>
+
         <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
+
         <div class="text-xs mb-2" style="color: #A89880;">
           🌧️ ${mix.rain}% • 🍃 ${mix.wind}% • 🏞️ ${mix.river}% • 🔔 ${mix.bowl}% • 💨 ${mix.breath}%
         </div>
+
       </div>
     `;
 
     soundsGrid.appendChild(mixItem);
 
+    // ===== delete button =====
+    const deleteBtn = mixItem.querySelector('.delete-mix-btn');
+
+    deleteBtn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+
+      const ok = confirm(`Delete "${mix.mix_name}" ?`);
+      if (!ok) return;
+
+      const { error } = await supabaseClient
+        .from('user_mixes')
+        .delete()
+        .eq('id', mix.id);
+
+      if (error) {
+        console.error(error);
+        showNotification('Delete failed');
+        return;
+      }
+
+      await loadSavedMixes();
+      renderYourMixOnly();
+      showNotification('✓ Deleted');
+    });
+
+    // ===== original click =====
     mixItem.querySelector('.sound-card').addEventListener('click', () => {
+
       if (sliders.rain) sliders.rain.value = mix.rain;
       if (sliders.wind) sliders.wind.value = mix.wind;
       if (sliders.river) sliders.river.value = mix.river;
@@ -1453,6 +1500,7 @@ function renderYourMixOnly() {
       navItems.forEach(nav => nav.classList.remove('active'));
       document.querySelector('.nav-item[data-section="personal"]').classList.add('active');
     });
+
   });
 
   if (savedMixes.length === 0) {
@@ -1463,7 +1511,6 @@ function renderYourMixOnly() {
     `;
   }
 }
-
 async function initSoundsPage() {
   dbSounds = await loadSoundsFromSupabase();
   await loadSavedMixes();
@@ -2305,6 +2352,7 @@ cardSound.addEventListener("timeupdate", () => {
    </script>
  </body>
 </html>
+
 
 
 
