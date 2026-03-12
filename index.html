@@ -1037,6 +1037,9 @@
       <button id="detailPlayBtn" class="calm-button w-full">
         Play This Sound
       </button>
+     <button id="detailAddToMixBtn" class="calm-button w-full mt-3" style="font-size: 0.9rem;">
+  + Add to Your Mix
+</button>
     </div>
   </div>
 </section>
@@ -1046,7 +1049,8 @@
    <div class="max-w-md mx-auto pt-16">
     <h2 class="font-display text-3xl font-light text-center mb-2" style="color: #8B7355;">Personal Calm</h2>
     <p class="text-center text-sm mb-8" style="color: #A89880;">Create your perfect soundscape</p>
-    <div class="space-y-6">
+<div id="customMixList" class="space-y-6 mb-6"></div>
+<div class="space-y-6">
      <div class="p-5 rounded-2xl" style="background: rgba(255, 252, 247, 0.7);">
       <div class="flex items-center justify-between mb-3"><span class="flex items-center gap-2"> <span>🌧️</span> <span class="font-display" style="color: #8B7355;">Rain</span> </span> <span class="text-sm" style="color: #A89880;" id="rainValue">50%</span>
       </div><input type="range" class="calm-slider" id="rainSlider" min="0" max="100" value="50">
@@ -1139,7 +1143,10 @@ let mixAudios = {
 };
 
 let savedMixes = [];
-
+let customMixSounds = [];
+let customMixAudios = {};
+let currentDetailSound = null;
+   
 function findSoundByTitle(title) {
   return dbSounds.find(
     s => (s.title || '').trim().toLowerCase() === title.toLowerCase()
@@ -1190,6 +1197,7 @@ function applyCurrentSliderVolumes() {
 
 async function playCurrentMix() {
   await ensureMixAudiosReady();
+  await ensureCustomMixAudiosReady();
   applyCurrentSliderVolumes();
 
   for (const key of Object.keys(mixAudios)) {
@@ -1204,6 +1212,19 @@ async function playCurrentMix() {
       console.error(`Play error (${key}):`, err);
     }
   }
+
+  for (const soundId of Object.keys(customMixAudios)) {
+    const audio = customMixAudios[soundId];
+    if (!audio) continue;
+
+    try {
+      if (audio.paused) {
+        await audio.play();
+      }
+    } catch (err) {
+      console.error(`Custom play error (${soundId}):`, err);
+    }
+  }
 }
 
 function stopCurrentMix() {
@@ -1213,6 +1234,153 @@ function stopCurrentMix() {
       audio.currentTime = 0;
     }
   });
+
+  Object.values(customMixAudios).forEach(audio => {
+    if (audio) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+  });
+}
+
+   function renderCustomMixList() {
+  const customMixList = document.getElementById('customMixList');
+  if (!customMixList) return;
+
+  if (customMixSounds.length === 0) {
+    customMixList.innerHTML = '';
+    return;
+  }
+
+  customMixList.innerHTML = customMixSounds.map(sound => `
+    <div class="p-5 rounded-2xl" style="background: rgba(255, 252, 247, 0.7);" data-custom-sound-id="${sound.id}">
+      <div class="flex items-center justify-between mb-3">
+        <span class="flex items-center gap-2">
+          <span>${sound.emoji || '🎵'}</span>
+          <span class="font-display" style="color: #8B7355;">${sound.title}</span>
+        </span>
+
+        <div class="flex items-center gap-3">
+          <span class="text-sm" style="color: #A89880;" id="customValue-${sound.id}">${sound.volume}%</span>
+          <button
+            class="remove-custom-sound-btn"
+            data-remove-id="${sound.id}"
+            style="
+              border:none;
+              background:transparent;
+              color:#B07A7A;
+              font-size:0.85rem;
+              cursor:pointer;
+              padding:0;
+            "
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+
+      <input
+        type="range"
+        class="calm-slider custom-mix-slider"
+        id="customSlider-${sound.id}"
+        min="0"
+        max="100"
+        value="${sound.volume}"
+        data-sound-id="${sound.id}"
+      >
+    </div>
+  `).join('');
+
+  customMixList.querySelectorAll('.custom-mix-slider').forEach(slider => {
+    slider.addEventListener('input', (e) => {
+      const soundId = String(e.target.dataset.soundId);
+      const value = parseInt(e.target.value || 0, 10);
+
+      const sound = customMixSounds.find(s => String(s.id) === soundId);
+      if (!sound) return;
+
+      sound.volume = value;
+
+      const valueEl = document.getElementById(`customValue-${sound.id}`);
+      if (valueEl) valueEl.textContent = `${value}%`;
+
+      if (customMixAudios[soundId]) {
+        customMixAudios[soundId].volume = value / 100;
+      }
+    });
+  });
+
+  customMixList.querySelectorAll('.remove-custom-sound-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const soundId = String(e.currentTarget.dataset.removeId);
+      removeCustomMixSound(soundId);
+    });
+  });
+}
+
+function addSoundToPersonalMix(sound) {
+  if (!sound || !sound.id) return;
+
+  const exists = customMixSounds.find(s => String(s.id) === String(sound.id));
+  if (exists) {
+    showNotification('Already in Personal Calm');
+    goToPersonalSection();
+    return;
+  }
+
+  customMixSounds.push({
+    id: sound.id,
+    title: sound.title || 'Untitled',
+    emoji: sound.emoji || '🎵',
+    audio_path: sound.audio_path || '',
+    volume: 50
+  });
+
+  renderCustomMixList();
+  showNotification(`✓ Added ${sound.title} to Personal Calm`);
+  goToPersonalSection();
+}
+
+function removeCustomMixSound(soundId) {
+  const index = customMixSounds.findIndex(s => String(s.id) === String(soundId));
+  if (index === -1) return;
+
+  if (customMixAudios[soundId]) {
+    customMixAudios[soundId].pause();
+    customMixAudios[soundId].currentTime = 0;
+    delete customMixAudios[soundId];
+  }
+
+  customMixSounds.splice(index, 1);
+  renderCustomMixList();
+  showNotification('Removed from Personal Calm');
+}
+
+function goToPersonalSection() {
+  Object.values(sections).forEach(s => s.classList.remove('active'));
+  sections.personal.classList.add('active');
+
+  navItems.forEach(nav => nav.classList.remove('active'));
+  const personalNav = document.querySelector('.nav-item[data-section="personal"]');
+  if (personalNav) personalNav.classList.add('active');
+}
+
+async function ensureCustomMixAudiosReady() {
+  for (const sound of customMixSounds) {
+    if (!sound.audio_path) continue;
+
+    const soundId = String(sound.id);
+    const audioUrl = getAudioUrl(sound.audio_path);
+    if (!audioUrl) continue;
+
+    if (!customMixAudios[soundId]) {
+      customMixAudios[soundId] = new Audio(audioUrl);
+      customMixAudios[soundId].loop = true;
+      customMixAudios[soundId].preload = 'auto';
+    }
+
+    customMixAudios[soundId].volume = (sound.volume || 0) / 100;
+  }
 }
 
 async function loadSavedMixes() {
@@ -1402,6 +1570,14 @@ function openSoundDetailFromDb(sound) {
     currentSoundAudio.loop = true;
     currentSoundAudio.play();
   };
+ currentDetailSound = sound;
+
+const detailAddToMixBtn = document.getElementById('detailAddToMixBtn');
+if (detailAddToMixBtn) {
+  detailAddToMixBtn.onclick = () => {
+    addSoundToPersonalMix(sound);
+  };
+}
 }
 
 function renderYourMixOnly() {
@@ -2348,10 +2524,12 @@ cardSound.addEventListener("timeupdate", () => {
     affirmationCard.addEventListener('click', revealAffirmation);
    
     initSoundsPage();
+    renderCustomMixList();
    
    </script>
  </body>
 </html>
+
 
 
 
