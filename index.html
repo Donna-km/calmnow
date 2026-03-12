@@ -1893,6 +1893,12 @@ if (stage.text === 'HoldBig') {
 // Back buttons
 document.querySelectorAll('[data-back]').forEach(btn => {
   btn.addEventListener('click', () => {
+
+   if (currentSoundAudio) {
+  currentSoundAudio.pause();
+  currentSoundAudio.currentTime = 0;
+  currentSoundAudio = null;
+}
     Object.values(sections).forEach(s => s.classList.remove('active'));
 
     navItems.forEach(nav => nav.classList.remove('active'));
@@ -2156,6 +2162,7 @@ cardSound.addEventListener("timeupdate", () => {
    </script>
  </body>
 </html>
+
 
 
 
