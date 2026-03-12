@@ -1131,7 +1131,15 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_
 let dbSounds = [];
 let currentCategory = 'sleep';
 let currentSoundAudio = null;
-
+// Mix sound players
+let mixAudios = {
+  rain: null,
+  wind: null,
+  river: null,
+  bowl: null,
+  breath: null
+};
+   
 function getAudioUrl(audioPath) {
   if (!audioPath) return '';
   const { data } = supabaseClient.storage.from('sounds').getPublicUrl(audioPath);
@@ -1965,12 +1973,19 @@ if (soundDetailBack) {
 
     // Sliders
     Object.keys(sliders).forEach(key => {
-      if (sliders[key] && sliderValues[key]) {
-        sliders[key].addEventListener('input', (e) => {
-          sliderValues[key].textContent = `${e.target.value}%`;
-        });
+
+  if (sliders[key] && sliderValues[key]) {
+
+    sliders[key].addEventListener('input', (e) => {
+      const value = parseInt(e.target.value || 0, 10);
+      sliderValues[key].textContent = `${value}%`;
+      // ปรับเสียงจริง
+      if (mixAudios[key]) {
+        mixAudios[key].volume = value / 100;
       }
     });
+  }
+});
 
     // Play Mix button
     const playMixBtn = document.getElementById('playMixBtn');
@@ -1980,7 +1995,8 @@ if (soundDetailBack) {
       playMixBtn.addEventListener('click', () => {
         currentMode = 'mix';
         momentOverlay.classList.add('active');
-        
+        playCurrentMix(); 
+       
         // Hide the blue breathing circle
         const blueCircle = document.querySelector('.breathing-circle');
         if (blueCircle) {
@@ -2203,6 +2219,7 @@ cardSound.addEventListener("timeupdate", () => {
    </script>
  </body>
 </html>
+
 
 
 
