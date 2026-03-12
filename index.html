@@ -996,10 +996,12 @@
     <div class="rounded-[28px] p-6 md:p-8" style="background: rgba(255, 252, 247, 0.78); border: 1px solid rgba(180,165,145,0.25); box-shadow: 0 20px 60px rgba(180,165,145,0.12);">
       
       <div id="detailImageWrap" class="mb-5" style="display: none;">
-  <img
-    id="detailImage"
-  src=""
-  alt="Sound cover"
+  <video
+  id="detailVideo"
+  autoplay
+  muted
+  loop
+  playsinline
   style="
     width: 100%;
     height: 380px;
@@ -1264,20 +1266,23 @@ function openSoundDetailFromDb(sound) {
   document.getElementById('detailTag').textContent = sound.tag || '-';
   document.getElementById('detailDuration').textContent = sound.duration_text || '-';
   document.getElementById('detailDescription').textContent = sound.description || '';
-const detailImageWrap = document.getElementById('detailImageWrap');
-const detailImage = document.getElementById('detailImage');
-const detailEmojiWrap = document.getElementById('detailEmojiWrap');
 
-if (sound.image_path) {
-  detailImage.src = getImageUrl(sound.image_path);
-  detailImage.alt = sound.title || 'Sound cover';
-  detailImageWrap.style.display = 'block';
-  detailEmojiWrap.style.display = 'none';
-} else {
-  detailImage.src = '';
-  detailImageWrap.style.display = 'none';
-  detailEmojiWrap.style.display = 'block';
-}
+  const detailImageWrap = document.getElementById('detailImageWrap');
+  const detailVideo = document.getElementById('detailVideo');
+  const detailEmojiWrap = document.getElementById('detailEmojiWrap');
+
+  if (sound.image_path) {
+    detailVideo.src = getImageUrl(sound.image_path);
+    detailVideo.load();
+    detailImageWrap.style.display = 'block';
+    detailEmojiWrap.style.display = 'none';
+  } else {
+    detailVideo.pause();
+    detailVideo.src = '';
+    detailImageWrap.style.display = 'none';
+    detailEmojiWrap.style.display = 'block';
+  }
+
   Object.values(sections).forEach(s => s.classList.remove('active'));
   sections.soundDetail.classList.add('active');
 
@@ -2198,6 +2203,7 @@ cardSound.addEventListener("timeupdate", () => {
    </script>
  </body>
 </html>
+
 
 
 
