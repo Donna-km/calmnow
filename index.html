@@ -1271,8 +1271,8 @@ function openSoundDetailFromDb(sound) {
   const detailVideo = document.getElementById('detailVideo');
   const detailEmojiWrap = document.getElementById('detailEmojiWrap');
 
-  if (sound.image_path) {
-    detailVideo.src = getImageUrl(sound.image_path);
+  if (sound.vdo_path) {
+    detailVideo.src = getImageUrl(sound.vdo_path);
     detailVideo.load();
     detailImageWrap.style.display = 'block';
     detailEmojiWrap.style.display = 'none';
@@ -2203,6 +2203,7 @@ cardSound.addEventListener("timeupdate", () => {
    </script>
  </body>
 </html>
+
 
 
 
