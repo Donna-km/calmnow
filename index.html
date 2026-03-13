@@ -930,6 +930,16 @@
    .nav-item[data-section="personal"] {
   display: none !important;
 }
+
+   .card-limit-text{
+  font-size:0.75rem;
+  color:#A89880;
+  margin-top:20px;
+  text-align:center;
+  line-height:1.6;
+  opacity:0.85;
+  max-width:260px;
+}
   </style>
   <style>body { box-sizing: border-box; }</style>
  
@@ -1081,48 +1091,76 @@
 </button>
    </div>
   </section><!-- Affirmations Section -->
-  <section id="affirmationsSection" class="section-panel">  <button class="back-button" data-back>
-    <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="#8B7355" stroke-width="1.5"><path d="M15 18l-6-6 6-6" />
-    </svg></button>
-   <div class="max-w-2xl mx-auto pt-8 h-full flex flex-col items-center justify-center">
-    <h2 class="font-display text-3xl font-light text-center mb-2" style="color: #8B7355;">Affirmations Cards</h2>
+
+<section id="affirmationsSection" class="section-panel">
+
+  <button class="back-button" data-back>
+    <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="#8B7355" stroke-width="1.5">
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+  </button>
+
+  <div class="max-w-2xl mx-auto pt-8 h-full flex flex-col items-center justify-center">
+
+    <h2 class="font-display text-3xl font-light text-center mb-2" style="color: #8B7355;">
+      Affirmations Cards
+    </h2>
+
     <p class="text-center text-sm mb-12" style="color: #A89880; line-height: 1.8;">
-  Take a deep breath.<br>
-  Close your eyes. Think of what your heart is seeking.<br>
-  Trust the card that finds you.
-</p>
+      Take a deep breath.<br>
+      Close your eyes. Think of what your heart is seeking.<br>
+      Trust the card that finds you.
+    </p>
+
     <div class="affirmation-container">
-     <div class="affirmation-card" id="affirmationCard">
-      <div class="affirmation-card-inner">
-       <div class="affirmation-card-face affirmation-front">
-  <div class="card-front-content">
 
-    <div class="card-star">✦</div>
+      <div class="affirmation-card" id="affirmationCard">
 
-    <div class="card-title">
-      THE UNIVERSE
+        <div class="affirmation-card-inner">
+
+          <div class="affirmation-card-face affirmation-front">
+            <div class="card-front-content">
+
+              <div class="card-star">✦</div>
+
+              <div class="card-title">
+                THE UNIVERSE
+              </div>
+
+              <div class="card-divider"></div>
+
+              <div class="card-subtitle">
+                IS SENDING YOU A SIGN
+              </div>
+
+              <div class="card-tap">
+                tap to reveal
+              </div>
+
+            </div>
+          </div>
+
+          <div class="affirmation-card-face affirmation-back">
+            <p class="affirmation-text" id="affirmationText">
+              I trust the timing of my life.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+
     </div>
 
-    <div class="card-divider"></div>
-
-    <div class="card-subtitle">
-      IS SENDING YOU A SIGN
-    </div>
-
-    <div class="card-tap">
-      tap to reveal
-    </div>
+    <!-- ข้อความ limit -->
+    <p class="card-limit-text">
+      This card should be opened no more than three times each day.<br>
+      The message will arrive when you are ready.
+    </p>
 
   </div>
-</div>
-       <div class="affirmation-card-face affirmation-back">
-        <p class="affirmation-text" id="affirmationText">I trust the timing of my life.</p>
-       </div>
-      </div>
-     </div>
-    </div>
-   </div>
-  </section>
+
+</section>
   <audio id="breathingSound" preload="auto" loop>
   <source src="https://lvtdqeerzxpznnayccmb.supabase.co/storage/v1/object/public/test-pics/mindsettherapy-2_FiYezlb6.mp3" type="audio/mp4">
 </audio> 
@@ -2398,6 +2436,7 @@ initApp();
    </script>
  </body>
 </html>
+
 
 
 
