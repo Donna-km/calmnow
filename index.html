@@ -1045,24 +1045,49 @@
   <span id="detailEmoji">🌊</span>
 </div>
 
-      <h2 class="font-display text-3xl text-center mb-2" id="detailTitle" style="color:#8B7355;">
-        Delta Waves
-      </h2>
+<h2 class="font-display text-3xl text-center mb-2" id="detailTitle" style="color:#8B7355;">
+  Delta Waves
+</h2>
 
-      <p class="text-center text-sm mb-6" id="detailSubtitle" style="color:#A89880;">
-        Deep sleep rhythm
-      </p>
+<div class="flex items-center justify-center gap-3 mb-6">
+  <p class="text-center text-sm m-0" id="detailSubtitle" style="color:#A89880;">
+    Deep sleep rhythm
+  </p>
 
-      <div class="rounded-2xl p-5 mb-6" style="background: rgba(245, 241, 235, 0.7);">
-        <div class="flex justify-between text-sm mb-3" style="color:#8B7355;">
-          <span id="detailTag">Binaural</span>
-          <span id="detailDuration">8 hours</span>
-        </div>
-        <div style="height:1px; background: rgba(180,165,145,0.18);"></div>
-        <p class="text-sm mt-4 leading-7" id="detailDescription" style="color:#A89880;">
-          A calming soundscape designed to help your mind slow down and drift into deeper rest.
-        </p>
-      </div>
+  <button
+    id="detailFavoriteBtn"
+    aria-label="Toggle favorite"
+    style="
+      width:36px;
+      height:36px;
+      border:none;
+      border-radius:50%;
+      background:rgba(255,252,247,0.92);
+      box-shadow:0 4px 12px rgba(180,165,145,0.12);
+      cursor:pointer;
+      font-size:18px;
+      color:#A89880;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      line-height:1;
+      padding:0;
+    "
+  >
+    ♡
+  </button>
+</div>
+
+<div class="rounded-2xl p-5 mb-6" style="background: rgba(245, 241, 235, 0.7);">
+  <div class="flex justify-between text-sm mb-3" style="color:#8B7355;">
+    <span id="detailTag">Binaural</span>
+    <span id="detailDuration">8 hours</span>
+  </div>
+  <div style="height:1px; background: rgba(180,165,145,0.18);"></div>
+  <p class="text-sm mt-4 leading-7" id="detailDescription" style="color:#A89880;">
+    A calming soundscape designed to help your mind slow down and drift into deeper rest.
+  </p>
+</div>
 
       <button id="detailPlayBtn" class="calm-button w-full">
         Play This Sound
@@ -1188,6 +1213,14 @@ let currentDetailSound = null;
 let dbAffirmations = [];
 let currentAffirmation = null;
 let personalBackTarget = 'sounds';   
+
+let favoriteSoundIds = [];
+let deviceId = localStorage.getItem('calmnow_device_id');
+
+if (!deviceId) {
+  deviceId = crypto.randomUUID();
+  localStorage.setItem('calmnow_device_id', deviceId);
+}
    
 
 async function playCurrentMix() {
@@ -1415,18 +1448,183 @@ async function loadSoundsFromSupabase() {
   return data || [];
 }
 
+   async function loadFavoritesFromSupabase() {
+  const { data, error } = await supabaseClient
+    .from('user_favorite_sounds')
+    .select('sound_id')
+    .eq('device_id', deviceId);
+
+  if (error) {
+    console.error('loadFavoritesFromSupabase error:', error);
+    favoriteSoundIds = [];
+    return;
+  }
+
+  favoriteSoundIds = (data || []).map(row => Number(row.sound_id));
+}
+
+function isFavorite(soundId) {
+  return favoriteSoundIds.includes(Number(soundId));
+}
+
+async function toggleFavorite(soundId) {
+  const id = Number(soundId);
+  const alreadyFavorite = isFavorite(id);
+
+  if (alreadyFavorite) {
+    const { error } = await supabaseClient
+      .from('user_favorite_sounds')
+      .delete()
+      .eq('device_id', deviceId)
+      .eq('sound_id', id);
+
+    if (error) {
+      console.error('remove favorite error:', error);
+      showNotification('Could not remove favorite');
+      return;
+    }
+
+    favoriteSoundIds = favoriteSoundIds.filter(favId => favId !== id);
+    showNotification('Removed from Favorites');
+  } else {
+    const { error } = await supabaseClient
+      .from('user_favorite_sounds')
+      .insert([
+        {
+          device_id: deviceId,
+          sound_id: id
+        }
+      ]);
+
+    if (error) {
+      console.error('add favorite error:', error);
+      showNotification('Could not save favorite');
+      return;
+    }
+
+    favoriteSoundIds.push(id);
+    showNotification('Added to Favorites');
+  }
+
+  renderSoundTabs();
+
+  if (currentCategory === 'favorites') {
+    renderFavoriteSounds();
+  } else if (currentCategory === 'your-mix') {
+    renderYourMixOnly();
+  } else {
+    renderSoundsFromDb(currentCategory);
+  }
+}
+
+function getFavoriteButtonHtml(soundId) {
+  const active = isFavorite(soundId);
+
+  return `
+    <button
+      class="favorite-btn"
+      data-favorite-id="${soundId}"
+      aria-label="Toggle favorite"
+      style="
+        position:absolute;
+        top:12px;
+        right:12px;
+        width:36px;
+        height:36px;
+        border:none;
+        border-radius:50%;
+        background:rgba(255,252,247,0.92);
+        box-shadow:0 4px 12px rgba(180,165,145,0.12);
+        cursor:pointer;
+        font-size:18px;
+        z-index:2;
+        color:${active ? '#C97B84' : '#A89880'};
+      "
+    >
+      ${active ? '♥' : '♡'}
+    </button>
+  `;
+}
+
+function bindFavoriteButtons() {
+  document.querySelectorAll('.favorite-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      e.stopPropagation();
+      await toggleFavorite(btn.dataset.favoriteId);
+    });
+  });
+}
+
+function renderFavoriteSounds() {
+  const soundsGrid = document.getElementById('soundsGrid');
+  if (!soundsGrid) return;
+
+  const favorites = dbSounds.filter(sound => isFavorite(sound.id));
+
+  if (favorites.length === 0) {
+    soundsGrid.innerHTML = `
+      <div class="col-span-full p-5 rounded-2xl text-center" style="background: rgba(255,252,247,0.6); color:#A89880;">
+        No favorite sounds yet.
+      </div>
+    `;
+    return;
+  }
+
+  soundsGrid.innerHTML = favorites.map(sound => `
+    <div class="sound-item" data-id="${sound.id}">
+      <div class="sound-card" style="position: relative;">
+        ${getFavoriteButtonHtml(sound.id)}
+
+        ${sound.image_path ? `
+          <img
+            src="${getImageUrl(sound.image_path)}"
+            alt="${sound.title}"
+            style="width:100%; height:180px; object-fit:cover; border-radius:16px; margin-bottom:1rem;"
+          >
+        ` : ''}
+
+        <div class="flex items-center justify-between mb-3">
+          <div>
+            <h3 class="font-display text-lg" style="color: #8B7355;">${sound.title || ''}</h3>
+            <p class="text-xs mt-1" style="color: #A89880;">${sound.subtitle || ''}</p>
+          </div>
+          <div class="text-2xl">${sound.emoji || '🎵'}</div>
+        </div>
+
+        <div style="height: 1px; background: rgba(180, 165, 145, 0.2); margin: 1rem 0;"></div>
+
+        <div class="flex items-center justify-between text-xs" style="color: #A89880;">
+          <span>${sound.tag || '-'} • ${sound.duration_text || '-'}</span>
+          <span>♪</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  soundsGrid.querySelectorAll('.sound-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const id = Number(item.dataset.id);
+      const sound = dbSounds.find(s => s.id === id);
+      if (sound) openSoundDetailFromDb(sound);
+    });
+  });
+
+  bindFavoriteButtons();
+}
+
 function renderSoundTabs() {
   const tabs = document.getElementById('soundTabs');
   if (!tabs) return;
 
   const categories = [
-    { key: 'sleep-deep', label: 'Sleep Deep' },
-    { key: 'relax', label: 'Relax' },
-    { key: 'focus', label: 'Focus' },
-    { key: 'nature', label: 'Nature' },
-    { key: 'meditation', label: 'Meditation' },
-    { key: 'your-mix', label: 'Your Mix' }
-  ];
+  { key: 'sleep-deep', label: 'Sleep Deep' },
+  { key: 'relax', label: 'Relax' },
+  { key: 'focus', label: 'Focus' },
+  { key: 'nature', label: 'Nature' },
+  { key: 'meditation', label: 'Meditation' },
+  { key: 'favorites', label: 'Favorites' },
+  { key: 'your-mix', label: 'Your Mix' }
+];
 
   tabs.innerHTML = categories.map(cat => `
     <button
@@ -1454,10 +1652,12 @@ function renderSoundTabs() {
       renderSoundTabs();
 
       if (currentCategory === 'your-mix') {
-        renderYourMixOnly();
-      } else {
-        renderSoundsFromDb(currentCategory);
-      }
+  renderYourMixOnly();
+} else if (currentCategory === 'favorites') {
+  renderFavoriteSounds();
+} else {
+  renderSoundsFromDb(currentCategory);
+}
     });
   });
 }
@@ -1478,7 +1678,8 @@ function renderSoundsFromDb(category) {
 
   soundsGrid.innerHTML = filtered.map(sound => `
     <div class="sound-item" data-id="${sound.id}">
-      <div class="sound-card">
+      <div class="sound-card" style="position: relative;">
+  ${getFavoriteButtonHtml(sound.id)}
         ${sound.image_path ? `
           <img
             src="${getImageUrl(sound.image_path)}"
@@ -1544,6 +1745,19 @@ function openSoundDetailFromDb(sound) {
   navItems.forEach(nav => nav.classList.remove('active'));
   document.querySelector('.nav-item[data-section="sounds"]').classList.add('active');
 
+ const detailFavoriteBtn = document.getElementById('detailFavoriteBtn');
+if (detailFavoriteBtn) {
+  detailFavoriteBtn.innerHTML = isFavorite(sound.id) ? '♥' : '♡';
+  detailFavoriteBtn.style.color = isFavorite(sound.id) ? '#C97B84' : '#A89880';
+
+  detailFavoriteBtn.onclick = async (e) => {
+    e.stopPropagation();
+    await toggleFavorite(sound.id);
+
+    detailFavoriteBtn.innerHTML = isFavorite(sound.id) ? '♥' : '♡';
+    detailFavoriteBtn.style.color = isFavorite(sound.id) ? '#C97B84' : '#A89880';
+  };
+}
   document.getElementById('detailPlayBtn').onclick = async () => {
     const audioUrl = getAudioUrl(sound.audio_path);
 
@@ -1683,11 +1897,14 @@ function renderYourMixOnly() {
 async function initSoundsPage() {
   dbSounds = await loadSoundsFromSupabase();
   await loadSavedMixes();
+  await loadFavoritesFromSupabase();
 
   renderSoundTabs();
 
   if (currentCategory === 'your-mix') {
     renderYourMixOnly();
+  } else if (currentCategory === 'favorites') {
+    renderFavoriteSounds();
   } else {
     renderSoundsFromDb(currentCategory);
   }
@@ -2436,6 +2653,7 @@ initApp();
    </script>
  </body>
 </html>
+
 
 
 
