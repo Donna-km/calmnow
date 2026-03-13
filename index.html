@@ -1060,7 +1060,7 @@
     </div>
   </div>
 </section>
-  <section id="personalSection" class="section-panel"><button class="back-button" data-back>
+  <section id="personalSection" class="section-panel"><button class="back-button" id="personalBack">
     <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="#8B7355" stroke-width="1.5"><path d="M15 18l-6-6 6-6" />
     </svg></button>
    <div class="max-w-md mx-auto pt-16">
@@ -1146,6 +1146,7 @@ let currentDetailSound = null;
 
 let dbAffirmations = [];
 let currentAffirmation = null;
+let personalBackTarget = 'sounds';   
    
 
 async function playCurrentMix() {
@@ -1262,7 +1263,7 @@ function addSoundToPersonalMix(sound) {
   const exists = customMixSounds.find(s => String(s.id) === String(sound.id));
   if (exists) {
     showNotification('Already in Personal Calm');
-    goToPersonalSection();
+    goToPersonalSection('sounds');
     return;
   }
 
@@ -1276,7 +1277,7 @@ function addSoundToPersonalMix(sound) {
 
   renderCustomMixList();
   showNotification(`✓ Added ${sound.title} to Personal Calm`);
-  goToPersonalSection();
+  goToPersonalSection('sounds');
 }
 
 function removeCustomMixSound(soundId) {
@@ -1294,7 +1295,9 @@ function removeCustomMixSound(soundId) {
   showNotification('Removed from Personal Calm');
 }
 
-function goToPersonalSection() {
+function goToPersonalSection(from = 'sounds') {
+  personalBackTarget = from;
+
   Object.values(sections).forEach(s => s.classList.remove('active'));
   sections.personal.classList.add('active');
 
@@ -1522,9 +1525,14 @@ function openSoundDetailFromDb(sound) {
 const detailAddToMixBtn = document.getElementById('detailAddToMixBtn');
 if (detailAddToMixBtn) {
   detailAddToMixBtn.onclick = () => {
+    if (currentSoundAudio) {
+      currentSoundAudio.pause();
+      currentSoundAudio.currentTime = 0;
+      currentSoundAudio = null;
+    }
+
     addSoundToPersonalMix(sound);
   };
-}
 }
 
 function renderYourMixOnly() {
@@ -2122,7 +2130,25 @@ if (soundDetailBack) {
   });
 }
      
-      
+const personalBack = document.getElementById('personalBack');
+
+if (personalBack) {
+  personalBack.addEventListener('click', () => {
+    stopCurrentMix();
+
+    if (currentSoundAudio) {
+      currentSoundAudio.pause();
+      currentSoundAudio.currentTime = 0;
+      currentSoundAudio = null;
+    }
+
+    Object.values(sections).forEach(s => s.classList.remove('active'));
+    sections.sounds.classList.add('active');
+
+    navItems.forEach(nav => nav.classList.remove('active'));
+    document.querySelector('.nav-item[data-section="sounds"]').classList.add('active');
+  });
+}      
 
     // Play Mix button
     const playMixBtn = document.getElementById('playMixBtn');
@@ -2369,6 +2395,7 @@ initApp();
    </script>
  </body>
 </html>
+
 
 
 
