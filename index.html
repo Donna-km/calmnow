@@ -1122,7 +1122,7 @@ const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_
 
 // sounds state
 let dbSounds = [];
-let currentCategory = 'sleep';
+let currentCategory = 'sleep-deep';
 let currentSoundAudio = null;
 let mixAudios = {};
 
@@ -1362,7 +1362,8 @@ function renderSoundTabs() {
   if (!tabs) return;
 
   const categories = [
-    { key: 'sleep', label: 'Sleep' },
+    { key: 'sleep-deep', label: 'Sleep Deep' },
+    { key: 'relax', label: 'Relax' },
     { key: 'focus', label: 'Focus' },
     { key: 'nature', label: 'Nature' },
     { key: 'meditation', label: 'Meditation' },
@@ -1402,7 +1403,6 @@ function renderSoundTabs() {
     });
   });
 }
-
 function renderSoundsFromDb(category) {
   const soundsGrid = document.getElementById('soundsGrid');
   if (!soundsGrid) return;
@@ -2354,6 +2354,7 @@ initApp();
    </script>
  </body>
 </html>
+
 
 
 
