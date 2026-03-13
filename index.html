@@ -1126,6 +1126,9 @@ let mixAudios = {};
 let savedMixes = [];
 let customMixSounds = [];
 let currentDetailSound = null;
+
+let dbAffirmations = [];
+let currentAffirmation = null;
    
 
 async function playCurrentMix() {
@@ -1623,7 +1626,21 @@ async function initSoundsPage() {
     renderSoundsFromDb(currentCategory);
   }
 }
-      
+
+   async function loadAffirmationsFromSupabase() {
+  const { data, error } = await supabaseClient
+    .from('affirmations')
+    .select('*')
+    .eq('is_active', true)
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('loadAffirmationsFromSupabase error:', error);
+    return [];
+  }
+
+  return data || [];
+}
     // Show save modal
     function showSaveModal() {
       const modal = document.getElementById('saveMixModal');
@@ -2250,60 +2267,67 @@ if (soundDetailBack) {
     }
     
     // Affirmations section
-    const affirmations = [
-  "Slow down. The moment you are in right now is enough.",
-  "What is meant for you is already finding its way.",
-  "You are being guided, even when the path feels unclear.",
-  "Nothing meant for you will ever miss you.",
-  "The universe is quietly arranging things in your favor.",
-  "Breathe. You are safe in this moment.",
-  "You are exactly where you need to be right now.",
-  "Some answers arrive only after you allow yourself to rest.",
-  "Trust the unfolding. Your story is still being written.",
-  "The calm you seek is already within you.",
-  "Even the delays are part of the design.",
-  "You are supported in ways you cannot yet see.",
-  "Something beautiful is quietly approaching your life.",
-  "Release the worry. The universe is working with you.",
-  "Your path is unique, and it is unfolding perfectly.",
-  "What feels uncertain now will make sense later.",
-  "The universe has not forgotten you.",
-  "You are moving closer to what is meant for you.",
-  "Every breath brings you back to yourself.",
-  "Peace is always one moment of awareness away."
-];
-    
-    const affirmationCard = document.getElementById('affirmationCard');
-    const affirmationText = document.getElementById('affirmationText');
-    const cardSound = document.getElementById('cardSound');
+const affirmationCard = document.getElementById('affirmationCard');
+const affirmationText = document.getElementById('affirmationText');
+const cardSound = document.getElementById('cardSound');
 
-cardSound.addEventListener("timeupdate", () => {
+let dbAffirmations = [];
+let currentAffirmation = null;
 
-  if (!cardSound.duration) return; // กัน duration = NaN
+async function loadAffirmations() {
 
-  const fadeDuration = 2; // เฟด 2 วินาที
-  const timeLeft = cardSound.duration - cardSound.currentTime;
+  const { data, error } = await supabaseClient
+    .from('affirmations')
+    .select('text')
+    .eq('is_active', true);
 
-  if (timeLeft <= fadeDuration) {
-    cardSound.volume = timeLeft / fadeDuration;
+  if (error) {
+    console.error(error);
+    return;
   }
 
-});
-    
-    function getRandomAffirmation() {
-      return affirmations[Math.floor(Math.random() * affirmations.length)];
-    }
-    
-    function revealAffirmation() {
+  dbAffirmations = data || [];
 
-  // เล่นเสียง
+}
+
+if (cardSound) {
+  cardSound.addEventListener("timeupdate", () => {
+
+    if (!cardSound.duration) return;
+
+    const fadeDuration = 2;
+    const timeLeft = cardSound.duration - cardSound.currentTime;
+
+    if (timeLeft <= fadeDuration) {
+      cardSound.volume = timeLeft / fadeDuration;
+    }
+
+  });
+}
+
+function getRandomAffirmation() {
+
+  if (dbAffirmations.length === 0) return "You are exactly where you need to be right now.";
+
+  let random;
+
+  do {
+    random = dbAffirmations[Math.floor(Math.random() * dbAffirmations.length)].text;
+  } while (random === currentAffirmation);
+
+  currentAffirmation = random;
+
+  return random;
+}
+
+function revealAffirmation() {
+
   if (cardSound) {
-    cardSound.volume = 1; 
+    cardSound.volume = 1;
     cardSound.currentTime = 0;
     cardSound.play();
   }
 
-  // Reset card
   affirmationCard.classList.remove('flipped');
 
   setTimeout(() => {
@@ -2312,16 +2336,25 @@ cardSound.addEventListener("timeupdate", () => {
   }, 100);
 
 }
-    
-    // Card click to flip
-    affirmationCard.addEventListener('click', revealAffirmation);
+
+affirmationCard.addEventListener('click', revealAffirmation);
    
-    initSoundsPage();
-    renderCustomMixList();
+   async function initApp() {
+  await initSoundsPage();
+  dbAffirmations = await loadAffirmationsFromSupabase();
+  renderCustomMixList();
+
+  if (affirmationText && dbAffirmations.length > 0) {
+    affirmationText.textContent = dbAffirmations[0].text || "I trust the timing of my life.";
+  }
+}
+
+initApp();
    
    </script>
  </body>
 </html>
+
 
 
 
