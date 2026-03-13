@@ -916,6 +916,17 @@
   flex: 0 0 auto;
   white-space: nowrap;
 }
+#mainScreen.hidden-screen {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.section-panel {
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+   
   </style>
   <style>body { box-sizing: border-box; }</style>
  
@@ -1903,7 +1914,19 @@ async function initSoundsPage() {
   affirmations: document.getElementById('affirmationsSection')
 };
     const backButtons = document.querySelectorAll('[data-back]');
+const mainScreen = document.getElementById('mainScreen');
 
+function showHomeScreen() {
+  if (mainScreen) {
+    mainScreen.classList.remove('hidden-screen');
+  }
+}
+
+function hideHomeScreen() {
+  if (mainScreen) {
+    mainScreen.classList.add('hidden-screen');
+  }
+}
     
     // Take a Moment functionality
     let breathingCycleInterval;
@@ -2038,52 +2061,40 @@ if (stage.text === 'HoldBig') {
     });
 
     // Navigation
-    navItems.forEach(item => {
-      item.addEventListener('click', () => {
-        const section = item.dataset.section;
-        
-        navItems.forEach(nav => nav.classList.remove('active'));
-        item.classList.add('active');
-        
-        if (section === 'home') {
-          // Reset affirmation card when going home
-          affirmationCard.classList.remove('flipped');
-          Object.values(sections).forEach(s => s.classList.remove('active'));
-        } else if (sections[section]) {
-          // Reset affirmation card when leaving focus section
-          if (section !== 'focus') {
-            affirmationCard.classList.remove('flipped');
-          }
-          Object.values(sections).forEach(s => s.classList.remove('active'));
-          sections[section].classList.add('active');
-        }
-      });
-    });
+   navItems.forEach(item => {
+  item.addEventListener('click', () => {
+    const section = item.dataset.section;
 
-    // Back buttons
-    backButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        // Reset affirmation card when leaving
-        affirmationCard.classList.remove('flipped');
-        
-        Object.values(sections).forEach(s => s.classList.remove('active'));
-        navItems.forEach(nav => {
-          nav.classList.remove('active');
-          if (nav.dataset.section === 'home') nav.classList.add('active');
-        });
-      });
-    });
+    navItems.forEach(nav => nav.classList.remove('active'));
+    item.classList.add('active');
+
+    if (section === 'home') {
+      affirmationCard.classList.remove('flipped');
+      Object.values(sections).forEach(s => s.classList.remove('active'));
+      showHomeScreen();
+    } else if (sections[section]) {
+      affirmationCard.classList.remove('flipped');
+      Object.values(sections).forEach(s => s.classList.remove('active'));
+      sections[section].classList.add('active');
+      hideHomeScreen();
+    }
+  });
+});
+
    
 // Back buttons
 document.querySelectorAll('[data-back]').forEach(btn => {
   btn.addEventListener('click', () => {
- stopCurrentMix();
-   if (currentSoundAudio) {
-  currentSoundAudio.pause();
-  currentSoundAudio.currentTime = 0;
-  currentSoundAudio = null;
-}
+    stopCurrentMix();
+
+    if (currentSoundAudio) {
+      currentSoundAudio.pause();
+      currentSoundAudio.currentTime = 0;
+      currentSoundAudio = null;
+    }
+
     Object.values(sections).forEach(s => s.classList.remove('active'));
+    showHomeScreen();
 
     navItems.forEach(nav => nav.classList.remove('active'));
     document.querySelector('.nav-item[data-section="home"]').classList.add('active');
@@ -2104,6 +2115,7 @@ if (soundDetailBack) {
 
     Object.values(sections).forEach(s => s.classList.remove('active'));
     sections.sounds.classList.add('active');
+    hideHomeScreen();
 
     navItems.forEach(nav => nav.classList.remove('active'));
     document.querySelector('.nav-item[data-section="sounds"]').classList.add('active');
@@ -2357,7 +2369,6 @@ initApp();
    </script>
  </body>
 </html>
-
 
 
 
