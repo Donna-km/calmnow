@@ -2095,14 +2095,15 @@ if (soundDetailBack) {
     
     if (playMixBtn) {
       playMixBtn.addEventListener('click', async () => {
-        currentMode = 'mix';
-        momentOverlay.classList.add('active');
-        await playCurrentMix();
-        // Hide the blue breathing circle
-        const blueCircle = document.querySelector('.breathing-circle');
-        if (blueCircle) {
-          blueCircle.style.display = 'none';
-        }
+  currentMode = 'mix';
+
+  const blueCircle = document.querySelector('.breathing-circle');
+  if (blueCircle) {
+    blueCircle.style.display = 'none';
+  }
+
+  momentOverlay.classList.add('active');
+  await playCurrentMix();
         
         // Show/create mix circle
         let mixCircle = document.getElementById('mixCircle');
@@ -2321,6 +2322,7 @@ cardSound.addEventListener("timeupdate", () => {
    </script>
  </body>
 </html>
+
 
 
 
