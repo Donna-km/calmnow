@@ -1492,10 +1492,10 @@
 
       <div class="flex flex-col gap-3 w-64">
         <button id="challenge-continue-btn"
-          class="px-8 py-3.5 rounded-full font-light text-base"
-          style="background: linear-gradient(135deg, rgba(180,155,125,0.85) 0%, rgba(160,135,105,0.9) 100%); border:1px solid rgba(160,135,105,0.5); color:#FFFCF8;">
-          Continue
-        </button>
+  class="px-8 py-3.5 rounded-full font-light text-base"
+  style="background: linear-gradient(135deg, rgba(180,155,125,0.85) 0%, rgba(160,135,105,0.9) 100%); border:1px solid rgba(160,135,105,0.5); color:#FFFCF8;">
+  Back
+</button>
 
         <button id="challenge-view-tomorrow-btn"
           class="px-8 py-3 rounded-full font-light text-sm"
@@ -3434,11 +3434,39 @@ function hideChallengeCompletion() {
     challengeCompletionOverlay.classList.add('hidden');
   }
 
-  resetChallengeTimer();
+  clearInterval(challengeTimerInterval);
+  challengeTimerInterval = null;
+  challengeTimerState = 'idle';
+
+  challengeRemainingSeconds = 0;
+  updateChallengeTimerDisplay();
+  updateChallengeTimerRing();
 
   if (challengeStatusBadge) {
     challengeStatusBadge.textContent = 'Completed';
   }
+
+  if (challengeStartBtn) {
+    challengeStartBtn.disabled = true;
+    challengeStartBtn.textContent = 'Completed';
+    challengeStartBtn.style.opacity = '0.7';
+    challengeStartBtn.style.cursor = 'default';
+  }
+
+  if (challengeActiveControls) {
+    challengeActiveControls.classList.add('hidden');
+    challengeActiveControls.classList.remove('flex');
+  }
+
+  if (challengePauseBtn) {
+    challengePauseBtn.textContent = 'Pause';
+  }
+
+  const progressFill = document.getElementById('challenge-progress-fill');
+  const progressText = document.getElementById('challenge-progress-text');
+
+  if (progressFill) progressFill.style.width = '14.2857%';
+  if (progressText) progressText.textContent = '1 of 7 days';
 }
 
 function showTomorrowsChallenge() {
@@ -3514,6 +3542,14 @@ function formatActivityTitle(activityType) {
 
   challengeTimerRing.style.strokeDasharray = `${circumference}`;
   challengeTimerRing.style.strokeDashoffset = `${offset}`;
+}
+
+   if (challengeContinueBtn) {
+  challengeContinueBtn.addEventListener('click', hideChallengeCompletion);
+}
+
+if (challengeViewTomorrowBtn) {
+  challengeViewTomorrowBtn.addEventListener('click', showTomorrowsChallenge);
 }
   
 initApp();
