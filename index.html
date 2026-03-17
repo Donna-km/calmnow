@@ -1445,6 +1445,8 @@ let currentChallengeDayId = 1;
 let currentChallengeDay = null;
 
 let challengeSelectedSoundId = null;
+let challengeSelectedAudioPath = '';
+let challengeAudio = null;   
 
 let challengeCalmMessages = [];
 let challengeCalmMessageIndex = 0;
@@ -2944,6 +2946,7 @@ async function loadChallengeSounds(challengeDayId) {
 
   const defaultRow = rows.find(row => row.is_default) || rows[0];
   challengeSelectedSoundId = defaultRow.sound_id;
+  challengeSelectedAudioPath = defaultRow.sounds.audio_path || '';
 
   chipsWrap.innerHTML = rows.map(row => `
     <button
@@ -2967,8 +2970,58 @@ function bindChallengeSoundChips() {
       chip.classList.add('active');
 
       challengeSelectedSoundId = Number(chip.dataset.soundId);
+      challengeSelectedAudioPath = chip.dataset.audioPath || '';
     });
   });
+}
+
+   async function startChallengeAudio() {
+  if (!challengeSelectedAudioPath) return;
+
+  const audioUrl = getAudioUrl(challengeSelectedAudioPath);
+  if (!audioUrl) return;
+
+  try {
+    if (challengeAudio) {
+      challengeAudio.pause();
+      challengeAudio.currentTime = 0;
+    }
+
+    challengeAudio = new Audio(audioUrl);
+    challengeAudio.loop = true;
+    challengeAudio.volume = 1;
+
+    await challengeAudio.play();
+  } catch (err) {
+    console.error('challenge audio play error:', err);
+  }
+}
+
+function pauseChallengeAudio() {
+  if (challengeAudio && !challengeAudio.paused) {
+    challengeAudio.pause();
+  }
+}
+
+async function resumeChallengeAudio() {
+  if (!challengeAudio) {
+    await startChallengeAudio();
+    return;
+  }
+
+  try {
+    await challengeAudio.play();
+  } catch (err) {
+    console.error('challenge audio resume error:', err);
+  }
+}
+
+function stopChallengeAudio() {
+  if (challengeAudio) {
+    challengeAudio.pause();
+    challengeAudio.currentTime = 0;
+    challengeAudio = null;
+  }
 }
    async function loadChallengeDay(challengeDayId) {
   const { data, error } = await supabaseClient
@@ -3063,6 +3116,11 @@ function startChallengeTimer() {
   if (challengeTimerState === 'running') return;
 
   challengeTimerState = 'running';
+  if (challengePauseBtn && challengePauseBtn.textContent === 'Resume') {
+  resumeChallengeAudio();
+} else {
+  startChallengeAudio();
+}
 
   if (challengeStartBtn) challengeStartBtn.classList.add('hidden');
   if (challengeActiveControls) {
@@ -3094,6 +3152,8 @@ function pauseChallengeTimer() {
     clearInterval(challengeTimerInterval);
     challengeTimerInterval = null;
 
+    pauseChallengeAudio();
+
     if (challengePauseBtn) challengePauseBtn.textContent = 'Resume';
     if (challengeStatusBadge) challengeStatusBadge.textContent = 'Paused';
     return;
@@ -3106,6 +3166,7 @@ function pauseChallengeTimer() {
 
 function resetChallengeTimer() {
   clearInterval(challengeTimerInterval);
+  stopChallengeAudio();
   challengeTimerInterval = null;
 
   challengeTimerState = 'idle';
@@ -3134,6 +3195,7 @@ function resetChallengeTimer() {
 
 function endChallengeEarly() {
   clearInterval(challengeTimerInterval);
+  stopChallengeAudio();
   challengeTimerInterval = null;
 
   challengeTimerState = 'idle';
@@ -3159,6 +3221,7 @@ function endChallengeEarly() {
 
 function completeChallengeTimerOnly() {
   clearInterval(challengeTimerInterval);
+  stopChallengeAudio();
   challengeTimerInterval = null;
   challengeTimerState = 'idle';
   challengeRemainingSeconds = 0;
