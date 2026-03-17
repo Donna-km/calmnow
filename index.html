@@ -952,6 +952,34 @@
   color: #FFFCF8 !important;
   border: 1px solid rgba(160,135,105,0.5) !important;
 }
+   .challenge-timer-ring {
+  stroke-dasharray: 565.49;
+  stroke-dashoffset: 565.49;
+  transform: rotate(-90deg);
+  transform-origin: center;
+  transition: stroke-dashoffset 0.8s linear;
+  filter: drop-shadow(0 0 12px rgba(200, 170, 130, 0.35));
+}
+
+.challenge-timer-glow {
+  position: absolute;
+  inset: 12px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(220,190,150,0.18) 0%, transparent 70%);
+  animation: challengeTimerBreathing 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes challengeTimerBreathing {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 0.9;
+  }
+}
   </style>
   <style>body { box-sizing: border-box; }</style>
  
@@ -1023,6 +1051,7 @@
         opacity: 1;
       }
     }
+   
   </style>
 
   <!-- Sound Detail Section -->
@@ -1279,19 +1308,53 @@
   </div>
 
   <!-- Timer -->
-  <div class="flex flex-col items-center mb-8">
-    <div class="relative w-56 h-56 flex items-center justify-center rounded-full"
-      style="background: radial-gradient(circle, rgba(220,190,150,0.18) 0%, transparent 70%);">
-      <div class="text-center">
-        <p id="challenge-timer-display" class="font-display text-5xl font-light" style="color: #5C4D3C;">
-          5:00
-        </p>
-        <p id="challenge-calm-message" class="font-light text-sm mt-2" style="color: #9B8A78;">
-          Breathe softly
-        </p>
-      </div>
+<div class="flex flex-col items-center mb-8">
+  <div class="relative w-56 h-56 flex items-center justify-center">
+    <div id="challenge-timer-glow" class="challenge-timer-glow"></div>
+
+    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 200 200">
+      <!-- วงพื้นหลัง -->
+      <circle
+        cx="100"
+        cy="100"
+        r="90"
+        fill="none"
+        stroke="rgba(220, 210, 195, 0.35)"
+        stroke-width="6"
+      />
+
+      <!-- วง progress -->
+      <circle
+        id="challenge-timer-ring"
+        class="challenge-timer-ring"
+        cx="100"
+        cy="100"
+        r="90"
+        fill="none"
+        stroke="url(#challengeTimerGradient)"
+        stroke-width="6"
+        stroke-linecap="round"
+      />
+
+      <defs>
+        <linearGradient id="challengeTimerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#C8AA82;stop-opacity:1" />
+          <stop offset="50%" style="stop-color:#D4BC96;stop-opacity:1" />
+          <stop offset="100%" style="stop-color:#C8AA82;stop-opacity:1" />
+        </linearGradient>
+      </defs>
+    </svg>
+
+    <div class="relative z-10 text-center">
+      <p id="challenge-timer-display" class="font-display text-5xl font-light" style="color: #5C4D3C;">
+        5:00
+      </p>
+      <p id="challenge-calm-message" class="font-light text-sm mt-2" style="color: #9B8A78;">
+        Breathe softly
+      </p>
     </div>
   </div>
+</div>
 
   <!-- Controls -->
   <div class="flex flex-col items-center gap-3 mb-8">
@@ -1398,7 +1461,9 @@ const challengeStartBtn = document.getElementById('challenge-start-btn');
 const challengeActiveControls = document.getElementById('challenge-active-controls');
 const challengePauseBtn = document.getElementById('challenge-pause-btn');
 const challengeEndBtn = document.getElementById('challenge-end-btn');
-const challengeStatusBadge = document.getElementById('challenge-status-badge');  
+const challengeStatusBadge = document.getElementById('challenge-status-badge'); 
+const challengeTimerRing = document.getElementById('challenge-timer-ring');
+const challengeTimerGlow = document.getElementById('challenge-timer-glow');
    
 if (!deviceId) {
   deviceId = crypto.randomUUID();
@@ -2947,6 +3012,9 @@ function bindChallengeSoundChips() {
   challengeTotalSeconds = data.default_duration_seconds || 300;
   challengeRemainingSeconds = challengeTotalSeconds;
 
+  updateChallengeTimerDisplay();
+  updateChallengeTimerRing();  
+
   document.getElementById('challenge-timer-display').textContent =
     formatChallengeTime(challengeRemainingSeconds);
 
@@ -3007,7 +3075,8 @@ function startChallengeTimer() {
   challengeTimerInterval = setInterval(() => {
     challengeRemainingSeconds--;
 
-    updateChallengeTimerDisplay();
+   updateChallengeTimerDisplay();
+   updateChallengeTimerRing();
 
     if (challengeRemainingSeconds > 0 && challengeRemainingSeconds % 8 === 0) {
       rotateChallengeCalmMessage();
@@ -3044,7 +3113,7 @@ function resetChallengeTimer() {
   challengeCalmMessageIndex = 0;
 
   updateChallengeTimerDisplay();
-
+  updateChallengeTimerRing();
   if (challengeCalmMessageEl) {
     challengeCalmMessageEl.textContent =
       challengeCalmMessages[0] || 'Breathe softly';
@@ -3071,6 +3140,7 @@ function endChallengeEarly() {
   challengeRemainingSeconds = challengeTotalSeconds;
 
   updateChallengeTimerDisplay();
+  updateChallengeTimerRing();
 
   if (challengeCalmMessageEl) {
     challengeCalmMessageEl.textContent =
@@ -3137,6 +3207,18 @@ function formatActivityTitle(activityType) {
   };
 
   return map[activityType] || 'Calm Practice';
+}
+
+   function updateChallengeTimerRing() {
+  if (!challengeTimerRing) return;
+
+  const radius = 90;
+  const circumference = 2 * Math.PI * radius;
+  const progress = (challengeTotalSeconds - challengeRemainingSeconds) / challengeTotalSeconds;
+  const offset = circumference * (1 - progress);
+
+  challengeTimerRing.style.strokeDasharray = `${circumference}`;
+  challengeTimerRing.style.strokeDashoffset = `${offset}`;
 }
   
 initApp();
