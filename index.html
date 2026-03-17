@@ -2937,26 +2937,40 @@ async function loadChallengeSounds(challengeDayId) {
     return;
   }
 
-  const rows = (data || []).filter(row => row.sounds);
+  const dbRows = (data || []).filter(row => row.sounds);
 
-  if (rows.length === 0) {
-    chipsWrap.innerHTML = `<p class="text-sm" style="color:#A89880;">No sounds found for this challenge.</p>`;
-    return;
-  }
+// inject Silent option from frontend
+const rows = [
+  {
+    sound_id: null,
+    is_default: true,
+    sort_order: -1,
+    sounds: {
+      id: null,
+      title: 'Silent',
+      emoji: '🤍',
+      audio_path: ''
+    }
+  },
+  ...dbRows.map(row => ({
+    ...row,
+    is_default: false
+  }))
+];
 
-  const defaultRow = rows.find(row => row.is_default) || rows[0];
-  challengeSelectedSoundId = defaultRow.sound_id;
-  challengeSelectedAudioPath = defaultRow.sounds.audio_path || '';
+const defaultRow = rows.find(row => row.is_default) || rows[0];
+challengeSelectedSoundId = defaultRow.sound_id;
+challengeSelectedAudioPath = defaultRow.sounds.audio_path || '';
 
   chipsWrap.innerHTML = rows.map(row => `
-    <button
-      class="challenge-sound-chip px-4 py-2 rounded-full text-sm font-light ${row.sound_id === challengeSelectedSoundId ? 'active' : ''}"
-      data-sound-id="${row.sound_id}"
-      data-audio-path="${row.sounds.audio_path || ''}"
-    >
-      ${row.sounds.title || 'Untitled'}
-    </button>
-  `).join('');
+  <button
+    class="challenge-sound-chip px-4 py-2 rounded-full text-sm font-light ${row.sound_id === challengeSelectedSoundId && row.sounds.title !== 'Silent' ? 'active' : ''} ${row.sound_id === null && challengeSelectedSoundId === null ? 'active' : ''}"
+    data-sound-id="${row.sound_id ?? ''}"
+    data-audio-path="${row.sounds.audio_path || ''}"
+  >
+    ${row.sounds.title || 'Untitled'}
+  </button>
+`).join('');
 
   bindChallengeSoundChips();
 }
@@ -2969,7 +2983,8 @@ function bindChallengeSoundChips() {
       chips.forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
 
-      challengeSelectedSoundId = Number(chip.dataset.soundId);
+      const rawId = chip.dataset.soundId;
+      challengeSelectedSoundId = rawId ? Number(rawId) : null;
       challengeSelectedAudioPath = chip.dataset.audioPath || '';
     });
   });
