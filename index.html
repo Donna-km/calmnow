@@ -1192,19 +1192,151 @@
     </svg>
   </button>
 
-  <div class="max-w-md mx-auto pt-16">
-    <h2 class="font-display text-3xl font-light text-center mb-2" style="color: #8B7355;">
-      Challenge
+ <div class="max-w-md mx-auto pt-16">
+  <!-- Header -->
+  <header class="flex items-center justify-between mb-8">
+    <h1 id="challenge-day-title" class="font-display text-3xl font-medium" style="color: #5C4D3C;">
+      Day 1
+    </h1>
+
+    <span id="challenge-status-badge"
+      class="px-4 py-1.5 rounded-full text-sm font-light"
+      style="
+        color: #8B7355;
+        background: rgba(255, 253, 250, 0.65);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+      ">
+      Ready
+    </span>
+  </header>
+
+  <!-- Main task -->
+  <section class="text-center mb-6">
+    <h2 id="challenge-task-title" class="font-display text-2xl font-normal leading-relaxed mb-3" style="color: #4A3F32;">
+      Sit in silence for 5 minutes
     </h2>
 
-    <p class="text-center text-sm mb-8" style="color: #A89880;">
-      Your daily calm ritual will appear here.
+    <p id="challenge-supportive-text" class="font-light text-base" style="color: #9B8A78;">
+      Take a moment to return to yourself.
+    </p>
+  </section>
+
+  <!-- Detail card -->
+  <div class="rounded-3xl p-6 mb-6"
+    style="
+      background: rgba(255, 253, 250, 0.65);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 4px 24px rgba(180, 160, 140, 0.08);
+    ">
+    <div class="flex items-center gap-3 mb-4">
+      <div class="w-10 h-10 rounded-full flex items-center justify-center"
+        style="background: linear-gradient(135deg, rgba(200, 175, 145, 0.3) 0%, rgba(180, 155, 125, 0.2) 100%);">
+        <span style="color: #8B7355; font-size: 18px;">✦</span>
+      </div>
+
+      <div>
+        <p class="font-display text-lg" style="color: #5C4D3C;">Mindful Silence</p>
+        <p class="text-sm font-light" style="color: #9B8A78;">5 minute practice</p>
+      </div>
+    </div>
+
+    <p class="text-sm font-light leading-relaxed" style="color: #7A6B5A;">
+      Find a quiet space. Close your eyes. Let thoughts pass like clouds. Return to stillness.
+    </p>
+  </div>
+
+  <!-- Sound selection -->
+  <div class="mb-8">
+    <p class="text-sm font-light mb-3 text-center" style="color: #9B8A78;">
+      Choose your soundscape
     </p>
 
-    <div class="rounded-3xl p-6 text-center" style="background: rgba(255, 252, 247, 0.7); border: 1px solid rgba(180, 165, 145, 0.25);">
-      <p class="font-display text-2xl mb-3" style="color: #8B7355;">Day 1</p>
-      <p class="text-sm" style="color: #A89880;">Challenge section connected successfully.</p>
+    <div id="challenge-sound-chips" class="flex flex-wrap justify-center gap-2">
+      <button class="challenge-sound-chip active px-4 py-2 rounded-full text-sm font-light"
+        style="color: #6B5D4D; background: rgba(255, 252, 248, 0.7); border: 1px solid rgba(200, 180, 160, 0.3);">
+        Rain
+      </button>
+
+      <button class="challenge-sound-chip px-4 py-2 rounded-full text-sm font-light"
+        style="color: #6B5D4D; background: rgba(255, 252, 248, 0.7); border: 1px solid rgba(200, 180, 160, 0.3);">
+        Ocean
+      </button>
+
+      <button class="challenge-sound-chip px-4 py-2 rounded-full text-sm font-light"
+        style="color: #6B5D4D; background: rgba(255, 252, 248, 0.7); border: 1px solid rgba(200, 180, 160, 0.3);">
+        Flute
+      </button>
     </div>
+  </div>
+
+  <!-- Timer -->
+  <div class="flex flex-col items-center mb-8">
+    <div class="relative w-56 h-56 flex items-center justify-center rounded-full"
+      style="background: radial-gradient(circle, rgba(220,190,150,0.18) 0%, transparent 70%);">
+      <div class="text-center">
+        <p id="challenge-timer-display" class="font-display text-5xl font-light" style="color: #5C4D3C;">
+          5:00
+        </p>
+        <p id="challenge-calm-message" class="font-light text-sm mt-2" style="color: #9B8A78;">
+          Breathe softly
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Controls -->
+  <div class="flex flex-col items-center gap-3 mb-8">
+    <button id="challenge-start-btn"
+      class="w-full max-w-xs px-12 py-3.5 rounded-full font-light text-base"
+      style="
+        background: linear-gradient(135deg, rgba(180, 155, 125, 0.85) 0%, rgba(160, 135, 105, 0.9) 100%);
+        border: 1px solid rgba(160, 135, 105, 0.5);
+        color: #FFFCF8;
+      ">
+      Start Challenge
+    </button>
+
+    <div id="challenge-active-controls" class="hidden flex-col items-center gap-3 w-full max-w-xs">
+      <button id="challenge-pause-btn"
+        class="w-full px-8 py-3 rounded-full font-light text-sm"
+        style="color: #6B5D4D; background: rgba(255, 252, 248, 0.8); border: 1px solid rgba(200, 180, 160, 0.4);">
+        Pause
+      </button>
+
+      <button id="challenge-end-btn"
+        class="px-8 py-2.5 rounded-full font-light text-sm"
+        style="color: #9B8A78; background: rgba(255, 252, 248, 0.8); border: 1px solid rgba(200, 180, 160, 0.4);">
+        End Early
+      </button>
+    </div>
+  </div>
+
+  <!-- Progress -->
+  <div class="rounded-2xl p-5 mt-auto"
+    style="
+      background: rgba(255, 253, 250, 0.65);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 4px 24px rgba(180, 160, 140, 0.08);
+    ">
+    <div class="flex items-center justify-between mb-3">
+      <p class="font-display text-lg" style="color: #5C4D3C;">Your Journey</p>
+      <p id="challenge-progress-text" class="text-sm font-light" style="color: #9B8A78;">0 of 7 days</p>
+    </div>
+
+    <div class="h-2 rounded-full overflow-hidden" style="background: rgba(220, 210, 195, 0.4);">
+      <div id="challenge-progress-fill"
+        class="h-full rounded-full"
+        style="
+          width: 0%;
+          background: linear-gradient(90deg, rgba(200,175,145,0.9) 0%, rgba(220,190,155,0.95) 50%, rgba(200,175,145,0.9) 100%);
+        ">
+      </div>
+    </div>
+  </div>
+</div>
   </div>
 </section>
   
