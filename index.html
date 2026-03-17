@@ -1391,6 +1391,14 @@ let challengeRemainingSeconds = 300;
 
 let challengeTimerState = 'idle'; // idle, running, paused
 let challengeTimerInterval = null;
+
+const challengeTimerDisplay = document.getElementById('challenge-timer-display');
+const challengeCalmMessageEl = document.getElementById('challenge-calm-message');
+const challengeStartBtn = document.getElementById('challenge-start-btn');
+const challengeActiveControls = document.getElementById('challenge-active-controls');
+const challengePauseBtn = document.getElementById('challenge-pause-btn');
+const challengeEndBtn = document.getElementById('challenge-end-btn');
+const challengeStatusBadge = document.getElementById('challenge-status-badge');  
    
 if (!deviceId) {
   deviceId = crypto.randomUUID();
@@ -2825,7 +2833,7 @@ affirmationCard.addEventListener('click', revealAffirmation);
 
   await loadChallengeDay(currentChallengeDayId);
 }
-
+   
    // =========================
 // Challenge sound loading
 // =========================
@@ -3130,15 +3138,7 @@ function formatActivityTitle(activityType) {
 
   return map[activityType] || 'Calm Practice';
 }
-
-const challengeTimerDisplay = document.getElementById('challenge-timer-display');
-const challengeCalmMessageEl = document.getElementById('challenge-calm-message');
-const challengeStartBtn = document.getElementById('challenge-start-btn');
-const challengeActiveControls = document.getElementById('challenge-active-controls');
-const challengePauseBtn = document.getElementById('challenge-pause-btn');
-const challengeEndBtn = document.getElementById('challenge-end-btn');
-const challengeStatusBadge = document.getElementById('challenge-status-badge');
-   
+  
 initApp();
    
    </script>
