@@ -1562,6 +1562,11 @@ const challengeEndBtn = document.getElementById('challenge-end-btn');
 const challengeStatusBadge = document.getElementById('challenge-status-badge'); 
 const challengeTimerRing = document.getElementById('challenge-timer-ring');
 const challengeTimerGlow = document.getElementById('challenge-timer-glow');
+const challengeCompletionOverlay = document.getElementById('challenge-completion-overlay');
+const challengeBloomEffects = document.getElementById('challenge-bloom-effects');
+const challengeCompletedDay = document.getElementById('challenge-completed-day');
+const challengeContinueBtn = document.getElementById('challenge-continue-btn');
+const challengeViewTomorrowBtn = document.getElementById('challenge-view-tomorrow-btn');   
    
 if (!deviceId) {
   deviceId = crypto.randomUUID();
@@ -3086,6 +3091,67 @@ function bindChallengeSoundChips() {
   });
 }
 
+   function createChallengeBloomEffects() {
+  if (!challengeBloomEffects) return;
+
+  challengeBloomEffects.innerHTML = '';
+
+  // bloom circles
+  for (let i = 0; i < 3; i++) {
+    const circle = document.createElement('div');
+    circle.className = 'bloom-circle';
+
+    const size = 150 + i * 80;
+
+    circle.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      background: radial-gradient(circle,
+        rgba(220, 195, 150, ${0.4 - i * 0.1}) 0%,
+        rgba(255, 248, 235, ${0.3 - i * 0.08}) 50%,
+        transparent 70%
+      );
+      animation-delay: ${i * 0.3}s;
+    `;
+
+    challengeBloomEffects.appendChild(circle);
+  }
+
+  // halo rings
+  for (let i = 0; i < 4; i++) {
+    const halo = document.createElement('div');
+    halo.className = 'halo-ring';
+
+    const size = 100 + i * 50;
+
+    halo.style.cssText = `
+      width: ${size}px;
+      height: ${size}px;
+      animation-delay: ${i * 0.4}s;
+    `;
+
+    challengeBloomEffects.appendChild(halo);
+  }
+
+  // sparkles
+  for (let i = 0; i < 12; i++) {
+    const sparkle = document.createElement('div');
+    sparkle.className = 'sparkle';
+
+    const angle = (i / 12) * 360;
+    const radius = 80 + Math.random() * 60;
+    const x = Math.cos(angle * Math.PI / 180) * radius;
+    const y = Math.sin(angle * Math.PI / 180) * radius;
+
+    sparkle.style.cssText = `
+      left: calc(50% + ${x}px);
+      top: calc(50% + ${y}px);
+      animation-delay: ${Math.random() * 2}s;
+    `;
+
+    challengeBloomEffects.appendChild(sparkle);
+  }
+}
    async function startChallengeAudio() {
   if (!challengeSelectedAudioPath) return;
 
