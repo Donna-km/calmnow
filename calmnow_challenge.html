@@ -1,0 +1,711 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calm Now - Daily Challenge</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&amp;family=Jost:wght@300;400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    
+    .font-serif-elegant { font-family: 'Cormorant Garamond', Georgia, serif; }
+    .font-sans-clean { font-family: 'Jost', system-ui, sans-serif; }
+    
+    /* Flowing curtain background */
+    .curtain-bg {
+      background: linear-gradient(180deg, 
+        #FDF8F3 0%, 
+        #F9F3EC 20%,
+        #F5EDE4 40%,
+        #F2E8DC 60%,
+        #EFE3D5 80%,
+        #ECE0D0 100%
+      );
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .curtain-bg::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -50%;
+      right: -50%;
+      bottom: 0;
+      background: 
+        radial-gradient(ellipse 80% 50% at 20% 10%, rgba(255,248,240,0.9) 0%, transparent 50%),
+        radial-gradient(ellipse 60% 40% at 80% 20%, rgba(255,250,245,0.8) 0%, transparent 45%),
+        radial-gradient(ellipse 90% 60% at 50% 50%, rgba(253,248,243,0.6) 0%, transparent 55%);
+      animation: curtainFlow 20s ease-in-out infinite;
+    }
+    
+    @keyframes curtainFlow {
+      0%, 100% { transform: translateX(0) scale(1); opacity: 0.8; }
+      50% { transform: translateX(5%) scale(1.02); opacity: 1; }
+    }
+    
+    /* Light rays */
+    .light-rays {
+      position: absolute;
+      top: -20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 200%;
+      height: 60%;
+      background: 
+        conic-gradient(from 180deg at 50% 100%, 
+          transparent 30deg,
+          rgba(255,250,240,0.4) 60deg,
+          transparent 90deg,
+          rgba(255,248,235,0.3) 120deg,
+          transparent 150deg,
+          rgba(255,252,245,0.35) 180deg,
+          transparent 210deg,
+          rgba(255,250,240,0.25) 240deg,
+          transparent 270deg
+        );
+      opacity: 0.6;
+      animation: raysPulse 15s ease-in-out infinite;
+    }
+    
+    @keyframes raysPulse {
+      0%, 100% { opacity: 0.5; transform: translateX(-50%) scale(1); }
+      50% { opacity: 0.7; transform: translateX(-50%) scale(1.05); }
+    }
+    
+    /* Glassy card */
+    .glass-card {
+      background: rgba(255, 253, 250, 0.65);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 
+        0 4px 24px rgba(180, 160, 140, 0.08),
+        0 1px 3px rgba(180, 160, 140, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+    
+    /* Timer ring */
+    .timer-ring {
+      stroke-dasharray: 628;
+      stroke-dashoffset: 0;
+      transform: rotate(-90deg);
+      transform-origin: center;
+      filter: drop-shadow(0 0 12px rgba(200, 170, 130, 0.4));
+    }
+    
+    .timer-glow {
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(220, 190, 150, 0.3) 0%, transparent 70%);
+      animation: timerBreathing 4s ease-in-out infinite;
+    }
+    
+    @keyframes timerBreathing {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.08); opacity: 0.9; }
+    }
+    
+    /* Sound chip */
+    .sound-chip {
+      transition: all 0.3s ease;
+      background: rgba(255, 252, 248, 0.7);
+      border: 1px solid rgba(200, 180, 160, 0.3);
+    }
+    
+    .sound-chip:hover {
+      background: rgba(255, 250, 245, 0.9);
+      border-color: rgba(200, 180, 160, 0.5);
+    }
+    
+    .sound-chip.active {
+      background: linear-gradient(135deg, rgba(220, 195, 165, 0.5) 0%, rgba(200, 175, 145, 0.4) 100%);
+      border-color: rgba(180, 155, 125, 0.6);
+      box-shadow: 
+        0 0 20px rgba(200, 170, 130, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+    }
+    
+    /* Pill button */
+    .pill-btn {
+      background: rgba(255, 252, 248, 0.8);
+      border: 1px solid rgba(200, 180, 160, 0.4);
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(180, 160, 140, 0.1);
+    }
+    
+    .pill-btn:hover {
+      background: rgba(255, 250, 245, 0.95);
+      box-shadow: 0 4px 16px rgba(180, 160, 140, 0.15);
+      transform: translateY(-1px);
+    }
+    
+    .pill-btn-primary {
+      background: linear-gradient(135deg, rgba(180, 155, 125, 0.85) 0%, rgba(160, 135, 105, 0.9) 100%);
+      border: 1px solid rgba(160, 135, 105, 0.5);
+      color: #FFFCF8;
+      box-shadow: 
+        0 4px 20px rgba(160, 135, 105, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    }
+    
+    .pill-btn-primary:hover {
+      background: linear-gradient(135deg, rgba(170, 145, 115, 0.9) 0%, rgba(150, 125, 95, 0.95) 100%);
+      box-shadow: 0 6px 24px rgba(160, 135, 105, 0.4);
+    }
+    
+    /* Progress bar */
+    .progress-track {
+      background: rgba(220, 210, 195, 0.4);
+    }
+    
+    .progress-fill {
+      background: linear-gradient(90deg, 
+        rgba(200, 175, 145, 0.9) 0%, 
+        rgba(220, 190, 155, 0.95) 50%,
+        rgba(200, 175, 145, 0.9) 100%
+      );
+      box-shadow: 0 0 12px rgba(200, 175, 145, 0.4);
+    }
+    
+    /* Completion overlay */
+    .completion-overlay {
+      background: radial-gradient(circle at center, 
+        rgba(255, 252, 245, 0.98) 0%,
+        rgba(253, 248, 240, 0.96) 30%,
+        rgba(250, 244, 235, 0.94) 60%,
+        rgba(248, 242, 232, 0.92) 100%
+      );
+    }
+    
+    .bloom-circle {
+      position: absolute;
+      border-radius: 50%;
+      animation: bloomExpand 2s ease-out forwards;
+    }
+    
+    @keyframes bloomExpand {
+      0% { transform: scale(0); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: scale(1); opacity: 0.6; }
+    }
+    
+    .sparkle {
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: radial-gradient(circle, rgba(255, 240, 200, 1) 0%, transparent 70%);
+      border-radius: 50%;
+      animation: sparkleFloat 3s ease-in-out infinite;
+    }
+    
+    @keyframes sparkleFloat {
+      0%, 100% { transform: translateY(0) scale(1); opacity: 0.6; }
+      50% { transform: translateY(-20px) scale(1.2); opacity: 1; }
+    }
+    
+    .halo-ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid rgba(220, 195, 150, 0.3);
+      animation: haloExpand 2.5s ease-out forwards;
+    }
+    
+    @keyframes haloExpand {
+      0% { transform: scale(0.5); opacity: 0; }
+      30% { opacity: 0.8; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+    
+    /* Calm message fade */
+    .calm-message {
+      animation: calmFade 4s ease-in-out infinite;
+    }
+    
+    @keyframes calmFade {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+    
+    /* Scroll styling */
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(200, 180, 160, 0.3);
+      border-radius: 2px;
+    }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="h-full font-sans-clean">
+  <div id="app" class="h-full curtain-bg overflow-auto">
+   <!-- Light rays background -->
+   <div class="light-rays"></div><!-- Main content -->
+   <div class="relative z-10 min-h-full flex flex-col px-6 py-8 max-w-md mx-auto">
+    <!-- Header -->
+    <header class="flex items-center justify-between mb-8">
+     <h1 id="day-title" class="font-serif-elegant text-3xl font-medium" style="color: #5C4D3C;">Day 1</h1><span id="status-badge" class="glass-card px-4 py-1.5 rounded-full text-sm font-light" style="color: #8B7355;"> In Progress </span>
+    </header><!-- Main task section -->
+    <section class="text-center mb-6">
+     <h2 id="task-title" class="font-serif-elegant text-2xl font-normal leading-relaxed mb-3" style="color: #4A3F32;">Sit in silence for 5 minutes</h2>
+     <p id="supportive-text" class="font-light text-base" style="color: #9B8A78;">Take a moment to return to yourself.</p>
+    </section><!-- Challenge detail card -->
+    <div class="glass-card rounded-3xl p-6 mb-6">
+     <div class="flex items-center gap-3 mb-4">
+      <div class="w-10 h-10 rounded-full flex items-center justify-center" style="background: linear-gradient(135deg, rgba(200, 175, 145, 0.3) 0%, rgba(180, 155, 125, 0.2) 100%);">
+       <i data-lucide="wind" class="w-5 h-5" style="color: #8B7355;"></i>
+      </div>
+      <div>
+       <p class="font-serif-elegant text-lg" style="color: #5C4D3C;">Mindful Silence</p>
+       <p class="text-sm font-light" style="color: #9B8A78;">5 minute practice</p>
+      </div>
+     </div>
+     <p class="text-sm font-light leading-relaxed" style="color: #7A6B5A;">Find a quiet space. Close your eyes. Let thoughts pass like clouds. Return to stillness.</p>
+    </div><!-- Sound selection -->
+    <div class="mb-8">
+     <p class="text-sm font-light mb-3 text-center" style="color: #9B8A78;">Choose your soundscape</p>
+     <div id="sound-chips" class="flex flex-wrap justify-center gap-2">
+      <button class="sound-chip px-4 py-2 rounded-full text-sm font-light" style="color: #6B5D4D;" data-sound="rain">Rain</button> <button class="sound-chip px-4 py-2 rounded-full text-sm font-light" style="color: #6B5D4D;" data-sound="forest">Forest</button> <button class="sound-chip px-4 py-2 rounded-full text-sm font-light" style="color: #6B5D4D;" data-sound="ocean">Ocean</button> <button class="sound-chip px-4 py-2 rounded-full text-sm font-light" style="color: #6B5D4D;" data-sound="piano">Soft Piano</button> <button class="sound-chip active px-4 py-2 rounded-full text-sm font-light" style="color: #6B5D4D;" data-sound="silent">Silent</button>
+     </div>
+    </div><!-- Timer section -->
+    <div class="flex flex-col items-center mb-8">
+     <div class="relative w-56 h-56 flex items-center justify-center">
+      <!-- Timer glow -->
+      <div class="timer-glow" id="timer-glow"></div><!-- Timer SVG -->
+      <svg class="absolute inset-0 w-full h-full" viewbox="0 0 200 200">
+       <!-- Background ring --> <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(220, 210, 195, 0.3)" stroke-width="6" /> <!-- Progress ring --> <circle id="timer-ring" class="timer-ring" cx="100" cy="100" r="90" fill="none" stroke="url(#timerGradient)" stroke-width="6" stroke-linecap="round" /> <defs>
+        <lineargradient id="timerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+         <stop offset="0%" style="stop-color: #C8AA82; stop-opacity: 1" />
+         <stop offset="50%" style="stop-color: #D4BC96; stop-opacity: 1" />
+         <stop offset="100%" style="stop-color: #C8AA82; stop-opacity: 1" />
+        </lineargradient>
+       </defs>
+      </svg><!-- Timer content -->
+      <div class="relative z-10 text-center">
+       <p id="timer-display" class="font-serif-elegant text-5xl font-light" style="color: #5C4D3C;">5:00</p>
+       <p id="calm-message" class="calm-message font-light text-sm mt-2" style="color: #9B8A78;">Breathe softly</p>
+      </div>
+     </div>
+    </div><!-- Controls -->
+    <div id="controls" class="flex flex-col items-center gap-3 mb-8">
+     <button id="start-btn" class="pill-btn-primary px-12 py-3.5 rounded-full font-light text-base w-full max-w-xs"> Start Challenge </button>
+     <div id="active-controls" class="hidden flex-col items-center gap-3 w-full max-w-xs">
+      <button id="pause-btn" class="pill-btn px-8 py-3 rounded-full font-light text-sm w-full" style="color: #6B5D4D;"> Pause </button> <button id="end-btn" class="pill-btn px-8 py-2.5 rounded-full font-light text-sm" style="color: #9B8A78;"> End Early </button>
+     </div>
+    </div><!-- Progress section -->
+    <div class="glass-card rounded-2xl p-5 mt-auto">
+     <div class="flex items-center justify-between mb-3">
+      <p class="font-serif-elegant text-lg" style="color: #5C4D3C;">Your Journey</p>
+      <p id="progress-text" class="text-sm font-light" style="color: #9B8A78;">0 of 30 days</p>
+     </div>
+     <div class="progress-track h-2 rounded-full overflow-hidden">
+      <div id="progress-fill" class="progress-fill h-full rounded-full transition-all duration-500" style="width: 0%;"></div>
+     </div>
+    </div>
+   </div><!-- Completion overlay -->
+   <div id="completion-overlay" class="hidden fixed inset-0 z-50 completion-overlay flex items-center justify-center">
+    <div class="relative flex flex-col items-center justify-center p-8">
+     <!-- Bloom effects container -->
+     <div id="bloom-effects" class="absolute inset-0 flex items-center justify-center pointer-events-none"></div><!-- Content -->
+     <div class="relative z-10 text-center">
+      <p id="completion-title" class="font-serif-elegant text-4xl font-light mb-4" style="color: #5C4D3C;">Beautiful.</p>
+      <p class="font-light text-lg mb-2" style="color: #7A6B5A;">You completed <span id="completed-day">Day 1</span></p>
+      <p class="font-light text-base mb-10" style="color: #9B8A78;">Day 2 is now unlocked.</p>
+      <div class="flex flex-col gap-3 w-64">
+       <button id="continue-btn" class="pill-btn-primary px-8 py-3.5 rounded-full font-light text-base"> Continue </button> <button id="view-tomorrow-btn" class="pill-btn px-8 py-3 rounded-full font-light text-sm" style="color: #6B5D4D;"> View Tomorrow's Challenge </button>
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+  <script>
+    // Default configuration
+    const defaultConfig = {
+      day_title: 'Day 1',
+      task_title: 'Sit in silence for 5 minutes',
+      supportive_text: 'Take a moment to return to yourself.',
+      completion_message: 'Beautiful.',
+      background_color: '#FDF8F3',
+      surface_color: '#FFFCFA',
+      text_color: '#5C4D3C',
+      primary_action_color: '#B49B7D',
+      secondary_action_color: '#9B8A78',
+      font_family: 'Cormorant Garamond',
+      font_size: 16
+    };
+    
+    // App state
+    let timerState = 'idle'; // idle, running, paused
+    let totalSeconds = 5 * 60; // 5 minutes
+    let remainingSeconds = totalSeconds;
+    let timerInterval = null;
+    let selectedSound = 'silent';
+    let completedDays = 0;
+    
+    const calmMessages = [
+      'Breathe softly',
+      'Stay here',
+      'This moment is enough',
+      'Let go gently',
+      'You are present',
+      'Be still',
+      'Feel the quiet'
+    ];
+    let currentMessageIndex = 0;
+    
+    // DOM elements
+    const timerDisplay = document.getElementById('timer-display');
+    const timerRing = document.getElementById('timer-ring');
+    const timerGlow = document.getElementById('timer-glow');
+    const calmMessageEl = document.getElementById('calm-message');
+    const startBtn = document.getElementById('start-btn');
+    const activeControls = document.getElementById('active-controls');
+    const pauseBtn = document.getElementById('pause-btn');
+    const endBtn = document.getElementById('end-btn');
+    const statusBadge = document.getElementById('status-badge');
+    const completionOverlay = document.getElementById('completion-overlay');
+    const bloomEffects = document.getElementById('bloom-effects');
+    const progressFill = document.getElementById('progress-fill');
+    const progressText = document.getElementById('progress-text');
+    
+    // Sound chip selection
+    document.querySelectorAll('.sound-chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        document.querySelectorAll('.sound-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        selectedSound = chip.dataset.sound;
+      });
+    });
+    
+    // Timer functions
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = seconds % 60;
+      return `${mins}:${secs.toString().padStart(2, '0')}`;
+    }
+    
+    function updateTimerRing() {
+      const circumference = 2 * Math.PI * 90;
+      const progress = (totalSeconds - remainingSeconds) / totalSeconds;
+      const offset = circumference * (1 - progress);
+      timerRing.style.strokeDashoffset = offset;
+    }
+    
+    function rotateCalmMessage() {
+      currentMessageIndex = (currentMessageIndex + 1) % calmMessages.length;
+      calmMessageEl.textContent = calmMessages[currentMessageIndex];
+    }
+    
+    function startTimer() {
+      timerState = 'running';
+      startBtn.classList.add('hidden');
+      activeControls.classList.remove('hidden');
+      activeControls.classList.add('flex');
+      statusBadge.textContent = 'In Progress';
+      timerGlow.style.animation = 'timerBreathing 4s ease-in-out infinite';
+      
+      timerInterval = setInterval(() => {
+        remainingSeconds--;
+        timerDisplay.textContent = formatTime(remainingSeconds);
+        updateTimerRing();
+        
+        if (remainingSeconds % 8 === 0) {
+          rotateCalmMessage();
+        }
+        
+        if (remainingSeconds <= 0) {
+          completeChallenge();
+        }
+      }, 1000);
+    }
+    
+    function pauseTimer() {
+      if (timerState === 'running') {
+        timerState = 'paused';
+        clearInterval(timerInterval);
+        pauseBtn.textContent = 'Resume';
+        statusBadge.textContent = 'Paused';
+        timerGlow.style.animation = 'none';
+      } else if (timerState === 'paused') {
+        timerState = 'running';
+        pauseBtn.textContent = 'Pause';
+        statusBadge.textContent = 'In Progress';
+        timerGlow.style.animation = 'timerBreathing 4s ease-in-out infinite';
+        
+        timerInterval = setInterval(() => {
+          remainingSeconds--;
+          timerDisplay.textContent = formatTime(remainingSeconds);
+          updateTimerRing();
+          
+          if (remainingSeconds % 8 === 0) {
+            rotateCalmMessage();
+          }
+          
+          if (remainingSeconds <= 0) {
+            completeChallenge();
+          }
+        }, 1000);
+      }
+    }
+    
+    function endEarly() {
+      clearInterval(timerInterval);
+      resetTimer();
+      statusBadge.textContent = 'Not Started';
+    }
+    
+    function resetTimer() {
+      timerState = 'idle';
+      remainingSeconds = totalSeconds;
+      timerDisplay.textContent = formatTime(remainingSeconds);
+      timerRing.style.strokeDashoffset = 0;
+      startBtn.classList.remove('hidden');
+      activeControls.classList.add('hidden');
+      activeControls.classList.remove('flex');
+      pauseBtn.textContent = 'Pause';
+      timerGlow.style.animation = 'timerBreathing 4s ease-in-out infinite';
+      calmMessageEl.textContent = calmMessages[0];
+    }
+    
+    function createBloomEffects() {
+      bloomEffects.innerHTML = '';
+      
+      // Create bloom circles
+      for (let i = 0; i < 3; i++) {
+        const circle = document.createElement('div');
+        circle.className = 'bloom-circle';
+        const size = 150 + i * 80;
+        circle.style.cssText = `
+          width: ${size}px;
+          height: ${size}px;
+          background: radial-gradient(circle, 
+            rgba(220, 195, 150, ${0.4 - i * 0.1}) 0%, 
+            rgba(255, 248, 235, ${0.3 - i * 0.08}) 50%, 
+            transparent 70%
+          );
+          animation-delay: ${i * 0.3}s;
+        `;
+        bloomEffects.appendChild(circle);
+      }
+      
+      // Create halo rings
+      for (let i = 0; i < 4; i++) {
+        const halo = document.createElement('div');
+        halo.className = 'halo-ring';
+        const size = 100 + i * 50;
+        halo.style.cssText = `
+          width: ${size}px;
+          height: ${size}px;
+          animation-delay: ${i * 0.4}s;
+        `;
+        bloomEffects.appendChild(halo);
+      }
+      
+      // Create sparkles
+      for (let i = 0; i < 12; i++) {
+        const sparkle = document.createElement('div');
+        sparkle.className = 'sparkle';
+        const angle = (i / 12) * 360;
+        const radius = 80 + Math.random() * 60;
+        const x = Math.cos(angle * Math.PI / 180) * radius;
+        const y = Math.sin(angle * Math.PI / 180) * radius;
+        sparkle.style.cssText = `
+          left: calc(50% + ${x}px);
+          top: calc(50% + ${y}px);
+          animation-delay: ${Math.random() * 2}s;
+        `;
+        bloomEffects.appendChild(sparkle);
+      }
+    }
+    
+    function completeChallenge() {
+      clearInterval(timerInterval);
+      timerState = 'idle';
+      completedDays++;
+      
+      // Update progress
+      progressFill.style.width = `${(completedDays / 30) * 100}%`;
+      progressText.textContent = `${completedDays} of 30 days`;
+      
+      // Show completion overlay
+      document.getElementById('completed-day').textContent = document.getElementById('day-title').textContent;
+      createBloomEffects();
+      completionOverlay.classList.remove('hidden');
+    }
+    
+    function hideCompletion() {
+      completionOverlay.classList.add('hidden');
+      resetTimer();
+      statusBadge.textContent = 'Completed';
+    }
+    
+    function showTomorrowsChallenge() {
+      completionOverlay.classList.add('hidden');
+      resetTimer();
+      statusBadge.textContent = 'Unlocked';
+      
+      const currentDay = parseInt(document.getElementById('day-title').textContent.split(' ')[1]) || 1;
+      const nextDay = currentDay + 1;
+      
+      document.getElementById('day-title').textContent = `Day ${nextDay}`;
+      document.getElementById('task-title').textContent = 'Deepen your practice';
+      document.getElementById('supportive-text').textContent = 'Continue your journey of calm.';
+      
+      // Disable start button
+      startBtn.disabled = true;
+      startBtn.style.opacity = '0.5';
+      startBtn.style.cursor = 'not-allowed';
+      startBtn.textContent = 'Available Tomorrow';
+      
+      // Hide sound and controls
+      document.getElementById('sound-chips').style.opacity = '0.5';
+      document.getElementById('sound-chips').style.pointerEvents = 'none';
+      
+      // Add lock icon to timer
+      const lockIcon = document.createElement('div');
+      lockIcon.className = 'absolute inset-0 flex items-center justify-center pointer-events-none';
+      lockIcon.innerHTML = '<i data-lucide="lock" class="w-12 h-12" style="color: #9B8A78; opacity: 0.6;"></i>';
+      document.querySelector('.relative.w-56.h-56').appendChild(lockIcon);
+      lucide.createIcons();
+    }
+    
+    // Event listeners
+    startBtn.addEventListener('click', startTimer);
+    pauseBtn.addEventListener('click', pauseTimer);
+    endBtn.addEventListener('click', endEarly);
+    document.getElementById('continue-btn').addEventListener('click', hideCompletion);
+    document.getElementById('view-tomorrow-btn').addEventListener('click', showTomorrowsChallenge);
+    
+    // Initialize Lucide icons
+    lucide.createIcons();
+    
+    // Element SDK initialization
+    if (window.elementSdk) {
+      const element = {
+        defaultConfig,
+        onConfigChange: async (config) => {
+          const fontFamily = config.font_family || defaultConfig.font_family;
+          const fontSize = config.font_size || defaultConfig.font_size;
+          const baseFontStack = 'Georgia, serif';
+          const sansFontStack = 'system-ui, sans-serif';
+          
+          // Update text content
+          document.getElementById('day-title').textContent = config.day_title || defaultConfig.day_title;
+          document.getElementById('task-title').textContent = config.task_title || defaultConfig.task_title;
+          document.getElementById('supportive-text').textContent = config.supportive_text || defaultConfig.supportive_text;
+          document.getElementById('completion-title').textContent = config.completion_message || defaultConfig.completion_message;
+          
+          // Apply colors
+          const bgColor = config.background_color || defaultConfig.background_color;
+          const surfaceColor = config.surface_color || defaultConfig.surface_color;
+          const textColor = config.text_color || defaultConfig.text_color;
+          const primaryColor = config.primary_action_color || defaultConfig.primary_action_color;
+          const secondaryColor = config.secondary_action_color || defaultConfig.secondary_action_color;
+          
+          // Background
+          document.getElementById('app').style.background = `linear-gradient(180deg, ${bgColor} 0%, ${adjustColor(bgColor, -5)} 100%)`;
+          
+          // Glass cards
+          document.querySelectorAll('.glass-card').forEach(card => {
+            card.style.background = `rgba(${hexToRgb(surfaceColor)}, 0.65)`;
+          });
+          
+          // Text colors
+          document.querySelectorAll('.font-serif-elegant').forEach(el => {
+            if (!el.closest('#completion-overlay') || el.id === 'completion-title') {
+              el.style.color = textColor;
+            }
+          });
+          
+          // Primary buttons
+          document.querySelectorAll('.pill-btn-primary').forEach(btn => {
+            btn.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${adjustColor(primaryColor, -10)} 100%)`;
+          });
+          
+          // Secondary elements
+          document.querySelectorAll('[style*="color: #9B8A78"], [style*="color: #8B7355"]').forEach(el => {
+            el.style.color = secondaryColor;
+          });
+          
+          // Apply fonts
+          document.querySelectorAll('.font-serif-elegant').forEach(el => {
+            el.style.fontFamily = `${fontFamily}, ${baseFontStack}`;
+          });
+          
+          // Apply font size scaling
+          document.getElementById('day-title').style.fontSize = `${fontSize * 1.875}px`;
+          document.getElementById('task-title').style.fontSize = `${fontSize * 1.5}px`;
+          document.getElementById('supportive-text').style.fontSize = `${fontSize}px`;
+          document.getElementById('timer-display').style.fontSize = `${fontSize * 3}px`;
+          document.getElementById('completion-title').style.fontSize = `${fontSize * 2.5}px`;
+        },
+        mapToCapabilities: (config) => ({
+          recolorables: [
+            {
+              get: () => config.background_color || defaultConfig.background_color,
+              set: (value) => { config.background_color = value; window.elementSdk.setConfig({ background_color: value }); }
+            },
+            {
+              get: () => config.surface_color || defaultConfig.surface_color,
+              set: (value) => { config.surface_color = value; window.elementSdk.setConfig({ surface_color: value }); }
+            },
+            {
+              get: () => config.text_color || defaultConfig.text_color,
+              set: (value) => { config.text_color = value; window.elementSdk.setConfig({ text_color: value }); }
+            },
+            {
+              get: () => config.primary_action_color || defaultConfig.primary_action_color,
+              set: (value) => { config.primary_action_color = value; window.elementSdk.setConfig({ primary_action_color: value }); }
+            },
+            {
+              get: () => config.secondary_action_color || defaultConfig.secondary_action_color,
+              set: (value) => { config.secondary_action_color = value; window.elementSdk.setConfig({ secondary_action_color: value }); }
+            }
+          ],
+          borderables: [],
+          fontEditable: {
+            get: () => config.font_family || defaultConfig.font_family,
+            set: (value) => { config.font_family = value; window.elementSdk.setConfig({ font_family: value }); }
+          },
+          fontSizeable: {
+            get: () => config.font_size || defaultConfig.font_size,
+            set: (value) => { config.font_size = value; window.elementSdk.setConfig({ font_size: value }); }
+          }
+        }),
+        mapToEditPanelValues: (config) => new Map([
+          ['day_title', config.day_title || defaultConfig.day_title],
+          ['task_title', config.task_title || defaultConfig.task_title],
+          ['supportive_text', config.supportive_text || defaultConfig.supportive_text],
+          ['completion_message', config.completion_message || defaultConfig.completion_message]
+        ])
+      };
+      
+      window.elementSdk.init(element);
+    }
+    
+    // Helper functions
+    function hexToRgb(hex) {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}` : '255, 252, 248';
+    }
+    
+    function adjustColor(hex, percent) {
+      const num = parseInt(hex.replace('#', ''), 16);
+      const amt = Math.round(2.55 * percent);
+      const R = (num >> 16) + amt;
+      const G = (num >> 8 & 0x00FF) + amt;
+      const B = (num & 0x0000FF) + amt;
+      return '#' + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 + (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 + (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9dd8d68c513dee5a',t:'MTc3MzcxNzM3OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
