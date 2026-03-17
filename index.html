@@ -3200,6 +3200,7 @@ function stopChallengeAudio() {
     challengeAudio = null;
   }
 }
+
    async function loadChallengeDay(challengeDayId) {
   const { data, error } = await supabaseClient
     .from('challenge_template_days')
@@ -3242,12 +3243,6 @@ function stopChallengeAudio() {
   challengeTotalSeconds = data.default_duration_seconds || 300;
   challengeRemainingSeconds = challengeTotalSeconds;
 
-  updateChallengeTimerDisplay();
-  updateChallengeTimerRing();  
-
-  document.getElementById('challenge-timer-display').textContent =
-    formatChallengeTime(challengeRemainingSeconds);
-
   document.getElementById('challenge-card-duration').textContent =
     `${Math.ceil(challengeTotalSeconds / 60)} minute practice`;
 
@@ -3259,18 +3254,70 @@ function stopChallengeAudio() {
   }
 
   challengeCalmMessageIndex = 0;
+
+  // ✅ reset timer (แทน update เดิม)
+  resetChallengeTimer();
+
+  // set calm message
   document.getElementById('challenge-calm-message').textContent =
     challengeCalmMessages[0];
 
-  // ถ้า day นี้ให้เลือกเสียงได้ ค่อยโหลด sounds
+  // sound chips
+  const chipsWrap = document.getElementById('challenge-sound-chips');
+
   if (data.allow_sound_selection) {
+    if (chipsWrap) {
+      chipsWrap.style.opacity = '1';
+      chipsWrap.style.pointerEvents = 'auto';
+    }
+
     await loadChallengeSounds(data.id);
   } else {
-    const chipsWrap = document.getElementById('challenge-sound-chips');
     if (chipsWrap) {
       chipsWrap.innerHTML = `<p class="text-sm" style="color:#A89880;">No sound selection for this challenge.</p>`;
+      chipsWrap.style.opacity = '1';
+      chipsWrap.style.pointerEvents = 'auto';
     }
   }
+
+  // ✅ reset ปุ่ม start ทุกครั้งที่โหลด day ใหม่
+  if (challengeStartBtn) {
+    challengeStartBtn.disabled = false;
+    challengeStartBtn.textContent = 'Start Challenge';
+    challengeStartBtn.style.opacity = '1';
+    challengeStartBtn.style.cursor = 'pointer';
+  }
+
+  // reset controls
+  if (challengeActiveControls) {
+    challengeActiveControls.classList.add('hidden');
+    challengeActiveControls.classList.remove('flex');
+  }
+
+  if (challengePauseBtn) {
+    challengePauseBtn.textContent = 'Pause';
+  }
+}
+
+   async function loadNextChallengeDay() {
+  if (!currentChallengeDay || !currentChallengeDay.template_id) return;
+
+  const nextDayNumber = (currentChallengeDay.day_number || 1) + 1;
+
+  const { data, error } = await supabaseClient
+    .from('challenge_template_days')
+    .select('*')
+    .eq('template_id', currentChallengeDay.template_id)
+    .eq('day_number', nextDayNumber)
+    .eq('is_active', true)
+    .single();
+
+  if (error) {
+    console.error('loadNextChallengeDay error:', error);
+    return null;
+  }
+
+  return data;
 }
 
    function updateChallengeTimerDisplay() {
@@ -3469,27 +3516,24 @@ function hideChallengeCompletion() {
   if (progressText) progressText.textContent = '1 of 7 days';
 }
 
-function showTomorrowsChallenge() {
+async function showTomorrowsChallenge() {
   if (challengeCompletionOverlay) {
     challengeCompletionOverlay.classList.add('hidden');
   }
 
-  resetChallengeTimer();
+  const nextDay = await loadNextChallengeDay();
+  if (!nextDay) return;
+
+  currentChallengeDayId = nextDay.id;
+  await loadChallengeDay(nextDay.id);
 
   if (challengeStatusBadge) challengeStatusBadge.textContent = 'Unlocked';
 
-  const currentDay = currentChallengeDay?.day_number || 1;
-  const nextDay = currentDay + 1;
-
-  document.getElementById('challenge-day-title').textContent = `Day ${nextDay}`;
-  document.getElementById('challenge-task-title').textContent = 'Deepen your practice';
-  document.getElementById('challenge-supportive-text').textContent = 'Continue your journey of calm.';
-
   if (challengeStartBtn) {
     challengeStartBtn.disabled = true;
+    challengeStartBtn.textContent = 'Available Tomorrow';
     challengeStartBtn.style.opacity = '0.5';
     challengeStartBtn.style.cursor = 'not-allowed';
-    challengeStartBtn.textContent = 'Available Tomorrow';
   }
 
   const chipsWrap = document.getElementById('challenge-sound-chips');
