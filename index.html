@@ -1378,14 +1378,20 @@ let personalBackTarget = 'sounds';
 let favoriteSoundIds = [];
 let deviceId = localStorage.getItem('calmnow_device_id');
 
-let currentChallengeDayId = 1;   // ใช้ id จริงของ challenge_template_days
+let currentChallengeDayId = 1;
 let currentChallengeDay = null;
+
+let challengeSelectedSoundId = null;
+
 let challengeCalmMessages = [];
 let challengeCalmMessageIndex = 0;
 
 let challengeTotalSeconds = 300;
-let challengeRemainingSeconds = 300;   
+let challengeRemainingSeconds = 300;
 
+let challengeTimerState = 'idle'; // idle, running, paused
+let challengeTimerInterval = null;
+   
 if (!deviceId) {
   deviceId = crypto.randomUUID();
   localStorage.setItem('calmnow_device_id', deviceId);
@@ -2962,6 +2968,150 @@ function bindChallengeSoundChips() {
     }
   }
 }
+
+   function updateChallengeTimerDisplay() {
+  if (challengeTimerDisplay) {
+    challengeTimerDisplay.textContent = formatChallengeTime(challengeRemainingSeconds);
+  }
+}
+
+function rotateChallengeCalmMessage() {
+  if (!challengeCalmMessages.length || !challengeCalmMessageEl) return;
+
+  challengeCalmMessageIndex =
+    (challengeCalmMessageIndex + 1) % challengeCalmMessages.length;
+
+  challengeCalmMessageEl.textContent =
+    challengeCalmMessages[challengeCalmMessageIndex];
+}
+
+function startChallengeTimer() {
+  if (challengeTimerState === 'running') return;
+
+  challengeTimerState = 'running';
+
+  if (challengeStartBtn) challengeStartBtn.classList.add('hidden');
+  if (challengeActiveControls) {
+    challengeActiveControls.classList.remove('hidden');
+    challengeActiveControls.classList.add('flex');
+  }
+  if (challengePauseBtn) challengePauseBtn.textContent = 'Pause';
+  if (challengeStatusBadge) challengeStatusBadge.textContent = 'In Progress';
+
+  challengeTimerInterval = setInterval(() => {
+    challengeRemainingSeconds--;
+
+    updateChallengeTimerDisplay();
+
+    if (challengeRemainingSeconds > 0 && challengeRemainingSeconds % 8 === 0) {
+      rotateChallengeCalmMessage();
+    }
+
+    if (challengeRemainingSeconds <= 0) {
+      completeChallengeTimerOnly();
+    }
+  }, 1000);
+}
+
+function pauseChallengeTimer() {
+  if (challengeTimerState === 'running') {
+    challengeTimerState = 'paused';
+    clearInterval(challengeTimerInterval);
+    challengeTimerInterval = null;
+
+    if (challengePauseBtn) challengePauseBtn.textContent = 'Resume';
+    if (challengeStatusBadge) challengeStatusBadge.textContent = 'Paused';
+    return;
+  }
+
+  if (challengeTimerState === 'paused') {
+    startChallengeTimer();
+  }
+}
+
+function resetChallengeTimer() {
+  clearInterval(challengeTimerInterval);
+  challengeTimerInterval = null;
+
+  challengeTimerState = 'idle';
+  challengeRemainingSeconds = challengeTotalSeconds;
+  challengeCalmMessageIndex = 0;
+
+  updateChallengeTimerDisplay();
+
+  if (challengeCalmMessageEl) {
+    challengeCalmMessageEl.textContent =
+      challengeCalmMessages[0] || 'Breathe softly';
+  }
+
+  if (challengeStartBtn) challengeStartBtn.classList.remove('hidden');
+  if (challengeActiveControls) {
+    challengeActiveControls.classList.add('hidden');
+    challengeActiveControls.classList.remove('flex');
+  }
+
+  if (challengePauseBtn) challengePauseBtn.textContent = 'Pause';
+  if (challengeStatusBadge) {
+    challengeStatusBadge.textContent =
+      currentChallengeDay?.status_label || 'Ready';
+  }
+}
+
+function endChallengeEarly() {
+  clearInterval(challengeTimerInterval);
+  challengeTimerInterval = null;
+
+  challengeTimerState = 'idle';
+  challengeRemainingSeconds = challengeTotalSeconds;
+
+  updateChallengeTimerDisplay();
+
+  if (challengeCalmMessageEl) {
+    challengeCalmMessageEl.textContent =
+      challengeCalmMessages[0] || 'Breathe softly';
+  }
+
+  if (challengeStartBtn) challengeStartBtn.classList.remove('hidden');
+  if (challengeActiveControls) {
+    challengeActiveControls.classList.add('hidden');
+    challengeActiveControls.classList.remove('flex');
+  }
+
+  if (challengePauseBtn) challengePauseBtn.textContent = 'Pause';
+  if (challengeStatusBadge) challengeStatusBadge.textContent = 'Ready';
+}
+
+function completeChallengeTimerOnly() {
+  clearInterval(challengeTimerInterval);
+  challengeTimerInterval = null;
+  challengeTimerState = 'idle';
+  challengeRemainingSeconds = 0;
+
+  updateChallengeTimerDisplay();
+
+  if (challengeStatusBadge) challengeStatusBadge.textContent = 'Completed';
+
+  if (challengeStartBtn) challengeStartBtn.classList.remove('hidden');
+  if (challengeActiveControls) {
+    challengeActiveControls.classList.add('hidden');
+    challengeActiveControls.classList.remove('flex');
+  }
+
+  alert('Beautiful. You completed this challenge.');
+}
+
+   if (challengeStartBtn) {
+  challengeStartBtn.addEventListener('click', startChallengeTimer);
+}
+
+if (challengePauseBtn) {
+  challengePauseBtn.addEventListener('click', pauseChallengeTimer);
+}
+
+if (challengeEndBtn) {
+  challengeEndBtn.addEventListener('click', endChallengeEarly);
+}
+   
   function formatChallengeTime(seconds) {
   const mins = Math.floor(seconds / 60);
   const secs = seconds % 60;
@@ -2982,6 +3132,14 @@ function formatActivityTitle(activityType) {
 
   return map[activityType] || 'Calm Practice';
 }
+
+const challengeTimerDisplay = document.getElementById('challenge-timer-display');
+const challengeCalmMessageEl = document.getElementById('challenge-calm-message');
+const challengeStartBtn = document.getElementById('challenge-start-btn');
+const challengeActiveControls = document.getElementById('challenge-active-controls');
+const challengePauseBtn = document.getElementById('challenge-pause-btn');
+const challengeEndBtn = document.getElementById('challenge-end-btn');
+const challengeStatusBadge = document.getElementById('challenge-status-badge');
    
 initApp();
    
