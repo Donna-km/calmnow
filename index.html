@@ -1249,14 +1249,17 @@
       </div>
 
       <div>
-        <p class="font-display text-lg" style="color: #5C4D3C;">Mindful Silence</p>
-        <p class="text-sm font-light" style="color: #9B8A78;">5 minute practice</p>
-      </div>
-    </div>
+        <p id="challenge-card-title" class="font-display text-lg" style="color: #5C4D3C;">
+  Mindful Silence
+</p>
 
-    <p class="text-sm font-light leading-relaxed" style="color: #7A6B5A;">
-      Find a quiet space. Close your eyes. Let thoughts pass like clouds. Return to stillness.
-    </p>
+<p id="challenge-card-duration" class="text-sm font-light" style="color: #9B8A78;">
+  5 minute practice
+</p>
+
+<p id="challenge-instruction-text" class="text-sm font-light leading-relaxed" style="color: #7A6B5A;">
+  Find a quiet space. Close your eyes. Let thoughts pass like clouds. Return to stillness.
+</p>
   </div>
 
   <!-- Sound selection -->
@@ -1369,6 +1372,14 @@ let personalBackTarget = 'sounds';
 
 let favoriteSoundIds = [];
 let deviceId = localStorage.getItem('calmnow_device_id');
+
+let currentChallengeDayId = 1;   // ใช้ id จริงของ challenge_template_days
+let currentChallengeDay = null;
+let challengeCalmMessages = [];
+let challengeCalmMessageIndex = 0;
+
+let challengeTotalSeconds = 300;
+let challengeRemainingSeconds = 300;   
 
 if (!deviceId) {
   deviceId = crypto.randomUUID();
@@ -2801,7 +2812,7 @@ affirmationCard.addEventListener('click', revealAffirmation);
     affirmationText.textContent = dbAffirmations[0].text || "I trust the timing of my life.";
   }
 
-  await loadChallengeSounds(currentChallengeDayId);
+  await loadChallengeDay(currentChallengeDayId);
 }
 
    // =========================
@@ -2876,6 +2887,95 @@ function bindChallengeSoundChips() {
       challengeSelectedSoundId = Number(chip.dataset.soundId);
     });
   });
+}
+   async function loadChallengeDay(challengeDayId) {
+  const { data, error } = await supabaseClient
+    .from('challenge_template_days')
+    .select('*')
+    .eq('id', challengeDayId)
+    .eq('is_active', true)
+    .single();
+
+  if (error) {
+    console.error('loadChallengeDay error:', error);
+    return;
+  }
+
+  if (!data) return;
+
+  currentChallengeDay = data;
+
+  // ข้อความบนหน้า
+  document.getElementById('challenge-day-title').textContent =
+    data.challenge_title || `Day ${data.day_number || 1}`;
+
+  document.getElementById('challenge-status-badge').textContent =
+    data.status_label || 'Ready';
+
+  document.getElementById('challenge-task-title').textContent =
+    data.main_task || '';
+
+  document.getElementById('challenge-supportive-text').textContent =
+    data.supportive_text || '';
+
+  document.getElementById('challenge-card-title').textContent =
+    data.activity_type
+      ? formatActivityTitle(data.activity_type)
+      : 'Calm Practice';
+
+  document.getElementById('challenge-instruction-text').textContent =
+    data.instruction_text || '';
+
+  // เวลา
+  challengeTotalSeconds = data.default_duration_seconds || 300;
+  challengeRemainingSeconds = challengeTotalSeconds;
+
+  document.getElementById('challenge-timer-display').textContent =
+    formatChallengeTime(challengeRemainingSeconds);
+
+  document.getElementById('challenge-card-duration').textContent =
+    `${Math.ceil(challengeTotalSeconds / 60)} minute practice`;
+
+  // calm messages
+  if (Array.isArray(data.calm_messages) && data.calm_messages.length > 0) {
+    challengeCalmMessages = data.calm_messages;
+  } else {
+    challengeCalmMessages = ['Breathe softly', 'Stay here', 'This moment is enough'];
+  }
+
+  challengeCalmMessageIndex = 0;
+  document.getElementById('challenge-calm-message').textContent =
+    challengeCalmMessages[0];
+
+  // ถ้า day นี้ให้เลือกเสียงได้ ค่อยโหลด sounds
+  if (data.allow_sound_selection) {
+    await loadChallengeSounds(data.id);
+  } else {
+    const chipsWrap = document.getElementById('challenge-sound-chips');
+    if (chipsWrap) {
+      chipsWrap.innerHTML = `<p class="text-sm" style="color:#A89880;">No sound selection for this challenge.</p>`;
+    }
+  }
+}
+  function formatChallengeTime(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins}:${String(secs).padStart(2, '0')}`;
+}
+
+function formatActivityTitle(activityType) {
+  const map = {
+    meditation: 'Meditation',
+    breathing: 'Breathing Practice',
+    listening: 'Mindful Listening',
+    body_relax: 'Body Relaxation',
+    gratitude: 'Gratitude Moment',
+    mindfulness: 'Mindfulness Practice',
+    sleep: 'Sleep Ritual',
+    relax: 'Relaxation'
+  };
+
+  return map[activityType] || 'Calm Practice';
 }
    
 initApp();
