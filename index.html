@@ -940,6 +940,18 @@
   opacity:0.85;
   max-width:360px;
 }
+   .challenge-sound-chip {
+  background: rgba(255, 252, 248, 0.7);
+  border: 1px solid rgba(200, 180, 160, 0.3);
+  color: #6B5D4D;
+  transition: all 0.3s ease;
+}
+
+.challenge-sound-chip.active {
+  background: linear-gradient(135deg, rgba(200,175,145,0.8), rgba(180,155,125,0.9));
+  color: #FFFCF8 !important;
+  border: 1px solid rgba(160,135,105,0.5) !important;
+}
   </style>
   <style>body { box-sizing: border-box; }</style>
  
@@ -1254,21 +1266,8 @@
     </p>
 
     <div id="challenge-sound-chips" class="flex flex-wrap justify-center gap-2">
-      <button class="challenge-sound-chip active px-4 py-2 rounded-full text-sm font-light"
-        style="color: #6B5D4D; background: rgba(255, 252, 248, 0.7); border: 1px solid rgba(200, 180, 160, 0.3);">
-        Rain
-      </button>
-
-      <button class="challenge-sound-chip px-4 py-2 rounded-full text-sm font-light"
-        style="color: #6B5D4D; background: rgba(255, 252, 248, 0.7); border: 1px solid rgba(200, 180, 160, 0.3);">
-        Ocean
-      </button>
-
-      <button class="challenge-sound-chip px-4 py-2 rounded-full text-sm font-light"
-        style="color: #6B5D4D; background: rgba(255, 252, 248, 0.7); border: 1px solid rgba(200, 180, 160, 0.3);">
-        Flute
-      </button>
-    </div>
+  <p class="text-sm" style="color:#A89880;">Loading sounds...</p>
+</div>
   </div>
 
   <!-- Timer -->
@@ -2801,8 +2800,84 @@ affirmationCard.addEventListener('click', revealAffirmation);
   if (affirmationText && dbAffirmations.length > 0) {
     affirmationText.textContent = dbAffirmations[0].text || "I trust the timing of my life.";
   }
+
+  await loadChallengeSounds(currentChallengeDayId);
 }
 
+   // =========================
+// Challenge sound loading
+// =========================
+let challengeSelectedSoundId = null;
+
+// ใส่ challenge_day_id ของ Day ที่กำลังเปิดอยู่
+// ตอนนี้เริ่มจาก hardcode Day 1 ไปก่อน
+let currentChallengeDayId = 1;
+
+async function loadChallengeSounds(challengeDayId) {
+  const chipsWrap = document.getElementById('challenge-sound-chips');
+  if (!chipsWrap) return;
+
+  chipsWrap.innerHTML = `<p class="text-sm" style="color:#A89880;">Loading sounds...</p>`;
+
+  const { data, error } = await supabaseClient
+    .from('challenge_day_sounds')
+    .select(`
+      sound_id,
+      is_default,
+      sort_order,
+      sounds (
+        id,
+        title,
+        emoji,
+        audio_path
+      )
+    `)
+    .eq('challenge_day_id', challengeDayId)
+    .eq('is_active', true)
+    .order('sort_order', { ascending: true });
+
+  if (error) {
+    console.error('loadChallengeSounds error:', error);
+    chipsWrap.innerHTML = `<p class="text-sm" style="color:#A89880;">Could not load sounds.</p>`;
+    return;
+  }
+
+  const rows = (data || []).filter(row => row.sounds);
+
+  if (rows.length === 0) {
+    chipsWrap.innerHTML = `<p class="text-sm" style="color:#A89880;">No sounds found for this challenge.</p>`;
+    return;
+  }
+
+  const defaultRow = rows.find(row => row.is_default) || rows[0];
+  challengeSelectedSoundId = defaultRow.sound_id;
+
+  chipsWrap.innerHTML = rows.map(row => `
+    <button
+      class="challenge-sound-chip px-4 py-2 rounded-full text-sm font-light ${row.sound_id === challengeSelectedSoundId ? 'active' : ''}"
+      data-sound-id="${row.sound_id}"
+      data-audio-path="${row.sounds.audio_path || ''}"
+    >
+      ${row.sounds.title || 'Untitled'}
+    </button>
+  `).join('');
+
+  bindChallengeSoundChips();
+}
+
+function bindChallengeSoundChips() {
+  const chips = document.querySelectorAll('.challenge-sound-chip');
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+
+      challengeSelectedSoundId = Number(chip.dataset.soundId);
+    });
+  });
+}
+   
 initApp();
    
    </script>
