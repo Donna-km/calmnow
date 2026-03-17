@@ -3317,9 +3317,9 @@ function startChallengeTimer() {
       rotateChallengeCalmMessage();
     }
 
-    if (challengeRemainingSeconds <= 0) {
-      completeChallengeTimerOnly();
-    }
+   if (challengeRemainingSeconds <= 0) {
+  completeChallenge();
+}
   }, 1000);
 }
 
@@ -3396,24 +3396,79 @@ function endChallengeEarly() {
   if (challengeStatusBadge) challengeStatusBadge.textContent = 'Ready';
 }
 
-function completeChallengeTimerOnly() {
+function completeChallenge() {
   clearInterval(challengeTimerInterval);
-  stopChallengeAudio();
   challengeTimerInterval = null;
   challengeTimerState = 'idle';
   challengeRemainingSeconds = 0;
 
+  stopChallengeAudio();
   updateChallengeTimerDisplay();
+  updateChallengeTimerRing();
 
-  if (challengeStatusBadge) challengeStatusBadge.textContent = 'Completed';
-
-  if (challengeStartBtn) challengeStartBtn.classList.remove('hidden');
-  if (challengeActiveControls) {
-    challengeActiveControls.classList.add('hidden');
-    challengeActiveControls.classList.remove('flex');
+  if (challengeStatusBadge) {
+    challengeStatusBadge.textContent = 'Completed';
   }
 
-  alert('Beautiful. You completed this challenge.');
+  const progressFill = document.getElementById('challenge-progress-fill');
+  const progressText = document.getElementById('challenge-progress-text');
+
+  // ตอนนี้ทำแบบง่ายก่อน: จบ Day 1 = 1 of 7
+  if (progressFill) progressFill.style.width = '14.2857%';
+  if (progressText) progressText.textContent = '1 of 7 days';
+
+  if (challengeCompletedDay && currentChallengeDay) {
+    challengeCompletedDay.textContent =
+      currentChallengeDay.challenge_title || `Day ${currentChallengeDay.day_number || 1}`;
+  }
+
+  createChallengeBloomEffects();
+
+  if (challengeCompletionOverlay) {
+    challengeCompletionOverlay.classList.remove('hidden');
+  }
+}
+
+function hideChallengeCompletion() {
+  if (challengeCompletionOverlay) {
+    challengeCompletionOverlay.classList.add('hidden');
+  }
+
+  resetChallengeTimer();
+
+  if (challengeStatusBadge) {
+    challengeStatusBadge.textContent = 'Completed';
+  }
+}
+
+function showTomorrowsChallenge() {
+  if (challengeCompletionOverlay) {
+    challengeCompletionOverlay.classList.add('hidden');
+  }
+
+  resetChallengeTimer();
+
+  if (challengeStatusBadge) challengeStatusBadge.textContent = 'Unlocked';
+
+  const currentDay = currentChallengeDay?.day_number || 1;
+  const nextDay = currentDay + 1;
+
+  document.getElementById('challenge-day-title').textContent = `Day ${nextDay}`;
+  document.getElementById('challenge-task-title').textContent = 'Deepen your practice';
+  document.getElementById('challenge-supportive-text').textContent = 'Continue your journey of calm.';
+
+  if (challengeStartBtn) {
+    challengeStartBtn.disabled = true;
+    challengeStartBtn.style.opacity = '0.5';
+    challengeStartBtn.style.cursor = 'not-allowed';
+    challengeStartBtn.textContent = 'Available Tomorrow';
+  }
+
+  const chipsWrap = document.getElementById('challenge-sound-chips');
+  if (chipsWrap) {
+    chipsWrap.style.opacity = '0.5';
+    chipsWrap.style.pointerEvents = 'none';
+  }
 }
 
    if (challengeStartBtn) {
