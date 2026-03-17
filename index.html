@@ -980,6 +980,68 @@
     opacity: 0.9;
   }
 }
+
+   /* Challenge completion bloom */
+.bloom-circle {
+  position: absolute;
+  border-radius: 50%;
+  animation: bloomExpand 2s ease-out forwards;
+}
+
+@keyframes bloomExpand {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+}
+
+.sparkle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: radial-gradient(circle, rgba(255, 240, 200, 1) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: sparkleFloat 3s ease-in-out infinite;
+}
+
+@keyframes sparkleFloat {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: translateY(-20px) scale(1.2);
+    opacity: 1;
+  }
+}
+
+.halo-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgba(220, 195, 150, 0.3);
+  animation: haloExpand 2.5s ease-out forwards;
+}
+
+@keyframes haloExpand {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
   </style>
   <style>body { box-sizing: border-box; }</style>
  
@@ -1409,7 +1471,41 @@
 </div>
   </div>
 </section>
-  
+
+  <div id="challenge-completion-overlay" class="hidden fixed inset-0 z-50 flex items-center justify-center"
+     style="background: radial-gradient(circle at center, rgba(255,252,245,0.98) 0%, rgba(253,248,240,0.96) 30%, rgba(250,244,235,0.94) 60%, rgba(248,242,232,0.92) 100%);">
+  <div class="relative flex flex-col items-center justify-center p-8">
+    <div id="challenge-bloom-effects" class="absolute inset-0 flex items-center justify-center pointer-events-none"></div>
+
+    <div class="relative z-10 text-center">
+      <p id="challenge-completion-title" class="font-display text-4xl font-light mb-4" style="color:#5C4D3C;">
+        Beautiful.
+      </p>
+
+      <p class="font-light text-lg mb-2" style="color:#7A6B5A;">
+        You completed <span id="challenge-completed-day">Day 1</span>
+      </p>
+
+      <p class="font-light text-base mb-10" style="color:#9B8A78;">
+        Day 2 is now unlocked.
+      </p>
+
+      <div class="flex flex-col gap-3 w-64">
+        <button id="challenge-continue-btn"
+          class="px-8 py-3.5 rounded-full font-light text-base"
+          style="background: linear-gradient(135deg, rgba(180,155,125,0.85) 0%, rgba(160,135,105,0.9) 100%); border:1px solid rgba(160,135,105,0.5); color:#FFFCF8;">
+          Continue
+        </button>
+
+        <button id="challenge-view-tomorrow-btn"
+          class="px-8 py-3 rounded-full font-light text-sm"
+          style="color:#6B5D4D; background: rgba(255,252,248,0.8); border:1px solid rgba(200,180,160,0.4);">
+          View Tomorrow's Challenge
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
   <audio id="breathingSound" preload="auto" loop>
   <source src="https://lvtdqeerzxpznnayccmb.supabase.co/storage/v1/object/public/test-pics/mindsettherapy-2_FiYezlb6.mp3" type="audio/mp4">
 </audio> 
