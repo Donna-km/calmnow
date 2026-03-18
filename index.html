@@ -1220,6 +1220,10 @@
 <button class="calm-button w-full mt-8 text-center" id="playMixBtn">
   <span>Play Your Mix</span>
 </button>
+
+<button class="calm-button w-full mt-3 text-center" id="useMixForChallengeBtn" style="font-size: 0.9rem;">
+  <span>Use for This Challenge</span>
+</button>
    </div>
   </section><!-- Affirmations Section -->
 
@@ -1363,30 +1367,44 @@
 </div>
   <!-- Sound selection -->
   <div class="mb-8">
-    <p class="text-sm font-light mb-3 text-center" style="color: #9B8A78;">
-      Sound for this challenge
-    </p>
+  <p class="text-sm font-light mb-3 text-center" style="color: #9B8A78;">
+    Sound for this challenge
+  </p>
 
-    <div class="flex justify-center">
-      <button
-        id="challenge-choose-sound-btn"
-        class="px-5 py-3 rounded-full text-sm font-light"
-        style="
-          min-width: 260px;
-          background: rgba(255, 252, 248, 0.82);
-          border: 1px solid rgba(200, 180, 160, 0.4);
-          color: #6B5D4D;
-          box-shadow: 0 6px 20px rgba(180, 160, 140, 0.06);
-        "
-      >
-        Selected Sound — Silent
-      </button>
-    </div>
+  <div class="flex flex-col items-center gap-3">
+    <button
+      id="challenge-silent-btn"
+      class="px-5 py-3 rounded-full text-sm font-light"
+      style="
+        min-width: 260px;
+        background: rgba(255, 252, 248, 0.82);
+        border: 1px solid rgba(200, 180, 160, 0.4);
+        color: #6B5D4D;
+        box-shadow: 0 6px 20px rgba(180, 160, 140, 0.06);
+      "
+    >
+      Silent
+    </button>
 
-    <p class="text-xs font-light text-center mt-3" style="color:#A89880;">
-      Choose a sound from the Sounds page.
-    </p>
+    <button
+      id="challenge-choose-sound-btn"
+      class="px-5 py-3 rounded-full text-sm font-light"
+      style="
+        min-width: 260px;
+        background: rgba(255, 252, 248, 0.82);
+        border: 1px solid rgba(200, 180, 160, 0.4);
+        color: #6B5D4D;
+        box-shadow: 0 6px 20px rgba(180, 160, 140, 0.06);
+      "
+    >
+      Selected Sound — Silent
+    </button>
   </div>
+
+  <p class="text-xs font-light text-center mt-3" style="color:#A89880;">
+    Choose a sound from the Sounds page.
+  </p>
+</div>
 
   <!-- Timer -->
 <div class="flex flex-col items-center mb-8">
@@ -1562,7 +1580,8 @@ let currentChallengeDay = null;
 let challengeSelectedSoundId = null;
 let challengeSelectedAudioPath = '';
 let challengeSelectedSoundTitle = 'Silent';
-let challengeAudio = null;   
+let challengeAudio = null;
+let challengeSelectedType = 'silent'; // silent | sound | mix   
 let soundDetailReturnSection = 'sounds';
 
 let challengeCalmMessages = [];
@@ -3076,13 +3095,27 @@ affirmationCard.addEventListener('click', revealAffirmation);
 // =========================
 function updateChallengeSelectedSoundButton() {
   const btn = document.getElementById('challenge-choose-sound-btn');
+  const silentBtn = document.getElementById('challenge-silent-btn');
   if (!btn) return;
 
   const label = challengeSelectedSoundTitle || 'Silent';
   btn.textContent = `Selected Sound — ${label}`;
+
+  if (silentBtn) {
+    if (challengeSelectedType === 'silent') {
+      silentBtn.style.background = 'linear-gradient(135deg, rgba(200,175,145,0.8), rgba(180,155,125,0.9))';
+      silentBtn.style.color = '#FFFCF8';
+      silentBtn.style.border = '1px solid rgba(160,135,105,0.5)';
+    } else {
+      silentBtn.style.background = 'rgba(255, 252, 248, 0.82)';
+      silentBtn.style.color = '#6B5D4D';
+      silentBtn.style.border = '1px solid rgba(200, 180, 160, 0.4)';
+    }
+  }
 }
 
 function setChallengeSound(sound = null) {
+  challengeSelectedType = sound ? 'sound' : 'silent';
   challengeSelectedSoundId = sound?.id ?? null;
   challengeSelectedAudioPath = sound?.audio_path || '';
   challengeSelectedSoundTitle = sound?.title || 'Silent';
@@ -3093,10 +3126,24 @@ function setChallengeSound(sound = null) {
     challengeAudio = null;
   }
 
+  stopCurrentMix();
   updateChallengeSelectedSoundButton();
   prepareChallengeAudio();
 }
+function setChallengeMix() {
+  challengeSelectedType = 'mix';
+  challengeSelectedSoundId = null;
+  challengeSelectedAudioPath = '';
+  challengeSelectedSoundTitle = 'Personal Calm Mix';
 
+  if (challengeAudio) {
+    challengeAudio.pause();
+    challengeAudio.currentTime = 0;
+    challengeAudio = null;
+  }
+
+  updateChallengeSelectedSoundButton();
+}
 function openSoundsForChallenge() {
   soundDetailReturnSection = 'challenge';
 
@@ -3198,6 +3245,11 @@ function openSoundsForChallenge() {
 }
 
 async function startChallengeAudio() {
+  if (challengeSelectedType === 'mix') {
+    await playCurrentMix();
+    return;
+  }
+
   if (!challengeSelectedAudioPath) return;
 
   prepareChallengeAudio();
@@ -3211,13 +3263,12 @@ async function startChallengeAudio() {
   }
 }
 
-function pauseChallengeAudio() {
-  if (challengeAudio && !challengeAudio.paused) {
-    challengeAudio.pause();
+   async function resumeChallengeAudio() {
+  if (challengeSelectedType === 'mix') {
+    await playCurrentMix();
+    return;
   }
-}
 
-async function resumeChallengeAudio() {
   if (!challengeAudio) {
     await startChallengeAudio();
     return;
@@ -3230,7 +3281,22 @@ async function resumeChallengeAudio() {
   }
 }
 
+function pauseChallengeAudio() {
+  if (challengeSelectedType === 'mix') {
+    Object.values(mixAudios).forEach(audio => {
+      if (audio && !audio.paused) audio.pause();
+    });
+    return;
+  }
+
+  if (challengeAudio && !challengeAudio.paused) {
+    challengeAudio.pause();
+  }
+}
+
 function stopChallengeAudio() {
+  stopCurrentMix();
+
   if (challengeAudio) {
     challengeAudio.pause();
     challengeAudio.currentTime = 0;
@@ -3616,6 +3682,34 @@ if (challengeViewTomorrowBtn) {
 const challengeChooseSoundBtn = document.getElementById('challenge-choose-sound-btn');
 if (challengeChooseSoundBtn) {
   challengeChooseSoundBtn.addEventListener('click', openSoundsForChallenge);
+}
+
+   const challengeSilentBtn = document.getElementById('challenge-silent-btn');
+if (challengeSilentBtn) {
+  challengeSilentBtn.addEventListener('click', () => {
+    setChallengeSound(null);
+    showNotification('✓ Silent selected for challenge');
+  });
+}
+   const useMixForChallengeBtn = document.getElementById('useMixForChallengeBtn');
+if (useMixForChallengeBtn) {
+  useMixForChallengeBtn.addEventListener('click', () => {
+    if (!customMixSounds.length) {
+      showNotification('Add sounds to Personal Calm first');
+      return;
+    }
+
+    setChallengeMix();
+    showNotification('✓ Personal Calm Mix selected for challenge');
+
+    Object.values(sections).forEach(s => s.classList.remove('active'));
+    sections.challenge.classList.add('active');
+    hideHomeScreen();
+
+    navItems.forEach(nav => nav.classList.remove('active'));
+    const challengeNav = document.querySelector('.nav-item[data-section="challenge"]');
+    if (challengeNav) challengeNav.classList.add('active');
+  });
 }
 
 initApp();
