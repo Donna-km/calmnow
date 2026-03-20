@@ -1836,6 +1836,9 @@ let currentUser = null;
 
 let currentChallengeDayId = 1;
 let currentChallengeDay = null;
+let challengeProgressRows = [];
+let currentChallengeProgressRow = null;
+let selectedChallengeMixId = null;
 
 let challengeSelectedSoundId = null;
 let challengeSelectedAudioPath = '';
@@ -3446,6 +3449,201 @@ function getAuthOwnerFilter() {
   return { user_id: null, device_id: deviceId };
 }
 
+async function loadChallengeProgressRows() {
+  const owner = getAuthOwnerFilter();
+
+  let query = supabaseClient
+    .from('user_challenge_progress')
+    .select('*')
+    .order('day_number', { ascending: true });
+
+  if (owner.user_id) {
+    query = query.eq('user_id', owner.user_id);
+  } else {
+    query = query.eq('device_id', owner.device_id);
+  }
+
+  const { data, error } = await query;
+
+  if (error) {
+    console.error('loadChallengeProgressRows error:', error);
+    challengeProgressRows = [];
+    return [];
+  }
+
+  challengeProgressRows = data || [];
+  return challengeProgressRows;
+}
+
+function getCompletedChallengeDaysCount() {
+  return challengeProgressRows.filter(row => row.status === 'completed').length;
+}
+
+function getLatestUnlockedOrInProgressDayRow() {
+  const available = challengeProgressRows.filter(row =>
+    row.status === 'unlocked' ||
+    row.status === 'in_progress' ||
+    row.status === 'completed'
+  );
+
+  if (!available.length) return null;
+
+  available.sort((a, b) => a.day_number - b.day_number);
+
+  const inProgress = available.find(row => row.status === 'in_progress');
+  if (inProgress) return inProgress;
+
+  const unlocked = available.find(row => row.status === 'unlocked');
+  if (unlocked) return unlocked;
+
+  return available[available.length - 1];
+}
+
+async function ensureFirstChallengeUnlocked() {
+  const rows = await loadChallengeProgressRows();
+  if (rows.length > 0) return rows;
+
+  const { data: firstDay, error } = await supabaseClient
+    .from('challenge_template_days')
+    .select('*')
+    .eq('day_number', 1)
+    .eq('is_active', true)
+    .order('id', { ascending: true })
+    .limit(1)
+    .single();
+
+  if (error) {
+    console.error('ensureFirstChallengeUnlocked error:', error);
+    return [];
+  }
+
+  const owner = getAuthOwnerFilter();
+
+  const payload = {
+    template_id: firstDay.template_id,
+    challenge_day_id: firstDay.id,
+    day_number: firstDay.day_number,
+    status: 'unlocked',
+    selected_type: 'silent',
+    selected_sound_id: null,
+    selected_mix_id: null,
+    ...(owner.user_id
+      ? { user_id: owner.user_id }
+      : { device_id: owner.device_id })
+  };
+
+  const { error: insertError } = await supabaseClient
+    .from('user_challenge_progress')
+    .insert([payload]);
+
+  if (insertError) {
+    console.error('ensureFirstChallengeUnlocked insert error:', insertError);
+    return [];
+  }
+
+  return await loadChallengeProgressRows();
+}
+
+async function saveChallengeProgressStatus({
+  challengeDayId,
+  templateId,
+  dayNumber,
+  status,
+  selectedType = 'silent',
+  selectedSoundId = null,
+  selectedMixId = null,
+  completedAt = null
+}) {
+  const owner = getAuthOwnerFilter();
+
+  let findQuery = supabaseClient
+    .from('user_challenge_progress')
+    .select('id')
+    .eq('challenge_day_id', challengeDayId);
+
+  if (owner.user_id) {
+    findQuery = findQuery.eq('user_id', owner.user_id);
+  } else {
+    findQuery = findQuery.eq('device_id', owner.device_id);
+  }
+
+  const { data: existingRow, error: findError } = await findQuery.maybeSingle();
+
+  if (findError) {
+    console.error('saveChallengeProgressStatus find error:', findError);
+    return false;
+  }
+
+  const basePayload = {
+    template_id: templateId,
+    challenge_day_id: challengeDayId,
+    day_number: dayNumber,
+    status,
+    selected_type: selectedType,
+    selected_sound_id: selectedType === 'sound' ? selectedSoundId : null,
+    selected_mix_id: selectedType === 'mix' ? selectedMixId : null,
+    completed_at: completedAt
+  };
+
+  if (existingRow?.id) {
+    const { error: updateError } = await supabaseClient
+      .from('user_challenge_progress')
+      .update(basePayload)
+      .eq('id', existingRow.id);
+
+    if (updateError) {
+      console.error('saveChallengeProgressStatus update error:', updateError);
+      return false;
+    }
+  } else {
+    const insertPayload = {
+      ...basePayload,
+      ...(owner.user_id
+        ? { user_id: owner.user_id }
+        : { device_id: owner.device_id })
+    };
+
+    const { error: insertError } = await supabaseClient
+      .from('user_challenge_progress')
+      .insert([insertPayload]);
+
+    if (insertError) {
+      console.error('saveChallengeProgressStatus insert error:', insertError);
+      return false;
+    }
+  }
+
+  await loadChallengeProgressRows();
+  return true;
+}
+
+async function unlockNextChallengeDayInDb() {
+  const nextDay = await loadNextChallengeDay();
+  if (!nextDay) return null;
+
+  await saveChallengeProgressStatus({
+    challengeDayId: nextDay.id,
+    templateId: nextDay.template_id,
+    dayNumber: nextDay.day_number,
+    status: 'unlocked',
+    selectedType: 'silent'
+  });
+
+  return nextDay;
+}
+
+function updateChallengeProgressUI() {
+  const progressFill = document.getElementById('challenge-progress-fill');
+  const progressText = document.getElementById('challenge-progress-text');
+
+  const completedCount = getCompletedChallengeDaysCount();
+  const totalDays = 7;
+  const percent = Math.min((completedCount / totalDays) * 100, 100);
+
+  if (progressFill) progressFill.style.width = `${percent}%`;
+  if (progressText) progressText.textContent = `${completedCount} of ${totalDays} days`;
+}
+
 function updateAuthUI(user) {
   currentUser = user || null;
 
@@ -3508,11 +3706,22 @@ async function handlePostLogin() {
   dbAffirmations = await loadAffirmationsFromSupabase();
   renderCustomMixList();
 
-  if (affirmationText && dbAffirmations.length > 0) {
+    if (affirmationText && dbAffirmations.length > 0) {
     affirmationText.textContent = dbAffirmations[0].text || "I trust the timing of my life.";
   }
 
+  await ensureFirstChallengeUnlocked();
+  const latestRow = getLatestUnlockedOrInProgressDayRow();
+
+  if (latestRow) {
+    currentChallengeDayId = latestRow.challenge_day_id;
+    currentChallengeProgressRow = latestRow;
+  } else {
+    currentChallengeProgressRow = null;
+  }
+
   await loadChallengeDay(currentChallengeDayId);
+  updateChallengeProgressUI();
 }
    
    // =========================
@@ -3552,9 +3761,11 @@ function setChallengeSound(sound = null) {
   }
 
   stopCurrentMix();
+  selectedChallengeMixId = null;
   updateChallengeSelectedSoundButton();
   prepareChallengeAudio();
 }
+  
 function setChallengeMix() {
   challengeSelectedType = 'mix';
   challengeSelectedSoundId = null;
@@ -3750,9 +3961,17 @@ function stopChallengeAudio() {
   document.getElementById('challenge-day-title').textContent =
     data.challenge_title || `Day ${data.day_number || 1}`;
 
-  document.getElementById('challenge-status-badge').textContent =
-    data.status_label || 'Ready';
+    currentChallengeProgressRow =
+    challengeProgressRows.find(row => row.challenge_day_id === data.id) || null;
 
+  document.getElementById('challenge-status-badge').textContent =
+    currentChallengeProgressRow?.status === 'completed'
+      ? 'Completed'
+      : currentChallengeProgressRow?.status === 'in_progress'
+      ? 'In Progress'
+      : currentChallengeProgressRow?.status === 'unlocked'
+      ? 'Unlocked'
+      : (data.status_label || 'Ready');
   document.getElementById('challenge-task-title').textContent =
     data.main_task || '';
 
@@ -3791,15 +4010,45 @@ function stopChallengeAudio() {
     challengeCalmMessages[0];
 
   // challenge sound defaults to Silent
-  setChallengeSound(null);
+    if (currentChallengeProgressRow?.selected_type === 'sound' && currentChallengeProgressRow?.selected_sound_id) {
+    const selectedSound = dbSounds.find(sound => sound.id === currentChallengeProgressRow.selected_sound_id);
+    if (selectedSound) {
+      setChallengeSound(selectedSound);
+    } else {
+      setChallengeSound(null);
+    }
+  } else if (currentChallengeProgressRow?.selected_type === 'mix') {
+    challengeSelectedType = 'mix';
+    challengeSelectedSoundId = null;
+    challengeSelectedAudioPath = '';
+    challengeSelectedSoundTitle = 'Personal Calm Mix';
+    selectedChallengeMixId = currentChallengeProgressRow.selected_mix_id || null;
+    updateChallengeSelectedSoundButton();
+  } else {
+    setChallengeSound(null);
+  }
 
   // ✅ reset ปุ่ม start ทุกครั้งที่โหลด day ใหม่
-  if (challengeStartBtn) {
-    challengeStartBtn.disabled = false;
-    challengeStartBtn.textContent = 'Start Challenge';
-    challengeStartBtn.style.opacity = '1';
-    challengeStartBtn.style.cursor = 'pointer';
+    if (challengeStartBtn) {
+    if (currentChallengeProgressRow?.status === 'completed') {
+      challengeStartBtn.disabled = true;
+      challengeStartBtn.textContent = 'Completed';
+      challengeStartBtn.style.opacity = '0.7';
+      challengeStartBtn.style.cursor = 'default';
+    } else if (currentChallengeProgressRow?.status === 'locked') {
+      challengeStartBtn.disabled = true;
+      challengeStartBtn.textContent = 'Locked';
+      challengeStartBtn.style.opacity = '0.5';
+      challengeStartBtn.style.cursor = 'not-allowed';
+    } else {
+      challengeStartBtn.disabled = false;
+      challengeStartBtn.textContent = 'Start Challenge';
+      challengeStartBtn.style.opacity = '1';
+      challengeStartBtn.style.cursor = 'pointer';
+    }
   }
+
+  updateChallengeProgressUI();
 
   // reset controls
   if (challengeActiveControls) {
