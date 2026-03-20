@@ -1836,6 +1836,8 @@ let currentUser = null;
 
 let currentChallengeDayId = 1;
 let currentChallengeDay = null;
+let currentChallengeTotalDays = 0;
+   
 let challengeProgressRows = [];
 let currentChallengeProgressRow = null;
 let selectedChallengeMixId = null;
@@ -3669,8 +3671,8 @@ function updateChallengeProgressUI() {
   const progressText = document.getElementById('challenge-progress-text');
 
   const completedCount = getCompletedChallengeDaysCount();
-  const totalDays = 7;
-  const percent = Math.min((completedCount / totalDays) * 100, 100);
+  const totalDays = currentChallengeTotalDays;
+  const percent = totalDays > 0 ? Math.min((completedCount / totalDays) * 100, 100) : 0;
 
   if (progressFill) progressFill.style.width = `${percent}%`;
   if (progressText) progressText.textContent = `${completedCount} of ${totalDays} days`;
@@ -3989,6 +3991,18 @@ function stopChallengeAudio() {
   if (!data) return;
 
   currentChallengeDay = data;
+  const { data: templateData, error: templateError } = await supabaseClient
+  .from('challenge_templates')
+  .select('total_days')
+  .eq('id', data.template_id)
+  .single();
+
+if (templateError) {
+  console.error('loadChallengeDay template error:', templateError);
+  return;
+}
+
+currentChallengeTotalDays = templateData.total_days;
 
   // ข้อความบนหน้า
   document.getElementById('challenge-day-title').textContent =
