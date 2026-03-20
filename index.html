@@ -1058,7 +1058,7 @@
 
   <!-- Auth Button -->
   <div class="absolute top-6 right-6 z-20 flex items-center gap-3">
-    <span id="authUserText" class="text-sm" style="color:#A89880; display:none;"></span>
+    <img id="authUserAvatar" class="w-8 h-8 rounded-full" style="display:none;" />
 
     <button
       id="authOpenBtn"
@@ -3452,10 +3452,12 @@ function updateAuthUI(user) {
   if (currentUser) {
     if (authOpenBtn) authOpenBtn.style.display = 'none';
     if (authLogoutBtn) authLogoutBtn.style.display = 'inline-flex';
-    if (authUserText) {
-      authUserText.style.display = 'inline-block';
-      authUserText.textContent = currentUser.email || 'Logged in';
-    }
+   const authUserAvatar = document.getElementById('authUserAvatar');
+
+if (authUserAvatar) {
+  authUserAvatar.style.display = 'inline-block';
+  authUserAvatar.src = currentUser.user_metadata?.avatar_url || '';
+}
   } else {
     if (authOpenBtn) authOpenBtn.style.display = 'inline-flex';
     if (authLogoutBtn) authLogoutBtn.style.display = 'none';
