@@ -1770,7 +1770,7 @@ if (googleLoginBtn) {
     const { error } = await supabaseClient.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin
+        redirectTo: 'https://donna-km.github.io/calmnow/'
       }
     });
 
@@ -1780,6 +1780,19 @@ if (googleLoginBtn) {
     }
   });
 }
+
+   window.addEventListener('load', async () => {
+  const { data, error } = await supabaseClient.auth.getSession();
+
+  if (data.session) {
+    console.log('Logged in:', data.session.user);
+
+    // 👉 ตรงนี้คือเปลี่ยน UI
+    // เช่น ซ่อน login แล้วโชว์หน้า app
+  } else {
+    console.log('Not logged in');
+  }
+});
    
 // sounds state
 let dbSounds = [];
