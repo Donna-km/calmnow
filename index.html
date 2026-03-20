@@ -3616,7 +3616,41 @@ async function saveChallengeProgressStatus({
   await loadChallengeProgressRows();
   return true;
 }
+function isNextDay(completedAt) {
+  if (!completedAt) return false;
 
+  const c = new Date(completedAt);
+  const now = new Date();
+
+  const cDate = new Date(c.getFullYear(), c.getMonth(), c.getDate());
+  const tDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+  return tDate > cDate;
+}
+
+async function unlockNextDayIfDue() {
+  await loadChallengeProgressRows();
+
+  const latest = getLatestUnlockedOrInProgressDayRow();
+  if (!latest) return;
+
+  if (latest.status !== 'completed') return;
+  if (!isNextDay(latest.completed_at)) return;
+
+  const nextDay = await loadNextChallengeDay();
+  if (!nextDay) return;
+
+  await saveChallengeProgressStatus({
+    challengeDayId: nextDay.id,
+    templateId: nextDay.template_id,
+    dayNumber: nextDay.day_number,
+    status: 'unlocked',
+    selectedType: 'silent',
+    selectedSoundId: null,
+    selectedMixId: null,
+    completedAt: null
+  });
+}
 async function unlockNextChallengeDayInDb() {
   const nextDay = await loadNextChallengeDay();
   if (!nextDay) return null;
@@ -3711,6 +3745,7 @@ async function handlePostLogin() {
   }
 
   await ensureFirstChallengeUnlocked();
+  await unlockNextDayIfDue(); 
   const latestRow = getLatestUnlockedOrInProgressDayRow();
 
   if (latestRow) {
@@ -4206,6 +4241,18 @@ function endChallengeEarly() {
 }
 
 function completeChallenge() {
+ if (currentChallengeDay) {
+  saveChallengeProgressStatus({
+    challengeDayId: currentChallengeDay.id,
+    templateId: currentChallengeDay.template_id,
+    dayNumber: currentChallengeDay.day_number,
+    status: 'completed',
+    selectedType: 'silent',
+    selectedSoundId: null,
+    selectedMixId: null,
+    completedAt: new Date().toISOString()
+  });
+}
   clearInterval(challengeTimerInterval);
   challengeTimerInterval = null;
   challengeTimerState = 'idle';
@@ -4289,7 +4336,7 @@ async function showTomorrowsChallenge() {
   currentChallengeDayId = nextDay.id;
   await loadChallengeDay(nextDay.id);
 
-  if (challengeStatusBadge) challengeStatusBadge.textContent = 'Unlocked';
+  if (challengeStatusBadge) challengestatusBadge.textContent = 'Locked';
 
   if (challengeStartBtn) {
     challengeStartBtn.disabled = true;
