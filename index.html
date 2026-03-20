@@ -1054,11 +1054,71 @@
    <div class="light-ray"></div>
    <div class="light-ray"></div>
   </div><!-- Main Screen -->
-  <main id="mainScreen" class="relative h-full flex flex-col items-center justify-center px-6"><!-- Title -->
-   <h1 id="appTitle" class="font-display text-6xl md:text-8xl font-light tracking-wider mb-16 opacity-0 animate-fade-in" style="color: #8B7355; letter-spacing: 0.08em;">Calm Now</h1><!-- Main Button --> <button id="takeAMomentBtn" class="calm-button opacity-0 animate-fade-in delay-200"> <span id="mainButtonText">Take a Moment</span> </button> <!-- Navigation -->
-   <nav class="absolute bottom-6 left-0 w-full flex justify-center gap-3 opacity-0 animate-fade-in delay-400"><button class="nav-item active" data-section="home">Home</button> <button class="nav-item" data-section="sounds">Sounds</button> <button class="nav-item" data-section="personal">Personal</button> <button class="nav-item" data-section="affirmations">Cards</button><button class="nav-item" data-section="challenge">Challenge</button>
-   </nav>
-  </main><!-- Moment Overlay -->
+<main id="mainScreen" class="relative h-full flex flex-col items-center justify-center px-6">
+
+  <!-- Auth Button -->
+  <div class="absolute top-6 right-6 z-20 flex items-center gap-3">
+    <span id="authUserText" class="text-sm" style="color:#A89880; display:none;"></span>
+
+    <button
+      id="authOpenBtn"
+      style="
+        padding: 0.7rem 1.2rem;
+        border-radius: 999px;
+        border: 1px solid rgba(180,165,145,0.35);
+        background: rgba(255,252,247,0.72);
+        backdrop-filter: blur(10px);
+        color: #8B7355;
+        font-family: 'Jost', system-ui, sans-serif;
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+      "
+    >
+      Log in
+    </button>
+
+    <button
+      id="authLogoutBtn"
+      style="
+        display:none;
+        padding: 0.7rem 1.2rem;
+        border-radius: 999px;
+        border: 1px solid rgba(180,165,145,0.25);
+        background: rgba(255,252,247,0.6);
+        backdrop-filter: blur(10px);
+        color: #A89880;
+        font-family: 'Jost', system-ui, sans-serif;
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        cursor: pointer;
+      "
+    >
+      Log out
+    </button>
+  </div>
+
+  <!-- Title -->
+  <h1 id="appTitle" class="font-display text-6xl md:text-8xl font-light tracking-wider mb-16 opacity-0 animate-fade-in" style="color: #8B7355; letter-spacing: 0.08em;">
+    Calm Now
+  </h1>
+
+  <!-- Main Button -->
+  <button id="takeAMomentBtn" class="calm-button opacity-0 animate-fade-in delay-200">
+    <span id="mainButtonText">Take a Moment</span>
+  </button>
+
+  <!-- Navigation -->
+  <nav class="absolute bottom-6 left-0 w-full flex justify-center gap-3 opacity-0 animate-fade-in delay-400">
+    <button class="nav-item active" data-section="home">Home</button>
+    <button class="nav-item" data-section="sounds">Sounds</button>
+    <button class="nav-item" data-section="personal">Personal</button>
+    <button class="nav-item" data-section="affirmations">Cards</button>
+    <button class="nav-item" data-section="challenge">Challenge</button>
+  </nav>
+</main><!-- Moment Overlay -->
   <div id="momentOverlay" class="moment-overlay">
    <div class="breathing-circle">
     <div class="breathing-inner"></div>
@@ -3711,10 +3771,141 @@ if (useMixForChallengeBtn) {
     if (challengeNav) challengeNav.classList.add('active');
   });
 }
-
+   
 initApp();
    
    </script>
+
+  <!-- Auth Modal -->
+<div
+  id="authModal"
+  style="
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.28);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    padding: 1rem;
+  "
+>
+  <div
+    style="
+      width: 100%;
+      max-width: 380px;
+      background: rgba(255,252,247,0.96);
+      border: 1px solid rgba(180,165,145,0.22);
+      border-radius: 24px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+      padding: 1.5rem;
+      backdrop-filter: blur(16px);
+    "
+  >
+    <div class="flex items-center justify-between mb-5">
+      <h3 id="authModalTitle" style="font-family:'Cormorant Garamond', Georgia, serif; font-size:2rem; color:#8B7355; margin:0;">
+        Welcome
+      </h3>
+
+      <button
+        id="authCloseBtn"
+        style="
+          border:none;
+          background:transparent;
+          color:#A89880;
+          font-size:1.3rem;
+          cursor:pointer;
+          line-height:1;
+        "
+      >
+        ×
+      </button>
+    </div>
+
+    <div class="flex gap-2 mb-5">
+      <button
+        id="authTabLogin"
+        style="
+          flex:1;
+          padding:0.7rem 1rem;
+          border-radius:999px;
+          border:1px solid rgba(180,165,145,0.3);
+          background: rgba(180,165,145,0.12);
+          color:#8B7355;
+          cursor:pointer;
+        "
+      >
+        Log in
+      </button>
+
+      <button
+        id="authTabSignup"
+        style="
+          flex:1;
+          padding:0.7rem 1rem;
+          border-radius:999px;
+          border:1px solid rgba(180,165,145,0.22);
+          background: transparent;
+          color:#A89880;
+          cursor:pointer;
+        "
+      >
+        Sign up
+      </button>
+    </div>
+
+    <div class="space-y-3">
+      <input
+        id="authEmailInput"
+        type="email"
+        placeholder="Email"
+        style="
+          width:100%;
+          padding:0.85rem 1rem;
+          border-radius:14px;
+          border:1px solid rgba(180,165,145,0.25);
+          background: rgba(255,255,255,0.7);
+          color:#8B7355;
+          outline:none;
+        "
+      />
+
+      <input
+        id="authPasswordInput"
+        type="password"
+        placeholder="Password"
+        style="
+          width:100%;
+          padding:0.85rem 1rem;
+          border-radius:14px;
+          border:1px solid rgba(180,165,145,0.25);
+          background: rgba(255,255,255,0.7);
+          color:#8B7355;
+          outline:none;
+        "
+      />
+    </div>
+
+    <p
+      id="authStatusText"
+      style="
+        min-height: 24px;
+        margin: 0.9rem 0 0 0;
+        font-size: 0.85rem;
+        color: #A89880;
+        line-height: 1.5;
+      "
+    ></p>
+
+    <button
+      id="authSubmitBtn"
+      class="calm-button w-full mt-4"
+      style="font-size:0.9rem;"
+    >
+      Continue
+    </button>
+  </div>
+</div>
  </body>
 </html>
 
