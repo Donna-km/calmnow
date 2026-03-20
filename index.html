@@ -1781,6 +1781,27 @@ if (googleLoginBtn) {
   });
 }
 
+   async function loadUserProfile() {
+  const { data: { user } } = await supabaseClient.auth.getUser();
+
+  if (!user) return;
+
+  const { data, error } = await supabaseClient
+    .from('profiles')
+    .select('*')
+    .eq('id', user.id)
+    .single();
+
+  if (error) {
+    console.error('Profile error:', error);
+    return;
+  }
+
+  console.log('Profile:', data);
+
+  // 👉 เอาไปใช้ตรง UI
+  renderUserProfile(data);
+}
    window.addEventListener('load', async () => {
   const { data, error } = await supabaseClient.auth.getSession();
 
