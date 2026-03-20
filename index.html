@@ -1738,6 +1738,22 @@
     >
       Continue
     </button>
+<button
+  id="googleLoginBtn"
+  style="
+    width:100%;
+    margin-top:10px;
+    padding:0.8rem;
+    border-radius:999px;
+    border:1px solid rgba(180,165,145,0.25);
+    background:white;
+    color:#444;
+    cursor:pointer;
+  "
+>
+  Continue with Google
+</button>
+   
   </div>
 </div>
   
@@ -1747,7 +1763,24 @@
 const SUPABASE_URL = 'https://foizrwegmdnekaxsahxu.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZvaXpyd2VnbWRuZWtheHNhaHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMjQwODEsImV4cCI6MjA4ODgwMDA4MX0._RbaB-OQd7AS48A3O50-CdQ7UaJZ6KGR8NCz56TUFtA';
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const googleLoginBtn = document.getElementById('googleLoginBtn');   
+   
+if (googleLoginBtn) {
+  googleLoginBtn.addEventListener('click', async () => {
+    const { error } = await supabaseClient.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: window.location.origin
+      }
+    });
 
+    if (error) {
+      console.error('Google login error:', error);
+      showNotification('Google login failed');
+    }
+  });
+}
+   
 // sounds state
 let dbSounds = [];
 let currentCategory = 'sleep-deep';
@@ -4182,7 +4215,8 @@ if (authLogoutBtn) {
 supabaseClient.auth.onAuthStateChange(async (_event, session) => {
   updateAuthUI(session?.user || null);
 });
-   
+
+    
 initApp();
    
    </script>
