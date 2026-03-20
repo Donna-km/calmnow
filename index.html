@@ -3637,7 +3637,19 @@ async function unlockNextDayIfDue() {
   if (latest.status !== 'completed') return;
   if (!isNextDay(latest.completed_at)) return;
 
-  const nextDay = await loadNextChallengeDay();
+  const { data: nextDay, error } = await supabaseClient
+    .from('challenge_template_days')
+    .select('*')
+    .eq('template_id', latest.template_id)
+    .eq('day_number', latest.day_number + 1)
+    .eq('is_active', true)
+    .maybeSingle();
+
+  if (error) {
+    console.error('unlockNextDayIfDue nextDay error:', error);
+    return;
+  }
+
   if (!nextDay) return;
 
   await saveChallengeProgressStatus({
@@ -3650,20 +3662,6 @@ async function unlockNextDayIfDue() {
     selectedMixId: null,
     completedAt: null
   });
-}
-async function unlockNextChallengeDayInDb() {
-  const nextDay = await loadNextChallengeDay();
-  if (!nextDay) return null;
-
-  await saveChallengeProgressStatus({
-    challengeDayId: nextDay.id,
-    templateId: nextDay.template_id,
-    dayNumber: nextDay.day_number,
-    status: 'unlocked',
-    selectedType: 'silent'
-  });
-
-  return nextDay;
 }
 
 function updateChallengeProgressUI() {
@@ -4333,10 +4331,23 @@ async function showTomorrowsChallenge() {
   const nextDay = await loadNextChallengeDay();
   if (!nextDay) return;
 
+  await saveChallengeProgressStatus({
+    challengeDayId: nextDay.id,
+    templateId: nextDay.template_id,
+    dayNumber: nextDay.day_number,
+    status: 'locked',
+    selectedType: 'silent',
+    selectedSoundId: null,
+    selectedMixId: null,
+    completedAt: null
+  });
+
+  await loadChallengeProgressRows();
+
   currentChallengeDayId = nextDay.id;
   await loadChallengeDay(nextDay.id);
 
-  if (challengeStatusBadge) challengestatusBadge.textContent = 'Locked';
+  if (challengeStatusBadge) challengeStatusBadge.textContent = 'Locked';
 
   if (challengeStartBtn) {
     challengeStartBtn.disabled = true;
@@ -4344,7 +4355,6 @@ async function showTomorrowsChallenge() {
     challengeStartBtn.style.opacity = '0.5';
     challengeStartBtn.style.cursor = 'not-allowed';
   }
-
 }
 
    if (challengeStartBtn) {
