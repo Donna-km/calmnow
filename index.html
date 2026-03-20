@@ -1633,6 +1633,8 @@ let personalBackTarget = 'sounds';
 
 let favoriteSoundIds = [];
 let deviceId = localStorage.getItem('calmnow_device_id');
+let authMode = 'login';
+let currentUser = null;   
 
 let currentChallengeDayId = 1;
 let currentChallengeDay = null;
@@ -1856,10 +1858,20 @@ async function ensureCustomMixAudiosReady() {
 }
 
 async function loadSavedMixes() {
-  const { data, error } = await supabaseClient
+  const owner = getAuthOwnerFilter();
+
+  let query = supabaseClient
     .from('user_mixes')
     .select('*')
     .order('created_at', { ascending: false });
+
+  if (owner.user_id) {
+    query = query.eq('user_id', owner.user_id);
+  } else {
+    query = query.eq('device_id', owner.device_id);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error('loadSavedMixes error:', error);
@@ -1899,11 +1911,20 @@ async function loadSoundsFromSupabase() {
   return data || [];
 }
 
-   async function loadFavoritesFromSupabase() {
-  const { data, error } = await supabaseClient
+  async function loadFavoritesFromSupabase() {
+  const owner = getAuthOwnerFilter();
+
+  let query = supabaseClient
     .from('user_favorite_sounds')
-    .select('sound_id')
-    .eq('device_id', deviceId);
+    .select('sound_id');
+
+  if (owner.user_id) {
+    query = query.eq('user_id', owner.user_id);
+  } else {
+    query = query.eq('device_id', owner.device_id);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error('loadFavoritesFromSupabase error:', error);
@@ -1913,7 +1934,7 @@ async function loadSoundsFromSupabase() {
 
   favoriteSoundIds = (data || []).map(row => Number(row.sound_id));
 }
-
+   
 function isFavorite(soundId) {
   return favoriteSoundIds.includes(Number(soundId));
 }
@@ -1921,13 +1942,19 @@ function isFavorite(soundId) {
 async function toggleFavorite(soundId) {
   const id = Number(soundId);
   const alreadyFavorite = isFavorite(id);
+  const owner = getAuthOwnerFilter();
 
   if (alreadyFavorite) {
-    const { error } = await supabaseClient
+    let del = supabaseClient
       .from('user_favorite_sounds')
       .delete()
-      .eq('device_id', deviceId)
       .eq('sound_id', id);
+
+    del = owner.user_id
+      ? del.eq('user_id', owner.user_id)
+      : del.eq('device_id', owner.device_id);
+
+    const { error } = await del;
 
     if (error) {
       console.error('remove favorite error:', error);
@@ -1938,14 +1965,13 @@ async function toggleFavorite(soundId) {
     favoriteSoundIds = favoriteSoundIds.filter(favId => favId !== id);
     showNotification('Removed from Favorites');
   } else {
+    const payload = owner.user_id
+      ? { user_id: owner.user_id, sound_id: id }
+      : { device_id: owner.device_id, sound_id: id };
+
     const { error } = await supabaseClient
       .from('user_favorite_sounds')
-      .insert([
-        {
-          device_id: deviceId,
-          sound_id: id
-        }
-      ]);
+      .insert([payload]);
 
     if (error) {
       console.error('add favorite error:', error);
@@ -2333,27 +2359,34 @@ function renderYourMixOnly() {
     const deleteBtn = mixItem.querySelector('.delete-mix-btn');
 
     deleteBtn.addEventListener('click', async (e) => {
-      e.stopPropagation();
+  e.stopPropagation();
 
-      const ok = confirm(`Delete "${mix.mix_name}" ?`);
-      if (!ok) return;
+  const ok = confirm(`Delete "${mix.mix_name}" ?`);
+  if (!ok) return;
 
-      const { error } = await supabaseClient
-        .from('user_mixes')
-        .delete()
-        .eq('id', mix.id);
+  const owner = getAuthOwnerFilter();
 
-      if (error) {
-        console.error(error);
-        showNotification('Delete failed');
-        return;
-      }
+  let del = supabaseClient
+    .from('user_mixes')
+    .delete()
+    .eq('id', mix.id);
 
-      await loadSavedMixes();
-      renderYourMixOnly();
-      showNotification('✓ Deleted');
-    });
+  del = owner.user_id
+    ? del.eq('user_id', owner.user_id)
+    : del.eq('device_id', owner.device_id);
 
+  const { error } = await del;
+
+  if (error) {
+    console.error(error);
+    showNotification('Delete failed');
+    return;
+  }
+
+  await loadSavedMixes();
+  renderYourMixOnly();
+  showNotification('✓ Deleted');
+});
     mixItem.querySelector('.sound-card').addEventListener('click', () => {
       customMixSounds = mixItems.map(item => ({
         id: item.id,
@@ -2456,16 +2489,21 @@ async function initSoundsPage() {
   confirmBtn.disabled = true;
   confirmBtn.textContent = 'Saving...';
 
-  const mixData = {
-    mix_name: mixName,
-    mix_items: customMixSounds.map(sound => ({
-      id: sound.id,
-      title: sound.title,
-      emoji: sound.emoji || '🎵',
-      audio_path: sound.audio_path || '',
-      volume: parseInt(sound.volume || 0, 10)
-    }))
-  };
+  const owner = getAuthOwnerFilter();
+
+const mixData = {
+  mix_name: mixName,
+  mix_items: customMixSounds.map(sound => ({
+    id: sound.id,
+    title: sound.title,
+    emoji: sound.emoji || '🎵',
+    audio_path: sound.audio_path || '',
+    volume: parseInt(sound.volume || 0, 10)
+  })),
+  ...(owner.user_id
+    ? { user_id: owner.user_id }
+    : { device_id: owner.device_id })
+};
 
   const { error } = await supabaseClient
     .from('user_mixes')
@@ -2669,6 +2707,23 @@ async function initSoundsPage() {
 };
     const backButtons = document.querySelectorAll('[data-back]');
 const mainScreen = document.getElementById('mainScreen');
+// =========================
+// Auth DOM
+// =========================
+const authModal = document.getElementById('authModal');
+const authOpenBtn = document.getElementById('authOpenBtn');
+const authCloseBtn = document.getElementById('authCloseBtn');
+const authLogoutBtn = document.getElementById('authLogoutBtn');
+const authUserText = document.getElementById('authUserText');
+
+const authTabLogin = document.getElementById('authTabLogin');
+const authTabSignup = document.getElementById('authTabSignup');
+const authModalTitle = document.getElementById('authModalTitle');
+
+const authEmailInput = document.getElementById('authEmailInput');
+const authPasswordInput = document.getElementById('authPasswordInput');
+const authSubmitBtn = document.getElementById('authSubmitBtn');
+const authStatusText = document.getElementById('authStatusText');   
 
 function showHomeScreen() {
   if (mainScreen) {
@@ -3137,8 +3192,118 @@ function revealAffirmation() {
 }
 
 affirmationCard.addEventListener('click', revealAffirmation);
+
+// =========================
+// Auth helpers
+// =========================
+function openAuthModal(mode = 'login') {
+  if (!authModal) return;
+  authMode = mode;
+  updateAuthModalUI();
+  authStatusText.textContent = '';
+  authModal.style.display = 'flex';
+
+  setTimeout(() => {
+    if (authEmailInput) authEmailInput.focus();
+  }, 50);
+}
+
+function closeAuthModal() {
+  if (!authModal) return;
+  authModal.style.display = 'none';
+}
+
+function updateAuthModalUI() {
+  const isLogin = authMode === 'login';
+
+  if (authModalTitle) {
+    authModalTitle.textContent = isLogin ? 'Welcome Back' : 'Create Account';
+  }
+
+  if (authSubmitBtn) {
+    authSubmitBtn.textContent = isLogin ? 'Log in' : 'Sign up';
+  }
+
+  if (authTabLogin) {
+    authTabLogin.style.background = isLogin ? 'rgba(180,165,145,0.12)' : 'transparent';
+    authTabLogin.style.color = isLogin ? '#8B7355' : '#A89880';
+    authTabLogin.style.border = isLogin
+      ? '1px solid rgba(180,165,145,0.3)'
+      : '1px solid rgba(180,165,145,0.22)';
+  }
+
+  if (authTabSignup) {
+    authTabSignup.style.background = !isLogin ? 'rgba(180,165,145,0.12)' : 'transparent';
+    authTabSignup.style.color = !isLogin ? '#8B7355' : '#A89880';
+    authTabSignup.style.border = !isLogin
+      ? '1px solid rgba(180,165,145,0.3)'
+      : '1px solid rgba(180,165,145,0.22)';
+  }
+}
+
+function getAuthOwnerFilter() {
+  if (currentUser?.id) {
+    return { user_id: currentUser.id, device_id: null };
+  }
+  return { user_id: null, device_id: deviceId };
+}
+
+function updateAuthUI(user) {
+  currentUser = user || null;
+
+  if (currentUser) {
+    if (authOpenBtn) authOpenBtn.style.display = 'none';
+    if (authLogoutBtn) authLogoutBtn.style.display = 'inline-flex';
+    if (authUserText) {
+      authUserText.style.display = 'inline-block';
+      authUserText.textContent = currentUser.email || 'Logged in';
+    }
+  } else {
+    if (authOpenBtn) authOpenBtn.style.display = 'inline-flex';
+    if (authLogoutBtn) authLogoutBtn.style.display = 'none';
+    if (authUserText) {
+      authUserText.style.display = 'none';
+      authUserText.textContent = '';
+    }
+  }
+}
+
+async function handlePostLogin() {
+  const { data: userData } = await supabaseClient.auth.getUser();
+  currentUser = userData?.user || null;
+  updateAuthUI(currentUser);
+
+  if (currentUser && deviceId) {
+    const { error: claimError } = await supabaseClient.rpc('claim_guest_data', {
+      p_device_id: deviceId
+    });
+
+    if (claimError) {
+      console.error('claim_guest_data error:', claimError);
+    }
+  }
+
+  await loadSavedMixes();
+  await loadFavoritesFromSupabase();
+  renderSoundTabs();
+
+  if (currentCategory === 'your-mix') {
+    renderYourMixOnly();
+  } else if (currentCategory === 'favorites') {
+    renderFavoriteSounds();
+  } else {
+    renderSoundsFromDb(currentCategory);
+  }
+
+  closeAuthModal();
+  showNotification('Logged in successfully');
+}  
    
    async function initApp() {
+  const { data: sessionData } = await supabaseClient.auth.getSession();
+  currentUser = sessionData?.session?.user || null;
+  updateAuthUI(currentUser);
+
   await initSoundsPage();
   dbAffirmations = await loadAffirmationsFromSupabase();
   renderCustomMixList();
@@ -3771,6 +3936,121 @@ if (useMixForChallengeBtn) {
     if (challengeNav) challengeNav.classList.add('active');
   });
 }
+
+   // =========================
+// Auth events
+// =========================
+if (authOpenBtn) {
+  authOpenBtn.addEventListener('click', () => openAuthModal('login'));
+}
+
+if (authCloseBtn) {
+  authCloseBtn.addEventListener('click', closeAuthModal);
+}
+
+if (authModal) {
+  authModal.addEventListener('click', (e) => {
+    if (e.target === authModal) closeAuthModal();
+  });
+}
+
+if (authTabLogin) {
+  authTabLogin.addEventListener('click', () => {
+    authMode = 'login';
+    updateAuthModalUI();
+    authStatusText.textContent = '';
+  });
+}
+
+if (authTabSignup) {
+  authTabSignup.addEventListener('click', () => {
+    authMode = 'signup';
+    updateAuthModalUI();
+    authStatusText.textContent = '';
+  });
+}
+
+if (authSubmitBtn) {
+  authSubmitBtn.addEventListener('click', async () => {
+    const email = authEmailInput.value.trim();
+    const password = authPasswordInput.value.trim();
+
+    if (!email || !password) {
+      authStatusText.textContent = 'Please enter email and password.';
+      return;
+    }
+
+    authSubmitBtn.disabled = true;
+    authSubmitBtn.textContent = authMode === 'login' ? 'Logging in...' : 'Creating...';
+    authStatusText.textContent = '';
+
+    try {
+      if (authMode === 'signup') {
+        const { error } = await supabaseClient.auth.signUp({
+          email,
+          password
+        });
+
+        if (error) throw error;
+
+        authStatusText.textContent = 'Account created. Check your email if confirmation is enabled.';
+      } else {
+        const { error } = await supabaseClient.auth.signInWithPassword({
+          email,
+          password
+        });
+
+        if (error) throw error;
+
+        await handlePostLogin();
+      }
+    } catch (err) {
+      console.error('auth error:', err);
+      authStatusText.textContent = err.message || 'Something went wrong.';
+    } finally {
+      authSubmitBtn.disabled = false;
+      authSubmitBtn.textContent = authMode === 'login' ? 'Log in' : 'Sign up';
+    }
+  });
+}
+
+if (authPasswordInput) {
+  authPasswordInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') authSubmitBtn.click();
+  });
+}
+
+if (authLogoutBtn) {
+  authLogoutBtn.addEventListener('click', async () => {
+    const { error } = await supabaseClient.auth.signOut();
+
+    if (error) {
+      console.error('logout error:', error);
+      showNotification('Could not log out');
+      return;
+    }
+
+    updateAuthUI(null);
+
+    await loadSavedMixes();
+    await loadFavoritesFromSupabase();
+    renderSoundTabs();
+
+    if (currentCategory === 'your-mix') {
+      renderYourMixOnly();
+    } else if (currentCategory === 'favorites') {
+      renderFavoriteSounds();
+    } else {
+      renderSoundsFromDb(currentCategory);
+    }
+
+    showNotification('Logged out');
+  });
+}
+
+supabaseClient.auth.onAuthStateChange(async (_event, session) => {
+  updateAuthUI(session?.user || null);
+});
    
 initApp();
    
