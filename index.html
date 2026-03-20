@@ -4238,9 +4238,9 @@ function endChallengeEarly() {
   if (challengeStatusBadge) challengeStatusBadge.textContent = 'Ready';
 }
 
-function completeChallenge() {
- if (currentChallengeDay) {
-  saveChallengeProgressStatus({
+async function completeChallenge() {
+if (currentChallengeDay) {
+  await saveChallengeProgressStatus({
     challengeDayId: currentChallengeDay.id,
     templateId: currentChallengeDay.template_id,
     dayNumber: currentChallengeDay.day_number,
@@ -4250,6 +4250,8 @@ function completeChallenge() {
     selectedMixId: null,
     completedAt: new Date().toISOString()
   });
+
+  await loadChallengeProgressRows();
 }
   clearInterval(challengeTimerInterval);
   challengeTimerInterval = null;
@@ -4264,12 +4266,7 @@ function completeChallenge() {
     challengeStatusBadge.textContent = 'Completed';
   }
 
-  const progressFill = document.getElementById('challenge-progress-fill');
-  const progressText = document.getElementById('challenge-progress-text');
-
-  // ตอนนี้ทำแบบง่ายก่อน: จบ Day 1 = 1 of 7
-  if (progressFill) progressFill.style.width = '14.2857%';
-  if (progressText) progressText.textContent = '1 of 7 days';
+  updateChallengeProgressUI();
 
   if (challengeCompletedDay && currentChallengeDay) {
     challengeCompletedDay.textContent =
@@ -4316,11 +4313,7 @@ function hideChallengeCompletion() {
     challengePauseBtn.textContent = 'Pause';
   }
 
-  const progressFill = document.getElementById('challenge-progress-fill');
-  const progressText = document.getElementById('challenge-progress-text');
-
-  if (progressFill) progressFill.style.width = '14.2857%';
-  if (progressText) progressText.textContent = '1 of 7 days';
+  updateChallengeProgressUI();
 }
 
 async function showTomorrowsChallenge() {
