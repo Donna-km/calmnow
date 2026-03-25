@@ -1425,6 +1425,58 @@
   </p>
 
 </div>
+
+  <!-- Choose time -->
+<div class="mb-8">
+  <p class="text-sm font-light mb-3 text-center" style="color: #9B8A78;">
+    Choose your time
+  </p>
+
+  <div id="challenge-time-options" class="flex flex-wrap justify-center gap-3">
+    <button class="challenge-time-btn active px-5 py-2.5 rounded-full text-sm font-light" data-seconds="180"
+      style="background: linear-gradient(135deg, rgba(200,175,145,0.8), rgba(180,155,125,0.9)); color:#FFFCF8; border:1px solid rgba(160,135,105,0.5);">
+      3 min
+    </button>
+
+    <button class="challenge-time-btn px-5 py-2.5 rounded-full text-sm font-light" data-seconds="300"
+      style="background: rgba(255,252,248,0.82); color:#6B5D4D; border:1px solid rgba(200,180,160,0.4);">
+      5 min
+    </button>
+
+    <button class="challenge-time-btn px-5 py-2.5 rounded-full text-sm font-light" data-seconds="600"
+      style="background: rgba(255,252,248,0.82); color:#6B5D4D; border:1px solid rgba(200,180,160,0.4);">
+      10 min
+    </button>
+
+    <button class="challenge-time-btn px-5 py-2.5 rounded-full text-sm font-light" data-seconds="900"
+      style="background: rgba(255,252,248,0.82); color:#6B5D4D; border:1px solid rgba(200,180,160,0.4);">
+      15 min
+    </button>
+  </div>
+</div>
+
+  <!-- Choose mode -->
+<div class="mb-8">
+  <p class="text-sm font-light mb-3 text-center" style="color: #9B8A78;">
+    How would you like to sit today?
+  </p>
+
+  <div id="challenge-mode-options" class="flex flex-wrap justify-center gap-3">
+
+    <button class="challenge-mode-btn active px-5 py-2.5 rounded-full text-sm font-light"
+      data-mode="feel"
+      style="background: linear-gradient(135deg, rgba(200,175,145,0.8), rgba(180,155,125,0.9)); color:#FFFCF8; border:1px solid rgba(160,135,105,0.5);">
+      Feel the time
+    </button>
+
+    <button class="challenge-mode-btn px-5 py-2.5 rounded-full text-sm font-light"
+      data-mode="see"
+      style="background: rgba(255,252,248,0.82); color:#6B5D4D; border:1px solid rgba(200,180,160,0.4);">
+      See the time
+    </button>
+
+  </div>
+</div>
   <!-- Sound selection -->
   <div class="mb-8">
   <p class="text-sm font-light mb-3 text-center" style="color: #9B8A78;">
@@ -1854,6 +1906,8 @@ let challengeCalmMessageIndex = 0;
 
 let challengeTotalSeconds = 300;
 let challengeRemainingSeconds = 300;
+let challengeSelectedSeconds = 180;
+let challengeTimerMode = 'feel'; // feel | see
 
 let challengeTimerState = 'idle'; // idle, running, paused
 let challengeTimerInterval = null;
@@ -4375,6 +4429,29 @@ if (challengePauseBtn) {
 if (challengeEndBtn) {
   challengeEndBtn.addEventListener('click', endChallengeEarly);
 }
+
+   document.querySelectorAll('.challenge-time-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    challengeSelectedSeconds = parseInt(btn.dataset.seconds, 10);
+    setChallengeTimeButtonStyles(btn);
+
+    const durationEl = document.getElementById('challenge-card-duration');
+    if (durationEl) {
+      durationEl.textContent = `${Math.ceil(challengeSelectedSeconds / 60)} minute practice`;
+    }
+
+    console.log('Selected time:', challengeSelectedSeconds);
+  });
+});
+
+document.querySelectorAll('.challenge-mode-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    challengeTimerMode = btn.dataset.mode;
+    setChallengeModeButtonStyles(btn);
+
+    console.log('Selected mode:', challengeTimerMode);
+  });
+});
    
   function formatChallengeTime(seconds) {
   const mins = Math.floor(seconds / 60);
@@ -4382,6 +4459,33 @@ if (challengeEndBtn) {
   return `${mins}:${String(secs).padStart(2, '0')}`;
 }
 
+   function setChallengeTimeButtonStyles(activeBtn) {
+  document.querySelectorAll('.challenge-time-btn').forEach(btn => {
+    btn.style.background = 'rgba(255,252,248,0.82)';
+    btn.style.color = '#6B5D4D';
+    btn.style.border = '1px solid rgba(200,180,160,0.4)';
+    btn.classList.remove('active');
+  });
+
+  activeBtn.style.background = 'linear-gradient(135deg, rgba(200,175,145,0.8), rgba(180,155,125,0.9))';
+  activeBtn.style.color = '#FFFCF8';
+  activeBtn.style.border = '1px solid rgba(160,135,105,0.5)';
+  activeBtn.classList.add('active');
+}
+
+function setChallengeModeButtonStyles(activeBtn) {
+  document.querySelectorAll('.challenge-mode-btn').forEach(btn => {
+    btn.style.background = 'rgba(255,252,248,0.82)';
+    btn.style.color = '#6B5D4D';
+    btn.style.border = '1px solid rgba(200,180,160,0.4)';
+    btn.classList.remove('active');
+  });
+
+  activeBtn.style.background = 'linear-gradient(135deg, rgba(200,175,145,0.8), rgba(180,155,125,0.9))';
+  activeBtn.style.color = '#FFFCF8';
+  activeBtn.style.border = '1px solid rgba(160,135,105,0.5)';
+  activeBtn.classList.add('active');
+}
 function formatActivityTitle(activityType) {
   const map = {
     meditation: 'Meditation',
