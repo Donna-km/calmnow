@@ -1381,19 +1381,8 @@
     </span>
   </header>
 
-  <!-- Main task -->
-  <section class="text-center mb-6">
-    <h2 id="challenge-task-title" class="font-display text-2xl font-normal leading-relaxed mb-3" style="color: #4A3F32;">
-      Sit in silence for 5 minutes
-    </h2>
-
-    <p id="challenge-supportive-text" class="font-light text-base" style="color: #9B8A78;">
-      Take a moment to return to yourself.
-    </p>
-  </section>
-
-  <!-- Detail card -->
-<div class="rounded-3xl p-6 mb-6"
+ <!-- Detail card -->
+<div class="rounded-3xl p-8 mb-6 text-center"
   style="
     background: rgba(255, 253, 250, 0.65);
     backdrop-filter: blur(20px);
@@ -1401,30 +1390,21 @@
     box-shadow: 0 4px 24px rgba(180, 160, 140, 0.08);
   ">
 
-  <div class="flex items-center gap-3 mb-4">
-    <div class="w-10 h-10 rounded-full flex items-center justify-center"
-      style="background: linear-gradient(135deg, rgba(200, 175, 145, 0.3) 0%, rgba(180, 155, 125, 0.2) 100%);">
-      <span style="color: #8B7355; font-size: 18px;">✦</span>
-    </div>
+  <p id="challenge-card-title"
+    class="font-display text-2xl font-normal leading-relaxed mb-3"
+    style="color: #4A3F32;">
+    Stay for as long as feels right today
+  </p>
 
-    <div>
-      <p id="challenge-card-title" class="font-display text-lg" style="color: #5C4D3C;">
-        Mindful Silence
-      </p>
-
-      <p id="challenge-card-duration" class="text-sm font-light" style="color: #9B8A78;">
-        5 minute practice
-      </p>
-    </div>
-  </div>
-
-  <p id="challenge-instruction-text"
-     class="text-sm font-light leading-relaxed"
-     style="color: #7A6B5A;">
-     Find a quiet space. Close your eyes. Let thoughts pass like clouds. Return to stillness.
+  <p id="challenge-card-duration"
+    class="text-base font-light"
+    style="color: #9B8A78;">
+    Use feeling, not time.
   </p>
 
 </div>
+  
+ 
 
   <!-- Choose time -->
 <div class="mb-8">
@@ -4093,41 +4073,44 @@ if (templateError) {
 currentChallengeTotalDays = templateData.total_days;
 
   // ข้อความบนหน้า
-  document.getElementById('challenge-day-title').textContent =
-    data.challenge_title || `Day ${data.day_number || 1}`;
+document.getElementById('challenge-day-title').textContent =
+  data.challenge_title || `Day ${data.day_number || 1}`;
 
-    currentChallengeProgressRow =
-    challengeProgressRows.find(row => row.challenge_day_id === data.id) || null;
+currentChallengeProgressRow =
+  challengeProgressRows.find(row => row.challenge_day_id === data.id) || null;
 
-  document.getElementById('challenge-status-badge').textContent =
-    currentChallengeProgressRow?.status === 'completed'
-      ? 'Completed'
-      : currentChallengeProgressRow?.status === 'in_progress'
-      ? 'In Progress'
-      : currentChallengeProgressRow?.status === 'unlocked'
-      ? 'Unlocked'
-      : (data.status_label || 'Ready');
-  document.getElementById('challenge-task-title').textContent =
-    data.main_task || '';
+document.getElementById('challenge-status-badge').textContent =
+  currentChallengeProgressRow?.status === 'completed'
+    ? 'Completed'
+    : currentChallengeProgressRow?.status === 'in_progress'
+    ? 'In Progress'
+    : currentChallengeProgressRow?.status === 'unlocked'
+    ? 'Unlocked'
+    : (data.status_label || 'Ready');
 
-  document.getElementById('challenge-supportive-text').textContent =
-    data.supportive_text || '';
 
-  document.getElementById('challenge-card-title').textContent =
-    data.activity_type
-      ? formatActivityTitle(data.activity_type)
-      : 'Calm Practice';
+// ❌ เอาพวกนี้ออกจากด้านบน (ไม่ใช้แล้ว)
+document.getElementById('challenge-task-title').textContent = '';
+document.getElementById('challenge-supportive-text').textContent = '';
 
-  document.getElementById('challenge-instruction-text').textContent =
-    data.instruction_text || '';
 
-  // เวลา
-  challengeTotalSeconds = data.default_duration_seconds || 300;
-  challengeRemainingSeconds = challengeTotalSeconds;
+// ✅ เอาข้อความมาใส่ใน "กรอบ" แทน
+document.getElementById('challenge-card-title').textContent =
+  data.main_task || 'Stay for as long as feels right today';
 
-  document.getElementById('challenge-card-duration').textContent =
-    `${Math.ceil(challengeTotalSeconds / 60)} minute practice`;
+document.getElementById('challenge-card-duration').textContent =
+  data.supportive_text || 'Use feeling, not time.';
 
+
+// ❌ ลบ instruction
+document.getElementById('challenge-instruction-text').textContent = '';
+
+
+// เวลา (ยังใช้ได้ปกติ)
+challengeTotalSeconds = data.default_duration_seconds || 300;
+challengeRemainingSeconds = challengeTotalSeconds;
+
+    
   // calm messages
   if (Array.isArray(data.calm_messages) && data.calm_messages.length > 0) {
     challengeCalmMessages = data.calm_messages;
@@ -4557,11 +4540,11 @@ function initChallengeUI() {
 
   if (dayTitle) dayTitle.textContent = 'Challenge';
   if (statusBadge) statusBadge.textContent = 'Ready';
-  if (taskTitle) taskTitle.textContent = 'Stay for as long as feels right today';
-  if (supportiveText) supportiveText.textContent = 'Use feeling, not time.';
-  if (cardTitle) cardTitle.textContent = 'Honest Timer';
-  if (cardDuration) cardDuration.textContent = '3 minute practice';
-  if (instructionText) instructionText.textContent = 'Sit quietly. Don’t count. Just notice.';
+  if (taskTitle) taskTitle.textContent = '';
+  if (supportiveText) supportiveText.textContent = '';
+  if (cardTitle) cardTitle.textContent = 'Stay for as long as feels right today';
+  if (cardDuration) cardDuration.textContent = 'Use feeling, not time.';
+  if (instructionText) instructionText.textContent = '';
 
   if (progressText) progressText.textContent = 'No moments yet';
   if (progressFill) progressFill.style.width = '0%';
