@@ -1621,6 +1621,48 @@
   </div>
 </section>
 
+<section id="progressSection" class="section-panel">
+  <button class="back-button" data-back>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8B7355" stroke-width="1.5">
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+  </button>
+
+  <div class="max-w-md mx-auto pt-16">
+    <h2 class="font-display text-3xl font-light text-center mb-2" style="color: #8B7355;">
+      Your Moments
+    </h2>
+
+    <p class="text-center text-sm mb-8" style="color: #A89880;">
+      A gentle record of the moments you returned
+    </p>
+
+    <div class="rounded-2xl p-5 mb-4"
+      style="background: rgba(255, 253, 250, 0.65); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.5);">
+      <div class="flex items-center justify-between">
+        <p class="font-display text-lg" style="color:#5C4D3C;">Today</p>
+        <p id="progress-today" class="text-sm font-light" style="color:#9B8A78;">—</p>
+      </div>
+    </div>
+
+    <div class="rounded-2xl p-5 mb-4"
+      style="background: rgba(255, 253, 250, 0.65); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.5);">
+      <div class="flex items-center justify-between">
+        <p class="font-display text-lg" style="color:#5C4D3C;">Last time</p>
+        <p id="progress-last" class="text-sm font-light" style="color:#9B8A78;">—</p>
+      </div>
+    </div>
+
+    <div class="rounded-2xl p-5"
+      style="background: rgba(255, 253, 250, 0.65); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.5);">
+      <div class="flex items-center justify-between">
+        <p class="font-display text-lg" style="color:#5C4D3C;">Longest moment</p>
+        <p id="progress-best" class="text-sm font-light" style="color:#9B8A78;">—</p>
+      </div>
+    </div>
+  </div>
+</section>
+  
   <div id="challenge-completion-overlay" class="hidden fixed inset-0 z-50 flex items-center justify-center"
      style="background: radial-gradient(circle at center, rgba(255,252,245,0.98) 0%, rgba(253,248,240,0.96) 30%, rgba(250,244,235,0.94) 60%, rgba(248,242,232,0.92) 100%);">
   <div class="relative flex flex-col items-center justify-center p-8">
@@ -2964,7 +3006,8 @@ const mixData = {
   soundDetail: document.getElementById('soundDetailSection'),
   personal: document.getElementById('personalSection'),
   affirmations: document.getElementById('affirmationsSection'),
-  challenge: document.getElementById('challengeSection')
+  challenge: document.getElementById('challengeSection'),
+  progress: document.getElementById('progressSection')
 };
     const backButtons = document.querySelectorAll('[data-back]');
 const mainScreen = document.getElementById('mainScreen');
@@ -3802,20 +3845,7 @@ async function handlePostLogin() {
     affirmationText.textContent = dbAffirmations[0].text || "I trust the timing of my life.";
   }
 
-  await ensureFirstChallengeUnlocked();
-  await unlockNextDayIfDue(); 
-  const latestRow = getLatestUnlockedOrInProgressDayRow();
-
-  if (latestRow) {
-    currentChallengeDayId = latestRow.challenge_day_id;
-    currentChallengeProgressRow = latestRow;
-  } else {
-    currentChallengeProgressRow = null;
-  }
-
-  await loadChallengeDay(currentChallengeDayId);
-  updateChallengeProgressUI();
-}
+  initChallengeUI();
    
    // =========================
 // Challenge sound selection
@@ -4332,7 +4362,7 @@ function endChallengeEarly() {
       revealSubtextEl.textContent = 'You stayed longer than you thought.';
     }
   }
-
+  updateProgressUI(challengeElapsedSeconds);
   createChallengeBloomEffects();
 
   if (challengeContinueBtn) {
@@ -4396,37 +4426,19 @@ function hideChallengeCompletion() {
     challengeCompletionOverlay.classList.add('hidden');
   }
 
-  clearInterval(challengeTimerInterval);
-  challengeTimerInterval = null;
-  challengeTimerState = 'idle';
-
-  challengeRemainingSeconds = 0;
-  updateChallengeTimerDisplay();
-  updateChallengeTimerRing();
+  resetChallengeTimer();
 
   if (challengeStatusBadge) {
-    challengeStatusBadge.textContent = 'Completed';
+    challengeStatusBadge.textContent = 'Ready';
   }
 
   if (challengeStartBtn) {
-    challengeStartBtn.disabled = true;
-    challengeStartBtn.textContent = 'Completed';
-    challengeStartBtn.style.opacity = '0.7';
-    challengeStartBtn.style.cursor = 'default';
+    challengeStartBtn.disabled = false;
+    challengeStartBtn.textContent = 'Start Moment';
+    challengeStartBtn.style.opacity = '1';
+    challengeStartBtn.style.cursor = 'pointer';
   }
-
-  if (challengeActiveControls) {
-    challengeActiveControls.classList.add('hidden');
-    challengeActiveControls.classList.remove('flex');
-  }
-
-  if (challengePauseBtn) {
-    challengePauseBtn.textContent = 'Pause';
-  }
-
-  updateChallengeProgressUI();
 }
-
 async function showTomorrowsChallenge() {
   if (challengeCompletionOverlay) {
     challengeCompletionOverlay.classList.add('hidden');
@@ -4502,6 +4514,90 @@ document.querySelectorAll('.challenge-mode-btn').forEach(btn => {
   return `${mins}:${String(secs).padStart(2, '0')}`;
 }
 
+    let lastMomentSeconds = null;
+let bestMomentSeconds = 0;
+
+function updateProgressUI(actualSeconds) {
+  const todayEl = document.getElementById('progress-today');
+  const lastEl = document.getElementById('progress-last');
+  const bestEl = document.getElementById('progress-best');
+  const challengeProgressText = document.getElementById('challenge-progress-text');
+  const challengeProgressFill = document.getElementById('challenge-progress-fill');
+
+  if (todayEl) todayEl.textContent = formatChallengeTime(actualSeconds);
+  if (lastEl) lastEl.textContent = lastMomentSeconds ? formatChallengeTime(lastMomentSeconds) : '—';
+
+  bestMomentSeconds = Math.max(bestMomentSeconds, actualSeconds);
+  if (bestEl) bestEl.textContent = formatChallengeTime(bestMomentSeconds);
+
+  lastMomentSeconds = actualSeconds;
+
+  if (challengeProgressText) {
+    challengeProgressText.textContent = `${formatChallengeTime(actualSeconds)} today`;
+  }
+
+  if (challengeProgressFill) {
+    const percent = Math.min((actualSeconds / challengeSelectedSeconds) * 100, 100);
+    challengeProgressFill.style.width = `${percent}%`;
+  }
+}
+function initChallengeUI() {
+  currentChallengeDay = null;
+  currentChallengeProgressRow = null;
+
+  const dayTitle = document.getElementById('challenge-day-title');
+  const statusBadge = document.getElementById('challenge-status-badge');
+  const taskTitle = document.getElementById('challenge-task-title');
+  const supportiveText = document.getElementById('challenge-supportive-text');
+  const cardTitle = document.getElementById('challenge-card-title');
+  const cardDuration = document.getElementById('challenge-card-duration');
+  const instructionText = document.getElementById('challenge-instruction-text');
+  const progressText = document.getElementById('challenge-progress-text');
+  const progressFill = document.getElementById('challenge-progress-fill');
+
+  if (dayTitle) dayTitle.textContent = 'Challenge';
+  if (statusBadge) statusBadge.textContent = 'Ready';
+  if (taskTitle) taskTitle.textContent = 'Stay for as long as feels right today';
+  if (supportiveText) supportiveText.textContent = 'Use feeling, not time.';
+  if (cardTitle) cardTitle.textContent = 'Honest Timer';
+  if (cardDuration) cardDuration.textContent = '3 minute practice';
+  if (instructionText) instructionText.textContent = 'Sit quietly. Don’t count. Just notice.';
+
+  if (progressText) progressText.textContent = 'No moments yet';
+  if (progressFill) progressFill.style.width = '0%';
+
+  challengeSelectedSeconds = 180;
+  challengeTimerMode = 'feel';
+  challengeCalmMessages = ['Breathe softly', 'Stay here', 'This moment is enough'];
+  challengeSelectedType = 'silent';
+  challengeSelectedSoundId = null;
+  challengeSelectedAudioPath = '';
+  challengeSelectedSoundTitle = 'Silent';
+
+  setChallengeSound(null);
+  updateChallengeSelectedSoundButton();
+  resetChallengeTimer();
+
+  document.querySelectorAll('.challenge-time-btn').forEach(btn => {
+    if (parseInt(btn.dataset.seconds, 10) === 180) {
+      setChallengeTimeButtonStyles(btn);
+    }
+  });
+
+  document.querySelectorAll('.challenge-mode-btn').forEach(btn => {
+    if (btn.dataset.mode === 'feel') {
+      setChallengeModeButtonStyles(btn);
+    }
+  });
+
+  if (challengeStartBtn) {
+    challengeStartBtn.disabled = false;
+    challengeStartBtn.textContent = 'Start Moment';
+    challengeStartBtn.style.opacity = '1';
+    challengeStartBtn.style.cursor = 'pointer';
+  }
+}
+   
    function setChallengeTimeButtonStyles(activeBtn) {
   document.querySelectorAll('.challenge-time-btn').forEach(btn => {
     btn.style.background = 'rgba(255,252,248,0.82)';
@@ -4561,7 +4657,17 @@ function formatActivityTitle(activityType) {
 }
 
 if (challengeViewTomorrowBtn) {
-  challengeViewTomorrowBtn.addEventListener('click', showTomorrowsChallenge);
+  challengeViewTomorrowBtn.addEventListener('click', () => {
+    if (challengeCompletionOverlay) {
+      challengeCompletionOverlay.classList.add('hidden');
+    }
+
+    Object.values(sections).forEach(s => s.classList.remove('active'));
+    sections.progress.classList.add('active');
+    hideHomeScreen();
+
+    navItems.forEach(nav => nav.classList.remove('active'));
+  });
 }
 
 const challengeChooseSoundBtn = document.getElementById('challenge-choose-sound-btn');
