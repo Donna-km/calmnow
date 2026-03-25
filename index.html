@@ -1632,12 +1632,14 @@
       </p>
 
       <p class="font-light text-lg mb-2" style="color:#7A6B5A;">
-        You completed <span id="challenge-completed-day">Day 1</span>
-      </p>
+  You thought: <span id="challenge-chosen-time"></span>
+</p>
 
-      <p class="font-light text-base mb-10" style="color:#9B8A78;">
-        Day 2 is now unlocked.
-      </p>
+<p id="challenge-reveal-text" class="font-light text-base mb-3" style="color:#9B8A78;">
+</p>
+
+<p id="challenge-reveal-subtext" class="font-light text-sm mb-10" style="color:#B09F8C;">
+</p>
 
       <div class="flex flex-col gap-3 w-64">
         <button id="challenge-continue-btn"
@@ -4298,24 +4300,53 @@ function endChallengeEarly() {
   challengeTimerInterval = null;
 
   challengeTimerState = 'idle';
-  challengeRemainingSeconds = challengeTotalSeconds;
 
-  updateChallengeTimerDisplay();
-  updateChallengeTimerRing();
+  const chosenMinutes = Math.ceil(challengeSelectedSeconds / 60);
+  const actualTime = formatChallengeTime(challengeElapsedSeconds);
 
-  if (challengeCalmMessageEl) {
-    challengeCalmMessageEl.textContent =
-      challengeCalmMessages[0] || 'Breathe softly';
+  const chosenTimeEl = document.getElementById('challenge-chosen-time');
+  const revealTextEl = document.getElementById('challenge-reveal-text');
+  const revealSubtextEl = document.getElementById('challenge-reveal-subtext');
+  const completionTitle = document.getElementById('challenge-completion-title');
+
+  if (completionTitle) {
+    completionTitle.textContent = 'Beautiful.';
   }
 
-  if (challengeStartBtn) challengeStartBtn.classList.remove('hidden');
-  if (challengeActiveControls) {
-    challengeActiveControls.classList.add('hidden');
-    challengeActiveControls.classList.remove('flex');
+  if (chosenTimeEl) {
+    chosenTimeEl.textContent = `${chosenMinutes} min`;
   }
 
-  if (challengePauseBtn) challengePauseBtn.textContent = 'Pause';
-  if (challengeStatusBadge) challengeStatusBadge.textContent = 'Ready';
+  if (revealTextEl) {
+    revealTextEl.textContent = `You stayed: ${actualTime}`;
+  }
+
+  if (revealSubtextEl) {
+    if (challengeElapsedSeconds <= 90) {
+      revealSubtextEl.textContent = 'It felt longer, didn’t it?';
+    } else if (challengeElapsedSeconds < challengeSelectedSeconds) {
+      revealSubtextEl.textContent = 'Your mind had other ideas.';
+    } else if (challengeElapsedSeconds === challengeSelectedSeconds) {
+      revealSubtextEl.textContent = 'Right on the feeling.';
+    } else {
+      revealSubtextEl.textContent = 'You stayed longer than you thought.';
+    }
+  }
+
+  createChallengeBloomEffects();
+
+  if (challengeContinueBtn) {
+    challengeContinueBtn.classList.remove('hidden');
+    challengeContinueBtn.textContent = 'Continue';
+  }
+
+  if (challengeViewTomorrowBtn) {
+    challengeViewTomorrowBtn.textContent = 'See Your Moments';
+  }
+
+  if (challengeCompletionOverlay) {
+    challengeCompletionOverlay.classList.remove('hidden');
+  }
 }
 
 async function completeChallenge() {
