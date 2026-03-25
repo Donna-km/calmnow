@@ -1906,6 +1906,8 @@ let challengeCalmMessageIndex = 0;
 
 let challengeTotalSeconds = 300;
 let challengeRemainingSeconds = 300;
+let challengeElapsedSeconds = 0;
+   
 let challengeSelectedSeconds = 180;
 let challengeTimerMode = 'feel'; // feel | see
 
@@ -4203,33 +4205,35 @@ function startChallengeTimer() {
   if (challengeTimerState === 'running') return;
 
   challengeTimerState = 'running';
-  if (challengePauseBtn && challengePauseBtn.textContent === 'Resume') {
-  resumeChallengeAudio();
-} else {
+  challengeElapsedSeconds = 0;
+
   startChallengeAudio();
-}
 
   if (challengeStartBtn) challengeStartBtn.classList.add('hidden');
+
   if (challengeActiveControls) {
     challengeActiveControls.classList.remove('hidden');
     challengeActiveControls.classList.add('flex');
   }
-  if (challengePauseBtn) challengePauseBtn.textContent = 'Pause';
+
   if (challengeStatusBadge) challengeStatusBadge.textContent = 'In Progress';
 
   challengeTimerInterval = setInterval(() => {
-    challengeRemainingSeconds--;
+    challengeElapsedSeconds++;
 
-   updateChallengeTimerDisplay();
-   updateChallengeTimerRing();
+    // ถ้า user เลือก See the time → โชว์เวลา
+    if (challengeTimerMode === 'see') {
+      challengeTimerDisplay.textContent = formatChallengeTime(challengeElapsedSeconds);
+    } else {
+      // ถ้า Feel → ไม่โชว์เวลา
+      challengeTimerDisplay.textContent = '';
+    }
 
-    if (challengeRemainingSeconds > 0 && challengeRemainingSeconds % 8 === 0) {
+    // calm message หมุนไปเรื่อย ๆ
+    if (challengeElapsedSeconds > 0 && challengeElapsedSeconds % 8 === 0) {
       rotateChallengeCalmMessage();
     }
 
-   if (challengeRemainingSeconds <= 0) {
-  completeChallenge();
-}
   }, 1000);
 }
 
@@ -4257,23 +4261,31 @@ function resetChallengeTimer() {
   challengeTimerInterval = null;
 
   challengeTimerState = 'idle';
-  challengeRemainingSeconds = challengeTotalSeconds;
+  challengeElapsedSeconds = 0;
   challengeCalmMessageIndex = 0;
 
-  updateChallengeTimerDisplay();
+  if (challengeTimerMode === 'see') {
+    challengeTimerDisplay.textContent = formatChallengeTime(0);
+  } else {
+    challengeTimerDisplay.textContent = '';
+  }
+
   updateChallengeTimerRing();
+
   if (challengeCalmMessageEl) {
     challengeCalmMessageEl.textContent =
       challengeCalmMessages[0] || 'Breathe softly';
   }
 
   if (challengeStartBtn) challengeStartBtn.classList.remove('hidden');
+
   if (challengeActiveControls) {
     challengeActiveControls.classList.add('hidden');
     challengeActiveControls.classList.remove('flex');
   }
 
   if (challengePauseBtn) challengePauseBtn.textContent = 'Pause';
+
   if (challengeStatusBadge) {
     challengeStatusBadge.textContent =
       currentChallengeDay?.status_label || 'Ready';
