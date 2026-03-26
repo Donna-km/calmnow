@@ -1493,18 +1493,18 @@
 
   
   <!-- Sound selection -->
- <div class="mb-10">
+ <div class="mb-12 flex flex-col items-center">
   <p class="text-sm font-light mb-3 text-center" style="color: #9B8A78;">
     Sound for this challenge
   </p>
 
-  <div class="flex items-center gap-3 w-full">
+  <div class="flex items-center justify-center gap-4 w-full max-w-[640px] mx-auto">
     <button
       id="challenge-silent-btn"
       class="flex-1 px-4 py-3 rounded-full text-sm font-light"
       style="
         min-width: 0;
-        max-width: 170px;
+        max-width: 260px;
         background: rgba(255, 252, 248, 0.82);
         border: 1px solid rgba(200, 180, 160, 0.4);
         color: #6B5D4D;
@@ -1519,17 +1519,14 @@
       class="flex-1 px-4 py-3 rounded-full text-sm font-light"
       style="
         min-width: 0;
-        max-width: 220px;
+        max-width: 260px;
         background: rgba(255, 252, 248, 0.82);
         border: 1px solid rgba(200, 180, 160, 0.4);
         color: #6B5D4D;
         box-shadow: 0 6px 20px rgba(180, 160, 140, 0.06);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
       "
     >
-      Gentle Sound
+      Choose Sound
     </button>
   </div>
 </div>
@@ -3866,10 +3863,8 @@ function updateChallengeSelectedSoundButton() {
   const silentBtn = document.getElementById('challenge-silent-btn');
   if (!btn) return;
 
-  const label = truncateChallengeSoundLabel(challengeSelectedSoundTitle, 18);
-  btn.textContent = label;
+  btn.textContent = 'Choose Sound';
 
-  // Silent button active state
   if (silentBtn) {
     if (challengeSelectedType === 'silent') {
       silentBtn.style.background = 'linear-gradient(135deg, rgba(200,175,145,0.8), rgba(180,155,125,0.9))';
@@ -3881,6 +3876,17 @@ function updateChallengeSelectedSoundButton() {
       silentBtn.style.border = '1px solid rgba(200, 180, 160, 0.4)';
     }
   }
+
+  if (challengeSelectedType === 'sound' || challengeSelectedType === 'mix') {
+    btn.style.background = 'linear-gradient(135deg, rgba(200,175,145,0.8), rgba(180,155,125,0.9))';
+    btn.style.color = '#FFFCF8';
+    btn.style.border = '1px solid rgba(160,135,105,0.5)';
+  } else {
+    btn.style.background = 'rgba(255, 252, 248, 0.82)';
+    btn.style.color = '#6B5D4D';
+    btn.style.border = '1px solid rgba(200, 180, 160, 0.4)';
+  }
+}
 
   // Sound button active state
   if (btn) {
