@@ -3888,20 +3888,7 @@ function updateChallengeSelectedSoundButton() {
   }
 }
 
-  // Sound button active state
-  if (btn) {
-    if (challengeSelectedType === 'sound' || challengeSelectedType === 'mix') {
-      btn.style.background = 'linear-gradient(135deg, rgba(200,175,145,0.8), rgba(180,155,125,0.9))';
-      btn.style.color = '#FFFCF8';
-      btn.style.border = '1px solid rgba(160,135,105,0.5)';
-    } else {
-      btn.style.background = 'rgba(255, 252, 248, 0.82)';
-      btn.style.color = '#6B5D4D';
-      btn.style.border = '1px solid rgba(200, 180, 160, 0.4)';
-    }
-  }
-}
-
+  
 function setChallengeSound(sound = null) {
   challengeSelectedType = sound ? 'sound' : 'silent';
   challengeSelectedSoundId = sound?.id ?? null;
