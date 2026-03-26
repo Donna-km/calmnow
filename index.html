@@ -1498,39 +1498,34 @@
     Sound for this challenge
   </p>
 
-  <div class="flex flex-col items-center gap-3">
-    <button
-      id="challenge-silent-btn"
-      class="px-5 py-3 rounded-full text-sm font-light"
-      style="
-        min-width: 260px;
-        background: rgba(255, 252, 248, 0.82);
-        border: 1px solid rgba(200, 180, 160, 0.4);
-        color: #6B5D4D;
-        box-shadow: 0 6px 20px rgba(180, 160, 140, 0.06);
-      "
-    >
-      Silent
-    </button>
+  <div class="flex gap-3 w-full">
+  <button
+    id="challenge-silent-btn"
+    class="flex-1 px-5 py-3 rounded-full text-sm font-light"
+    style="
+      min-width: 0;
+      background: rgba(255, 252, 248, 0.82);
+      border: 1px solid rgba(200, 180, 160, 0.4);
+      color: #6B5D4D;
+      box-shadow: 0 6px 20px rgba(180, 160, 140, 0.06);
+    "
+  >
+    In Silence
+  </button>
 
-    <button
-      id="challenge-choose-sound-btn"
-      class="px-5 py-3 rounded-full text-sm font-light"
-      style="
-        min-width: 260px;
-        background: rgba(255, 252, 248, 0.82);
-        border: 1px solid rgba(200, 180, 160, 0.4);
-        color: #6B5D4D;
-        box-shadow: 0 6px 20px rgba(180, 160, 140, 0.06);
-      "
-    >
-      Selected Sound
-    </button>
-  </div>
-
-  <p class="text-xs font-light text-center mt-3" style="color:#A89880;">
-    Choose a sound from the Sounds page.
-  </p>
+  <button
+    id="challenge-choose-sound-btn"
+    class="flex-1 px-5 py-3 rounded-full text-sm font-light"
+    style="
+      min-width: 0;
+      background: rgba(255, 252, 248, 0.82);
+      border: 1px solid rgba(200, 180, 160, 0.4);
+      color: #6B5D4D;
+      box-shadow: 0 6px 20px rgba(180, 160, 140, 0.06);
+    "
+  >
+    Gentle Sound
+  </button>
 </div>
 
  
@@ -1570,10 +1565,12 @@
       border: 1px solid rgba(255, 255, 255, 0.5);
       box-shadow: 0 4px 24px rgba(180, 160, 140, 0.08);
     ">
-    <div class="flex items-center justify-between mb-3">
-      <p class="font-display text-lg" style="color: #5C4D3C;">Your Journey</p>
-      <p id="challenge-progress-text" class="text-sm font-light" style="color: #9B8A78;">0 of 7 days</p>
-    </div>
+   <div class="hidden flex items-center justify-between mb-3">
+  <p class="font-display text-lg" style="color: #5C4D3C;">Your Journey</p>
+  <p id="challenge-progress-text" class="text-sm font-light" style="color: #9B8A78;">
+    0 of 7 days
+  </p>
+</div>
 
     <div class="h-2 rounded-full overflow-hidden" style="background: rgba(220, 210, 195, 0.4);">
       <div id="challenge-progress-fill"
