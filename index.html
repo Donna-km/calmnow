@@ -4267,48 +4267,6 @@ function startChallengeTimer() {
     }
   }, 1000);
 }
-function pauseChallengeTimer() {
-  if (challengeTimerState === 'running') {
-    challengeTimerState = 'paused';
-    clearInterval(challengeTimerInterval);
-    challengeTimerInterval = null;
-
-    pauseChallengeAudio();
-
-    if (challengePauseBtn) challengePauseBtn.textContent = 'Resume';
-    if (challengeStatusBadge) challengeStatusBadge.textContent = 'Paused';
-
-    if (challengeSessionCircle) challengeSessionCircle.classList.add('paused');
-    if (challengeSessionBreathText) challengeSessionBreathText.classList.add('paused');
-    return;
-  }
-
-  if (challengeTimerState === 'paused') {
-    challengeTimerState = 'running';
-
-    if (challengeSessionCircle) challengeSessionCircle.classList.remove('paused');
-    if (challengeSessionBreathText) challengeSessionBreathText.classList.remove('paused');
-
-    resumeChallengeAudio();
-
-    if (challengePauseBtn) challengePauseBtn.textContent = 'Pause';
-    if (challengeStatusBadge) challengeStatusBadge.textContent = 'In Progress';
-
-    challengeTimerInterval = setInterval(() => {
-      challengeElapsedSeconds++;
-
-      if (challengeElapsedSeconds > 0 && challengeElapsedSeconds % 8 === 0) {
-        rotateChallengeCalmMessage();
-      }
-
-      const sessionWords = ['Stay here', 'Breathe', 'Calm', 'Be present'];
-      if (challengeSessionBreathText && challengeElapsedSeconds > 0 && challengeElapsedSeconds % 4 === 0) {
-        const index = Math.floor(challengeElapsedSeconds / 4) % sessionWords.length;
-        challengeSessionBreathText.textContent = sessionWords[index];
-      }
-    }, 1000);
-  }
-}
    
 function resetChallengeTimer() {
   clearInterval(challengeTimerInterval);
