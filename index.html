@@ -1493,45 +1493,51 @@
 
   
   <!-- Sound selection -->
-  <div class="mb-8">
+ <div class="mb-10">
   <p class="text-sm font-light mb-3 text-center" style="color: #9B8A78;">
     Sound for this challenge
   </p>
 
-  <div class="flex gap-3 w-full">
-  <button
-    id="challenge-silent-btn"
-    class="flex-1 px-5 py-3 rounded-full text-sm font-light"
-    style="
-      min-width: 0;
-      background: rgba(255, 252, 248, 0.82);
-      border: 1px solid rgba(200, 180, 160, 0.4);
-      color: #6B5D4D;
-      box-shadow: 0 6px 20px rgba(180, 160, 140, 0.06);
-    "
-  >
-    In Silence
-  </button>
+  <div class="flex items-center gap-3 w-full">
+    <button
+      id="challenge-silent-btn"
+      class="flex-1 px-4 py-3 rounded-full text-sm font-light"
+      style="
+        min-width: 0;
+        max-width: 170px;
+        background: rgba(255, 252, 248, 0.82);
+        border: 1px solid rgba(200, 180, 160, 0.4);
+        color: #6B5D4D;
+        box-shadow: 0 6px 20px rgba(180, 160, 140, 0.06);
+      "
+    >
+      In Silence
+    </button>
 
-  <button
-    id="challenge-choose-sound-btn"
-    class="flex-1 px-5 py-3 rounded-full text-sm font-light"
-    style="
-      min-width: 0;
-      background: rgba(255, 252, 248, 0.82);
-      border: 1px solid rgba(200, 180, 160, 0.4);
-      color: #6B5D4D;
-      box-shadow: 0 6px 20px rgba(180, 160, 140, 0.06);
-    "
-  >
-    Gentle Sound
-  </button>
+    <button
+      id="challenge-choose-sound-btn"
+      class="flex-1 px-4 py-3 rounded-full text-sm font-light"
+      style="
+        min-width: 0;
+        max-width: 220px;
+        background: rgba(255, 252, 248, 0.82);
+        border: 1px solid rgba(200, 180, 160, 0.4);
+        color: #6B5D4D;
+        box-shadow: 0 6px 20px rgba(180, 160, 140, 0.06);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      "
+    >
+      Gentle Sound
+    </button>
+  </div>
 </div>
 
  
 
   <!-- Controls -->
-  <div class="flex flex-col items-center gap-3 mb-8">
+  <div class="flex flex-col items-center gap-3 mb-10">
     <button id="challenge-start-btn"
       class="w-full max-w-xs px-12 py-3.5 rounded-full font-light text-base"
       style="
@@ -3850,14 +3856,20 @@ async function handlePostLogin() {
    // =========================
 // Challenge sound selection
 // =========================
+function truncateChallengeSoundLabel(text, max = 18) {
+  if (!text) return 'Gentle Sound';
+  return text.length > max ? text.slice(0, max).trim() + '…' : text;
+}
+
 function updateChallengeSelectedSoundButton() {
   const btn = document.getElementById('challenge-choose-sound-btn');
   const silentBtn = document.getElementById('challenge-silent-btn');
   if (!btn) return;
 
-  const label = challengeSelectedSoundTitle || 'Silent';
-  btn.textContent = `Selected Sound — ${label}`;
+  const label = truncateChallengeSoundLabel(challengeSelectedSoundTitle, 18);
+  btn.textContent = label;
 
+  // Silent button active state
   if (silentBtn) {
     if (challengeSelectedType === 'silent') {
       silentBtn.style.background = 'linear-gradient(135deg, rgba(200,175,145,0.8), rgba(180,155,125,0.9))';
@@ -3867,6 +3879,19 @@ function updateChallengeSelectedSoundButton() {
       silentBtn.style.background = 'rgba(255, 252, 248, 0.82)';
       silentBtn.style.color = '#6B5D4D';
       silentBtn.style.border = '1px solid rgba(200, 180, 160, 0.4)';
+    }
+  }
+
+  // Sound button active state
+  if (btn) {
+    if (challengeSelectedType === 'sound' || challengeSelectedType === 'mix') {
+      btn.style.background = 'linear-gradient(135deg, rgba(200,175,145,0.8), rgba(180,155,125,0.9))';
+      btn.style.color = '#FFFCF8';
+      btn.style.border = '1px solid rgba(160,135,105,0.5)';
+    } else {
+      btn.style.background = 'rgba(255, 252, 248, 0.82)';
+      btn.style.color = '#6B5D4D';
+      btn.style.border = '1px solid rgba(200, 180, 160, 0.4)';
     }
   }
 }
