@@ -4523,7 +4523,15 @@ function initChallengeUI() {
 
   setChallengeSound(null);
   updateChallengeSelectedSoundButton();
-  resetChallengeTimer();
+  challengeTimerState = 'idle';
+challengeElapsedSeconds = 0;
+challengeCalmMessageIndex = 0;
+
+if (challengeSessionCircle) challengeSessionCircle.classList.remove('paused');
+if (challengeSessionBreathText) {
+  challengeSessionBreathText.classList.remove('paused');
+  challengeSessionBreathText.textContent = 'Stay here';
+}
 
   document.querySelectorAll('.challenge-time-btn').forEach(btn => {
     if (parseInt(btn.dataset.seconds, 10) === 180) {
