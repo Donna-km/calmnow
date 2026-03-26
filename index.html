@@ -1552,11 +1552,11 @@
   Pause
 </button>
 
-      <button id="challenge-end-btn"
-        class="px-8 py-2.5 rounded-full font-light text-sm"
-        style="color: #9B8A78; background: rgba(255, 252, 248, 0.8); border: 1px solid rgba(200, 180, 160, 0.4);">
-        End Moment
-      </button>
+      <button id="challenge-end-setup-btn"
+  class="px-8 py-2.5 rounded-full font-light text-sm"
+  style="color: #9B8A78; background: rgba(255, 252, 248, 0.8); border: 1px solid rgba(200, 180, 160, 0.4);">
+  End Moment
+</button>
     </div>
   </div>
 
@@ -1953,7 +1953,6 @@ const challengeTimerDisplay = document.getElementById('challenge-timer-display')
 const challengeCalmMessageEl = document.getElementById('challenge-calm-message');
 const challengeStartBtn = document.getElementById('challenge-start-btn');
 const challengeActiveControls = document.getElementById('challenge-active-controls');
-const challengePauseBtn = document.getElementById('challenge-pause-btn');
 const challengeEndBtn = document.getElementById('challenge-end-btn');
 const challengeStatusBadge = document.getElementById('challenge-status-badge'); 
 const challengeTimerRing = document.getElementById('challenge-timer-ring');
@@ -4530,10 +4529,6 @@ async function showTomorrowsChallenge() {
 
    if (challengeStartBtn) {
   challengeStartBtn.addEventListener('click', startChallengeTimer);
-}
-
-if (challengePauseBtn) {
-  challengePauseBtn.addEventListener('click', pauseChallengeTimer);
 }
 
 if (challengeEndBtn) {
