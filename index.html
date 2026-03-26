@@ -4117,10 +4117,6 @@ document.getElementById('challenge-status-badge').textContent =
     : (data.status_label || 'Ready');
 
 
-// ❌ เอาพวกนี้ออกจากด้านบน (ไม่ใช้แล้ว)
-document.getElementById('challenge-task-title').textContent = '';
-document.getElementById('challenge-supportive-text').textContent = '';
-
 
 // ✅ เอาข้อความมาใส่ใน "กรอบ" แทน
 document.getElementById('challenge-card-title').textContent =
@@ -4129,9 +4125,6 @@ document.getElementById('challenge-card-title').textContent =
 document.getElementById('challenge-card-duration').textContent =
   data.supportive_text || 'Stay with yourself. No need to watch the clock.';
 
-
-// ❌ ลบ instruction
-document.getElementById('challenge-instruction-text').textContent = '';
 
 
 // เวลา (ยังใช้ได้ปกติ)
@@ -4268,13 +4261,7 @@ function startChallengeTimer() {
   challengeTimerInterval = setInterval(() => {
     challengeElapsedSeconds++;
 
-    if (challengeTimerMode === 'see') {
-      challengeTimerDisplay.textContent = formatChallengeTime(challengeElapsedSeconds);
-    } else {
-      challengeTimerDisplay.textContent = '';
-    }
-
-    if (challengeElapsedSeconds > 0 && challengeElapsedSeconds % 8 === 0) {
+     if (challengeElapsedSeconds > 0 && challengeElapsedSeconds % 8 === 0) {
       rotateChallengeCalmMessage();
     }
 
@@ -4321,12 +4308,6 @@ function pauseChallengeTimer() {
     challengeTimerInterval = setInterval(() => {
       challengeElapsedSeconds++;
 
-      if (challengeTimerMode === 'see') {
-        challengeTimerDisplay.textContent = formatChallengeTime(challengeElapsedSeconds);
-      } else {
-        challengeTimerDisplay.textContent = '';
-      }
-
       if (challengeElapsedSeconds > 0 && challengeElapsedSeconds % 8 === 0) {
         rotateChallengeCalmMessage();
       }
@@ -4349,12 +4330,7 @@ function resetChallengeTimer() {
   challengeElapsedSeconds = 0;
   challengeCalmMessageIndex = 0;
 
-  if (challengeTimerMode === 'see') {
-    challengeTimerDisplay.textContent = formatChallengeTime(0);
-  } else {
-    challengeTimerDisplay.textContent = '';
-  }
-
+  
   if (challengeCalmMessageEl) {
     challengeCalmMessageEl.textContent =
       challengeCalmMessages[0] || 'Breathe softly';
@@ -4589,21 +4565,19 @@ function initChallengeUI() {
 
   const dayTitle = document.getElementById('challenge-day-title');
   const statusBadge = document.getElementById('challenge-status-badge');
-  const taskTitle = document.getElementById('challenge-task-title');
-  const supportiveText = document.getElementById('challenge-supportive-text');
+  
   const cardTitle = document.getElementById('challenge-card-title');
   const cardDuration = document.getElementById('challenge-card-duration');
-  const instructionText = document.getElementById('challenge-instruction-text');
+  
   const progressText = document.getElementById('challenge-progress-text');
   const progressFill = document.getElementById('challenge-progress-fill');
 
   if (dayTitle) dayTitle.textContent = 'Challenge';
   if (statusBadge) statusBadge.textContent = 'Ready';
-  if (taskTitle) taskTitle.textContent = '';
-  if (supportiveText) supportiveText.textContent = '';
+  
   if (cardTitle) cardTitle.textContent = 'Feel the Time';
   if (cardDuration) cardDuration.textContent = 'Stay with yourself. No need to watch the clock.';
-  if (instructionText) instructionText.textContent = '';
+  
 
   if (progressText) progressText.textContent = 'No moments yet';
   if (progressFill) progressFill.style.width = '0%';
