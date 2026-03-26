@@ -1393,13 +1393,13 @@
   <p id="challenge-card-title"
     class="font-display text-2xl font-normal leading-relaxed mb-3"
     style="color: #4A3F32;">
-    Stay for as long as feels right today
+    Feel the Time
   </p>
 
   <p id="challenge-card-duration"
     class="text-base font-light"
     style="color: #9B8A78;">
-    Use feeling, not time.
+    Stay with yourself. No need to watch the clock.
   </p>
 
 </div>
@@ -4096,10 +4096,10 @@ document.getElementById('challenge-supportive-text').textContent = '';
 
 // ✅ เอาข้อความมาใส่ใน "กรอบ" แทน
 document.getElementById('challenge-card-title').textContent =
-  data.main_task || 'Stay for as long as feels right today';
+  data.main_task || 'Feel the Time';
 
 document.getElementById('challenge-card-duration').textContent =
-  data.supportive_text || 'Use feeling, not time.';
+  data.supportive_text || 'Stay with yourself. No need to watch the clock.';
 
 
 // ❌ ลบ instruction
@@ -4542,8 +4542,8 @@ function initChallengeUI() {
   if (statusBadge) statusBadge.textContent = 'Ready';
   if (taskTitle) taskTitle.textContent = '';
   if (supportiveText) supportiveText.textContent = '';
-  if (cardTitle) cardTitle.textContent = 'Stay for as long as feels right today';
-  if (cardDuration) cardDuration.textContent = 'Use feeling, not time.';
+  if (cardTitle) cardTitle.textContent = 'Feel the Time';
+  if (cardDuration) cardDuration.textContent = 'Stay with yourself. No need to watch the clock.';
   if (instructionText) instructionText.textContent = '';
 
   if (progressText) progressText.textContent = 'No moments yet';
