@@ -4133,73 +4133,63 @@ challengeRemainingSeconds = challengeTotalSeconds;
 
     
   // calm messages
-  if (Array.isArray(data.calm_messages) && data.calm_messages.length > 0) {
-    challengeCalmMessages = data.calm_messages;
-  } else {
-    challengeCalmMessages = ['Breathe softly', 'Stay here', 'This moment is enough'];
-  }
+if (Array.isArray(data.calm_messages) && data.calm_messages.length > 0) {
+  challengeCalmMessages = data.calm_messages;
+} else {
+  challengeCalmMessages = ['Breathe softly', 'Stay here', 'This moment is enough'];
+}
 
-  challengeCalmMessageIndex = 0;
+challengeCalmMessageIndex = 0;
 
-  // ✅ reset timer (แทน update เดิม)
-  resetChallengeTimer();
+// ✅ reset timer (แทน update เดิม)
+resetChallengeTimer();
 
-  // set calm message
-  document.getElementById('challenge-calm-message').textContent =
-    challengeCalmMessages[0];
-
-  // challenge sound defaults to Silent
-    if (currentChallengeProgressRow?.selected_type === 'sound' && currentChallengeProgressRow?.selected_sound_id) {
-    const selectedSound = dbSounds.find(sound => sound.id === currentChallengeProgressRow.selected_sound_id);
-    if (selectedSound) {
-      setChallengeSound(selectedSound);
-    } else {
-      setChallengeSound(null);
-    }
-  } else if (currentChallengeProgressRow?.selected_type === 'mix') {
-    challengeSelectedType = 'mix';
-    challengeSelectedSoundId = null;
-    challengeSelectedAudioPath = '';
-    challengeSelectedSoundTitle = 'Personal Calm Mix';
-    selectedChallengeMixId = currentChallengeProgressRow.selected_mix_id || null;
-    updateChallengeSelectedSoundButton();
+// challenge sound defaults to Silent
+if (currentChallengeProgressRow?.selected_type === 'sound' && currentChallengeProgressRow?.selected_sound_id) {
+  const selectedSound = dbSounds.find(sound => sound.id === currentChallengeProgressRow.selected_sound_id);
+  if (selectedSound) {
+    setChallengeSound(selectedSound);
   } else {
     setChallengeSound(null);
   }
+} else if (currentChallengeProgressRow?.selected_type === 'mix') {
+  challengeSelectedType = 'mix';
+  challengeSelectedSoundId = null;
+  challengeSelectedAudioPath = '';
+  challengeSelectedSoundTitle = 'Personal Calm Mix';
+  selectedChallengeMixId = currentChallengeProgressRow.selected_mix_id || null;
+  updateChallengeSelectedSoundButton();
+} else {
+  setChallengeSound(null);
+}
 
-  // ✅ reset ปุ่ม start ทุกครั้งที่โหลด day ใหม่
-    if (challengeStartBtn) {
-    if (currentChallengeProgressRow?.status === 'completed') {
-      challengeStartBtn.disabled = true;
-      challengeStartBtn.textContent = 'Completed';
-      challengeStartBtn.style.opacity = '0.7';
-      challengeStartBtn.style.cursor = 'default';
-    } else if (currentChallengeProgressRow?.status === 'locked') {
-      challengeStartBtn.disabled = true;
-      challengeStartBtn.textContent = 'Locked';
-      challengeStartBtn.style.opacity = '0.5';
-      challengeStartBtn.style.cursor = 'not-allowed';
-    } else {
-      challengeStartBtn.disabled = false;
-      challengeStartBtn.textContent = 'Start Challenge';
-      challengeStartBtn.style.opacity = '1';
-      challengeStartBtn.style.cursor = 'pointer';
-    }
-  }
-
-  updateChallengeProgressUI();
-
-  // reset controls
-  if (challengeActiveControls) {
-    challengeActiveControls.classList.add('hidden');
-    challengeActiveControls.classList.remove('flex');
-  }
-
-  if (challengePauseBtn) {
-    challengePauseBtn.textContent = 'Pause';
+// ✅ reset ปุ่ม start ทุกครั้งที่โหลด day ใหม่
+if (challengeStartBtn) {
+  if (currentChallengeProgressRow?.status === 'completed') {
+    challengeStartBtn.disabled = true;
+    challengeStartBtn.textContent = 'Completed';
+    challengeStartBtn.style.opacity = '0.7';
+    challengeStartBtn.style.cursor = 'default';
+  } else if (currentChallengeProgressRow?.status === 'locked') {
+    challengeStartBtn.disabled = true;
+    challengeStartBtn.textContent = 'Locked';
+    challengeStartBtn.style.opacity = '0.5';
+    challengeStartBtn.style.cursor = 'not-allowed';
+  } else {
+    challengeStartBtn.disabled = false;
+    challengeStartBtn.textContent = 'Start Challenge';
+    challengeStartBtn.style.opacity = '1';
+    challengeStartBtn.style.cursor = 'pointer';
   }
 }
 
+updateChallengeProgressUI();
+
+// reset controls
+if (challengeActiveControls) {
+  challengeActiveControls.classList.add('hidden');
+  challengeActiveControls.classList.remove('flex');
+}
    async function loadNextChallengeDay() {
   if (!currentChallengeDay || !currentChallengeDay.template_id) return;
 
@@ -4256,12 +4246,11 @@ function startChallengeTimer() {
   startChallengeAudio();
 
   if (challengeStatusBadge) challengeStatusBadge.textContent = 'In Progress';
-  if (challengePauseBtn) challengePauseBtn.textContent = 'Pause';
 
   challengeTimerInterval = setInterval(() => {
     challengeElapsedSeconds++;
 
-     if (challengeElapsedSeconds > 0 && challengeElapsedSeconds % 8 === 0) {
+    if (challengeElapsedSeconds > 0 && challengeElapsedSeconds % 8 === 0) {
       rotateChallengeCalmMessage();
     }
 
@@ -4277,7 +4266,6 @@ function startChallengeTimer() {
     }
   }, 1000);
 }
-
 function pauseChallengeTimer() {
   if (challengeTimerState === 'running') {
     challengeTimerState = 'paused';
@@ -4329,14 +4317,6 @@ function resetChallengeTimer() {
   challengeTimerState = 'idle';
   challengeElapsedSeconds = 0;
   challengeCalmMessageIndex = 0;
-
-  
-  if (challengeCalmMessageEl) {
-    challengeCalmMessageEl.textContent =
-      challengeCalmMessages[0] || 'Breathe softly';
-  }
-
-  if (challengePauseBtn) challengePauseBtn.textContent = 'Pause';
 
   if (challengeSessionCircle) challengeSessionCircle.classList.remove('paused');
   if (challengeSessionBreathText) {
