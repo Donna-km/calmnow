@@ -1042,6 +1042,62 @@
     opacity: 0;
   }
 }
+
+   .challenge-session-circle {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(196, 167, 125, 0.15),
+    rgba(196, 167, 125, 0.05)
+  );
+  box-shadow:
+    0 0 60px rgba(196, 167, 125, 0.2),
+    0 0 120px rgba(196, 167, 125, 0.1),
+    inset 0 0 60px rgba(255, 255, 255, 0.3);
+  animation: challengeSessionBreathe 8s ease-in-out infinite;
+}
+
+.challenge-session-circle.paused {
+  animation-play-state: paused;
+}
+
+.challenge-session-breath-text {
+  color: #8B7355;
+  opacity: 0.75;
+  letter-spacing: 0.04em;
+  animation: challengeSessionTextFade 8s ease-in-out infinite;
+}
+
+.challenge-session-breath-text.paused {
+  animation-play-state: paused;
+}
+
+@keyframes challengeSessionBreathe {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 60px rgba(196, 167, 125, 0.2),
+      0 0 120px rgba(196, 167, 125, 0.1),
+      inset 0 0 60px rgba(255, 255, 255, 0.3);
+  }
+  50% {
+    transform: scale(1.15);
+    box-shadow:
+      0 0 80px rgba(196, 167, 125, 0.3),
+      0 0 160px rgba(196, 167, 125, 0.15),
+      inset 0 0 80px rgba(255, 255, 255, 0.4);
+  }
+}
+
+@keyframes challengeSessionTextFade {
+  0%, 100% { opacity: 1; }
+  45% { opacity: 1; }
+  50% { opacity: 0.35; }
+  55% { opacity: 1; }
+  95% { opacity: 1; }
+}
   </style>
   <style>body { box-sizing: border-box; }</style>
  
@@ -1477,54 +1533,7 @@
   </p>
 </div>
 
-  <!-- Timer -->
-<div class="flex flex-col items-center mb-8">
-  <div class="relative w-56 h-56 flex items-center justify-center">
-    <div id="challenge-timer-glow" class="challenge-timer-glow"></div>
-
-    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 200 200">
-      <!-- วงพื้นหลัง -->
-      <circle
-        cx="100"
-        cy="100"
-        r="90"
-        fill="none"
-        stroke="rgba(220, 210, 195, 0.35)"
-        stroke-width="6"
-      />
-
-      <!-- วง progress -->
-      <circle
-        id="challenge-timer-ring"
-        class="challenge-timer-ring"
-        cx="100"
-        cy="100"
-        r="90"
-        fill="none"
-        stroke="url(#challengeTimerGradient)"
-        stroke-width="6"
-        stroke-linecap="round"
-      />
-
-      <defs>
-        <linearGradient id="challengeTimerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style="stop-color:#C8AA82;stop-opacity:1" />
-          <stop offset="50%" style="stop-color:#D4BC96;stop-opacity:1" />
-          <stop offset="100%" style="stop-color:#C8AA82;stop-opacity:1" />
-        </linearGradient>
-      </defs>
-    </svg>
-
-    <div class="relative z-10 text-center">
-      <p id="challenge-timer-display" class="font-display text-5xl font-light" style="color: #5C4D3C;">
-        5:00
-      </p>
-      <p id="challenge-calm-message" class="font-light text-sm mt-2" style="color: #9B8A78;">
-        Breathe softly
-      </p>
-    </div>
-  </div>
-</div>
+ 
 
   <!-- Controls -->
   <div class="flex flex-col items-center gap-3 mb-8">
@@ -1580,6 +1589,38 @@
   </div>
 </section>
 
+  <section id="challengeSessionSection" class="section-panel">
+  <div class="max-w-md mx-auto h-full flex flex-col items-center justify-between pt-10 pb-10">
+    
+    <div class="h-8"></div>
+
+    <div class="flex flex-col items-center justify-center flex-1">
+      <div id="challenge-session-circle" class="challenge-session-circle flex items-center justify-center">
+        <span id="challenge-session-breath-text" class="challenge-session-breath-text font-display text-2xl font-light">
+          Stay here
+        </span>
+      </div>
+
+      <p id="challenge-calm-message" class="font-light text-sm mt-8 text-center" style="color: #9B8A78;">
+        Breathe softly
+      </p>
+    </div>
+
+    <div class="flex items-center gap-8">
+      <button id="challenge-pause-btn"
+        class="control-btn p-3"
+        style="color:#6B5D4D; opacity:0.6;">
+        Pause
+      </button>
+
+      <button id="challenge-end-btn"
+        class="control-btn p-3"
+        style="color:#6B5D4D; opacity:0.6;">
+        End
+      </button>
+    </div>
+  </div>
+</section>
 <section id="progressSection" class="section-panel">
   <button class="back-button" data-back>
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8B7355" stroke-width="1.5">
@@ -1930,7 +1971,9 @@ const challengeCompletionOverlay = document.getElementById('challenge-completion
 const challengeBloomEffects = document.getElementById('challenge-bloom-effects');
 const challengeCompletedDay = document.getElementById('challenge-completed-day');
 const challengeContinueBtn = document.getElementById('challenge-continue-btn');
-const challengeViewTomorrowBtn = document.getElementById('challenge-view-tomorrow-btn');   
+const challengeViewTomorrowBtn = document.getElementById('challenge-view-tomorrow-btn'); 
+const challengeSessionCircle = document.getElementById('challenge-session-circle');
+const challengeSessionBreathText = document.getElementById('challenge-session-breath-text');   
    
 if (!deviceId) {
   deviceId = crypto.randomUUID();
@@ -2966,6 +3009,7 @@ const mixData = {
   personal: document.getElementById('personalSection'),
   affirmations: document.getElementById('affirmationsSection'),
   challenge: document.getElementById('challengeSection'),
+  challengeSession: document.getElementById('challengeSessionSection'),
   progress: document.getElementById('progressSection')
 };
     const backButtons = document.querySelectorAll('[data-back]');
@@ -4201,33 +4245,44 @@ function startChallengeTimer() {
   challengeTimerState = 'running';
   challengeElapsedSeconds = 0;
 
-  startChallengeAudio();
+  Object.values(sections).forEach(s => s.classList.remove('active'));
+  sections.challengeSession.classList.add('active');
+  hideHomeScreen();
 
-  if (challengeStartBtn) challengeStartBtn.classList.add('hidden');
-
-  if (challengeActiveControls) {
-    challengeActiveControls.classList.remove('hidden');
-    challengeActiveControls.classList.add('flex');
+  if (challengeSessionCircle) challengeSessionCircle.classList.remove('paused');
+  if (challengeSessionBreathText) {
+    challengeSessionBreathText.classList.remove('paused');
+    challengeSessionBreathText.textContent = 'Stay here';
   }
 
+  startChallengeAudio();
+
   if (challengeStatusBadge) challengeStatusBadge.textContent = 'In Progress';
+  if (challengePauseBtn) challengePauseBtn.textContent = 'Pause';
 
   challengeTimerInterval = setInterval(() => {
     challengeElapsedSeconds++;
 
-    // ถ้า user เลือก See the time → โชว์เวลา
     if (challengeTimerMode === 'see') {
       challengeTimerDisplay.textContent = formatChallengeTime(challengeElapsedSeconds);
     } else {
-      // ถ้า Feel → ไม่โชว์เวลา
       challengeTimerDisplay.textContent = '';
     }
 
-    // calm message หมุนไปเรื่อย ๆ
     if (challengeElapsedSeconds > 0 && challengeElapsedSeconds % 8 === 0) {
       rotateChallengeCalmMessage();
     }
 
+    const sessionWords = ['Stay here', 'Breathe', 'Calm', 'Be present'];
+
+    if (
+      challengeSessionBreathText &&
+      challengeElapsedSeconds > 0 &&
+      challengeElapsedSeconds % 4 === 0
+    ) {
+      const index = Math.floor(challengeElapsedSeconds / 4) % sessionWords.length;
+      challengeSessionBreathText.textContent = sessionWords[index];
+    }
   }, 1000);
 }
 
@@ -4241,14 +4296,45 @@ function pauseChallengeTimer() {
 
     if (challengePauseBtn) challengePauseBtn.textContent = 'Resume';
     if (challengeStatusBadge) challengeStatusBadge.textContent = 'Paused';
+
+    if (challengeSessionCircle) challengeSessionCircle.classList.add('paused');
+    if (challengeSessionBreathText) challengeSessionBreathText.classList.add('paused');
     return;
   }
 
   if (challengeTimerState === 'paused') {
-    startChallengeTimer();
+    challengeTimerState = 'running';
+
+    if (challengeSessionCircle) challengeSessionCircle.classList.remove('paused');
+    if (challengeSessionBreathText) challengeSessionBreathText.classList.remove('paused');
+
+    resumeChallengeAudio();
+
+    if (challengePauseBtn) challengePauseBtn.textContent = 'Pause';
+    if (challengeStatusBadge) challengeStatusBadge.textContent = 'In Progress';
+
+    challengeTimerInterval = setInterval(() => {
+      challengeElapsedSeconds++;
+
+      if (challengeTimerMode === 'see') {
+        challengeTimerDisplay.textContent = formatChallengeTime(challengeElapsedSeconds);
+      } else {
+        challengeTimerDisplay.textContent = '';
+      }
+
+      if (challengeElapsedSeconds > 0 && challengeElapsedSeconds % 8 === 0) {
+        rotateChallengeCalmMessage();
+      }
+
+      const sessionWords = ['Stay here', 'Breathe', 'Calm', 'Be present'];
+      if (challengeSessionBreathText && challengeElapsedSeconds > 0 && challengeElapsedSeconds % 4 === 0) {
+        const index = Math.floor(challengeElapsedSeconds / 4) % sessionWords.length;
+        challengeSessionBreathText.textContent = sessionWords[index];
+      }
+    }, 1000);
   }
 }
-
+   
 function resetChallengeTimer() {
   clearInterval(challengeTimerInterval);
   stopChallengeAudio();
@@ -4264,26 +4350,27 @@ function resetChallengeTimer() {
     challengeTimerDisplay.textContent = '';
   }
 
-  updateChallengeTimerRing();
-
   if (challengeCalmMessageEl) {
     challengeCalmMessageEl.textContent =
       challengeCalmMessages[0] || 'Breathe softly';
   }
 
-  if (challengeStartBtn) challengeStartBtn.classList.remove('hidden');
-
-  if (challengeActiveControls) {
-    challengeActiveControls.classList.add('hidden');
-    challengeActiveControls.classList.remove('flex');
-  }
-
   if (challengePauseBtn) challengePauseBtn.textContent = 'Pause';
+
+  if (challengeSessionCircle) challengeSessionCircle.classList.remove('paused');
+  if (challengeSessionBreathText) {
+    challengeSessionBreathText.classList.remove('paused');
+    challengeSessionBreathText.textContent = 'Stay here';
+  }
 
   if (challengeStatusBadge) {
     challengeStatusBadge.textContent =
       currentChallengeDay?.status_label || 'Ready';
   }
+
+  Object.values(sections).forEach(s => s.classList.remove('active'));
+  sections.challenge.classList.add('active');
+  hideHomeScreen();
 }
 
 function endChallengeEarly() {
