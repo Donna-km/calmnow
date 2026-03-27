@@ -4227,6 +4227,7 @@ function startChallengeTimer() {
   challengeElapsedSeconds = 0;
 
   Object.values(sections).forEach(s => s.classList.remove('active'));
+  sections.challengeSession.style.display = '';
   sections.challengeSession.classList.add('active');
   hideHomeScreen();
 
@@ -4613,18 +4614,19 @@ function formatActivityTitle(activityType) {
 
 if (challengeViewTomorrowBtn) {
   challengeViewTomorrowBtn.addEventListener('click', () => {
-    sections.challengeSession.classList.remove('active');
-    sections.challenge.classList.remove('active');
-
-    Object.values(sections).forEach(s => s.classList.remove('active'));
-    sections.progress.classList.add('active');
-    hideHomeScreen();
-
-    navItems.forEach(nav => nav.classList.remove('active'));
+    sections.challengeSession.style.display = 'none';
 
     if (challengeCompletionOverlay) {
       challengeCompletionOverlay.classList.add('hidden');
     }
+
+    requestAnimationFrame(() => {
+      Object.values(sections).forEach(s => s.classList.remove('active'));
+      sections.progress.classList.add('active');
+      hideHomeScreen();
+
+      navItems.forEach(nav => nav.classList.remove('active'));
+    });
   });
 }
 
