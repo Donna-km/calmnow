@@ -4613,15 +4613,18 @@ function formatActivityTitle(activityType) {
 
 if (challengeViewTomorrowBtn) {
   challengeViewTomorrowBtn.addEventListener('click', () => {
-    if (challengeCompletionOverlay) {
-      challengeCompletionOverlay.classList.add('hidden');
-    }
+    sections.challengeSession.classList.remove('active');
+    sections.challenge.classList.remove('active');
 
     Object.values(sections).forEach(s => s.classList.remove('active'));
     sections.progress.classList.add('active');
     hideHomeScreen();
 
     navItems.forEach(nav => nav.classList.remove('active'));
+
+    if (challengeCompletionOverlay) {
+      challengeCompletionOverlay.classList.add('hidden');
+    }
   });
 }
 
