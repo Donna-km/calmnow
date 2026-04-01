@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en" style="height: 100%;">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy | CalmNow</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;family=Jost:wght@300;400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+    }
+
+    body {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      line-height: 1.8;
+      color: #5c4a3d;
+      background: linear-gradient(180deg, #faf7f2 0%, #f5efe6 100%);
+      overflow-y: auto;
+    }
+
+    .page-wrapper {
+      width: 100%;
+      min-height: 100%;
+      padding: 3rem 1.5rem;
+    }
+
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 3rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid rgba(92, 74, 61, 0.1);
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: #8b7355;
+      letter-spacing: 0.05em;
+    }
+
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, #c9b896 0%, #a89070 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .logo-icon svg {
+      width: 18px;
+      height: 18px;
+      stroke: #faf7f2;
+    }
+
+    .page-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 6vw, 3.5rem);
+      font-weight: 400;
+      color: #4a3c31;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .page-subtitle {
+      font-size: 1.125rem;
+      color: #8b7355;
+      font-weight: 300;
+      font-style: italic;
+    }
+
+    .last-updated {
+      margin-top: 1rem;
+      font-size: 0.875rem;
+      color: #a89070;
+    }
+
+    /* Sections */
+    .section {
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 20px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 4px 20px rgba(92, 74, 61, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+    }
+
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem;
+      font-weight: 500;
+      color: #4a3c31;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-icon {
+      width: 28px;
+      height: 28px;
+      background: linear-gradient(135deg, #e8dfd3 0%, #d4c4b0 100%);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .section-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: #6b5a4a;
+    }
+
+    .section p {
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+
+    .section p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Lists */
+    .gentle-list {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .gentle-list li {
+      position: relative;
+      padding-left: 1.75rem;
+      margin-bottom: 0.75rem;
+      font-size: 1rem;
+    }
+
+    .gentle-list li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0.7rem;
+      width: 8px;
+      height: 8px;
+      background: linear-gradient(135deg, #c9b896 0%, #a89070 100%);
+      border-radius: 50%;
+    }
+
+    .gentle-list li:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Third party badges */
+    .service-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin: 1rem 0;
+    }
+
+    .service-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(200, 184, 150, 0.15);
+      border-radius: 50px;
+      font-size: 0.875rem;
+      color: #6b5a4a;
+      border: 1px solid rgba(200, 184, 150, 0.3);
+    }
+
+    .service-badge svg {
+      width: 14px;
+      height: 14px;
+      stroke: #8b7355;
+    }
+
+    /* Contact section */
+    .contact-card {
+      background: linear-gradient(135deg, #e8dfd3 0%, #ddd2c2 100%);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
+
+    .contact-email {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem;
+      color: #4a3c31;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .contact-email:hover {
+      color: #8b7355;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding-top: 2rem;
+      margin-top: 1rem;
+      border-top: 1px solid rgba(92, 74, 61, 0.1);
+    }
+
+    .footer-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.125rem;
+      color: #8b7355;
+      margin-bottom: 0.75rem;
+    }
+
+    .footer p {
+      font-size: 0.875rem;
+      color: #a89070;
+    }
+
+    /* Highlight text */
+    .highlight {
+      color: #8b7355;
+      font-weight: 400;
+    }
+
+    /* Divider */
+    .soft-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(92, 74, 61, 0.15), transparent);
+      margin: 1.5rem 0;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .page-wrapper {
+        padding: 2rem 1rem;
+      }
+
+      .section {
+        padding: 1.5rem;
+        border-radius: 16px;
+      }
+
+      .section-title {
+        font-size: 1.35rem;
+      }
+
+      .service-badges {
+        flex-direction: column;
+      }
+
+      .service-badge {
+        justify-content: center;
+      }
+    }
+
+    /* Smooth animations */
+    .section {
+      animation: fadeInUp 0.6s ease forwards;
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .section:nth-child(1) { animation-delay: 0.1s; }
+    .section:nth-child(2) { animation-delay: 0.15s; }
+    .section:nth-child(3) { animation-delay: 0.2s; }
+    .section:nth-child(4) { animation-delay: 0.25s; }
+    .section:nth-child(5) { animation-delay: 0.3s; }
+    .section:nth-child(6) { animation-delay: 0.35s; }
+    .section:nth-child(7) { animation-delay: 0.4s; }
+    .section:nth-child(8) { animation-delay: 0.45s; }
+    .section:nth-child(9) { animation-delay: 0.5s; }
+    .section:nth-child(10) { animation-delay: 0.55s; }
+  </style>
+  <style>body { box-sizing: border-box; }</style>
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body>
+  <div class="page-wrapper">
+   <div class="container"><!-- Header -->
+    <header class="header">
+     <div class="logo">
+      <div class="logo-icon">
+       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+       </svg>
+      </div> CalmNow
+     </div>
+     <h1 class="page-title" id="pageTitle">Privacy Policy</h1>
+     <p class="page-subtitle" id="pageSubtitle">Your calm space is also your safe space.</p>
+     <p class="last-updated">Last updated: January 2025</p>
+    </header><!-- Introduction -->
+    <section class="section">
+     <h2 class="section-title"><span class="section-icon">
+       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+       </svg></span> Welcome</h2>
+     <p>At <span class="highlight">CalmNow</span>, we believe your peace of mind should never come at the cost of your privacy. We've designed our mindfulness app to support your mental well-being while collecting only what's truly necessary.</p>
+     <p>This policy explains, in simple and clear terms, how we handle your information. No complex legal jargon—just honest, straightforward communication.</p>
+    </section><!-- Information We Collect -->
+    <section class="section">
+     <h2 class="section-title"><span class="section-icon">
+       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+       </svg></span> Information We Collect</h2>
+     <p>We keep data collection minimal and purposeful:</p>
+     <ul class="gentle-list">
+      <li><strong>Account information</strong> — Your email address and name when you sign up via email or Google login</li>
+      <li><strong>Usage patterns</strong> — How you interact with the app, session lengths, and features you use most</li>
+      <li><strong>Your preferences</strong> — Saved sound mixes, favorite meditations, and personalization settings (optional)</li>
+     </ul>
+     <div class="soft-divider"></div>
+     <p><span class="highlight">What we don't collect:</span> We never intentionally collect sensitive personal data, health records, or any information beyond what's needed to provide you a calming experience.</p>
+    </section><!-- How We Use Information -->
+    <section class="section">
+     <h2 class="section-title"><span class="section-icon">
+       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.324.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 011.37.49l1.296 2.247a1.125 1.125 0 01-.26 1.431l-1.003.827c-.293.24-.438.613-.431.992a6.759 6.759 0 010 .255c-.007.378.138.75.43.99l1.005.828c.424.35.534.954.26 1.43l-1.298 2.247a1.125 1.125 0 01-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.57 6.57 0 01-.22.128c-.331.183-.581.495-.644.869l-.213 1.28c-.09.543-.56.941-1.11.941h-2.594c-.55 0-1.02-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 01-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 01-1.369-.49l-1.297-2.247a1.125 1.125 0 01.26-1.431l1.004-.827c.292-.24.437-.613.43-.992a6.932 6.932 0 010-.255c.007-.378-.138-.75-.43-.99l-1.004-.828a1.125 1.125 0 01-.26-1.43l1.297-2.247a1.125 1.125 0 011.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.087.22-.128.332-.183.582-.495.644-.869l.214-1.281z" /> <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+       </svg></span> How We Use Your Information</h2>
+     <p>Your data helps us create a better, more peaceful experience:</p>
+     <ul class="gentle-list">
+      <li><strong>Personalization</strong> — Remembering your favorite soundscapes and meditation preferences</li>
+      <li><strong>App improvement</strong> — Understanding which features bring you the most calm</li>
+      <li><strong>Performance</strong> — Ensuring the app runs smoothly and reliably</li>
+      <li><strong>Communication</strong> — Sending important updates about your account (only when necessary)</li>
+     </ul>
+    </section><!-- Data Storage & Security -->
+    <section class="section">
+     <h2 class="section-title"><span class="section-icon">
+       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+       </svg></span> Data Storage &amp; Security</h2>
+     <p>Your information is stored securely using industry-standard practices. We use trusted infrastructure providers and implement encryption to protect your data both in transit and at rest.</p>
+     <div class="soft-divider"></div>
+     <p><span class="highlight">Our promise:</span> We will never sell your personal data. Your trust is far more valuable to us than any data marketplace.</p>
+    </section><!-- Third-Party Services -->
+    <section class="section">
+     <h2 class="section-title"><span class="section-icon">
+       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244" />
+       </svg></span> Third-Party Services</h2>
+     <p>To provide you with a seamless experience, we work with these trusted partners:</p>
+     <div class="service-badges"><span class="service-badge">
+       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+       </svg> Supabase </span> <span class="service-badge">
+       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+       </svg> Google Login </span> <span class="service-badge">
+       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
+       </svg> Stripe </span>
+     </div>
+     <p>These services only receive the information necessary to perform their function. They are bound by their own privacy policies and security standards.</p>
+    </section><!-- User Rights -->
+    <section class="section">
+     <h2 class="section-title"><span class="section-icon">
+       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
+       </svg></span> Your Rights</h2>
+     <p>You're always in control of your information. You can:</p>
+     <ul class="gentle-list">
+      <li><strong>Access your data</strong> — Request a copy of the information we hold about you</li>
+      <li><strong>Update your information</strong> — Correct or modify your account details anytime</li>
+      <li><strong>Request deletion</strong> — Ask us to remove your data from our systems</li>
+     </ul>
+     <p>Simply reach out to us, and we'll respond promptly and respectfully.</p>
+    </section><!-- Data Retention -->
+    <section class="section">
+     <h2 class="section-title"><span class="section-icon">
+       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+       </svg></span> Data Retention</h2>
+     <p>We only keep your information for as long as necessary to provide our services or as required by law. When you delete your account, we remove your personal data within 30 days.</p>
+     <p>Some anonymized usage data may be retained for improving the app, but this cannot be linked back to you.</p>
+    </section><!-- Children's Privacy -->
+    <section class="section">
+     <h2 class="section-title"><span class="section-icon">
+       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+       </svg></span> Children's Privacy</h2>
+     <p>CalmNow is designed for users aged 13 and older. We do not knowingly collect information from children under 13. If you believe a child has provided us with personal information, please contact us so we can take appropriate action.</p>
+    </section><!-- Changes to Policy -->
+    <section class="section">
+     <h2 class="section-title"><span class="section-icon">
+       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+       </svg></span> Changes to This Policy</h2>
+     <p>If we make meaningful changes to this privacy policy, we'll let you know through the app or via email. We believe in transparency and will always give you time to review any updates before they take effect.</p>
+    </section><!-- Contact -->
+    <section class="section">
+     <h2 class="section-title"><span class="section-icon">
+       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" />
+       </svg></span> Get in Touch</h2>
+     <p>Have questions about your privacy? We're here to help. Reach out to us anytime—we respond within 48 hours.</p>
+     <div class="contact-card"><a href="mailto:support@calmnow.app" class="contact-email" id="contactEmail">support@calmnow.app</a>
+     </div>
+    </section><!-- Footer -->
+    <footer class="footer">
+     <div class="footer-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewbox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+      </svg> CalmNow
+     </div>
+     <p>Breathe easy. Your privacy is safe with us.</p>
+    </footer>
+   </div>
+  </div>
+  <script>
+    const defaultConfig = {
+      page_title: 'Privacy Policy',
+      page_subtitle: 'Your calm space is also your safe space.',
+      contact_email: 'support@calmnow.app',
+      background_color: '#faf7f2',
+      surface_color: 'rgba(255, 255, 255, 0.6)',
+      text_color: '#5c4a3d',
+      accent_color: '#8b7355',
+      heading_color: '#4a3c31',
+      font_family: 'Cormorant Garamond',
+      font_size: 16
+    };
+
+    async function onConfigChange(config) {
+      // Update text content
+      document.getElementById('pageTitle').textContent = config.page_title || defaultConfig.page_title;
+      document.getElementById('pageSubtitle').textContent = config.page_subtitle || defaultConfig.page_subtitle;
+      
+      const contactEmail = document.getElementById('contactEmail');
+      const email = config.contact_email || defaultConfig.contact_email;
+      contactEmail.textContent = email;
+      contactEmail.href = `mailto:${email}`;
+
+      // Update colors
+      const bgColor = config.background_color || defaultConfig.background_color;
+      const surfaceColor = config.surface_color || defaultConfig.surface_color;
+      const textColor = config.text_color || defaultConfig.text_color;
+      const accentColor = config.accent_color || defaultConfig.accent_color;
+      const headingColor = config.heading_color || defaultConfig.heading_color;
+
+      document.body.style.background = `linear-gradient(180deg, ${bgColor} 0%, #f5efe6 100%)`;
+      document.body.style.color = textColor;
+
+      document.querySelectorAll('.section').forEach(section => {
+        section.style.background = surfaceColor;
+      });
+
+      document.querySelectorAll('.section-title').forEach(title => {
+        title.style.color = headingColor;
+      });
+
+      document.querySelectorAll('.highlight').forEach(el => {
+        el.style.color = accentColor;
+      });
+
+      document.querySelector('.page-title').style.color = headingColor;
+      document.querySelector('.page-subtitle').style.color = accentColor;
+
+      // Update fonts
+      const customFont = config.font_family || defaultConfig.font_family;
+      const baseSize = config.font_size || defaultConfig.font_size;
+      
+      document.querySelectorAll('.page-title, .section-title, .logo, .footer-logo, .contact-email').forEach(el => {
+        el.style.fontFamily = `'${customFont}', serif`;
+      });
+
+      document.body.style.fontSize = `${baseSize}px`;
+    }
+
+    function mapToCapabilities(config) {
+      return {
+        recolorables: [
+          {
+            get: () => config.background_color || defaultConfig.background_color,
+            set: (value) => {
+              config.background_color = value;
+              window.elementSdk.setConfig({ background_color: value });
+            }
+          },
+          {
+            get: () => config.surface_color || defaultConfig.surface_color,
+            set: (value) => {
+              config.surface_color = value;
+              window.elementSdk.setConfig({ surface_color: value });
+            }
+          },
+          {
+            get: () => config.text_color || defaultConfig.text_color,
+            set: (value) => {
+              config.text_color = value;
+              window.elementSdk.setConfig({ text_color: value });
+            }
+          },
+          {
+            get: () => config.accent_color || defaultConfig.accent_color,
+            set: (value) => {
+              config.accent_color = value;
+              window.elementSdk.setConfig({ accent_color: value });
+            }
+          },
+          {
+            get: () => config.heading_color || defaultConfig.heading_color,
+            set: (value) => {
+              config.heading_color = value;
+              window.elementSdk.setConfig({ heading_color: value });
+            }
+          }
+        ],
+        borderables: [],
+        fontEditable: {
+          get: () => config.font_family || defaultConfig.font_family,
+          set: (value) => {
+            config.font_family = value;
+            window.elementSdk.setConfig({ font_family: value });
+          }
+        },
+        fontSizeable: {
+          get: () => config.font_size || defaultConfig.font_size,
+          set: (value) => {
+            config.font_size = value;
+            window.elementSdk.setConfig({ font_size: value });
+          }
+        }
+      };
+    }
+
+    function mapToEditPanelValues(config) {
+      return new Map([
+        ['page_title', config.page_title || defaultConfig.page_title],
+        ['page_subtitle', config.page_subtitle || defaultConfig.page_subtitle],
+        ['contact_email', config.contact_email || defaultConfig.contact_email]
+      ]);
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig,
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+  </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9e57328dd03ed033',t:'MTc3NTA0MjM1Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
