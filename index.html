@@ -3213,9 +3213,25 @@ function finishIntroFlow() {
     momentOverlay.classList.remove('intro-mode');
   }
   if (breathingSound) {
-    breathingSound.pause();
-    breathingSound.currentTime = 0;
-  }
+  const audio = breathingSound;
+  const fadeDuration = 1800; // 1.8 sec
+  const startVolume = audio.volume || 1;
+  const stepTime = 60;
+  const steps = fadeDuration / stepTime;
+  let step = 0;
+
+  const fade = setInterval(() => {
+    step++;
+    audio.volume = Math.max(0, startVolume * (1 - step / steps));
+
+    if (step >= steps) {
+      clearInterval(fade);
+      audio.pause();
+      audio.currentTime = 0;
+      audio.volume = startVolume;
+    }
+  }, stepTime);
+}
   showHomeScreen();
   showSoftPaywallIfNeeded();
 }
@@ -3239,15 +3255,15 @@ function startFirstTimeIntroFlow() {
   startBreathingGuide();
 
   introTimers.push(setTimeout(() => {
-    const breathingInstruction = document.getElementById('breathingInstruction');
-    if (breathingInstruction) {
-      breathingInstruction.classList.remove('active');
-    }
-  }, 4200));
+  const breathingInstruction = document.getElementById('breathingInstruction');
+  if (breathingInstruction) {
+    breathingInstruction.classList.remove('active');
+  }
+}, 14000));
 
-  introTimers.push(setTimeout(() => {
-    finishIntroFlow();
-  }, 5600));
+introTimers.push(setTimeout(() => {
+  finishIntroFlow();
+}, 15500));
 }
 
 function bootEntryFlow() {
