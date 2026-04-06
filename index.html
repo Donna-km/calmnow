@@ -1795,8 +1795,7 @@
 
     <div class="relative z-10 text-center">
       <p id="challenge-completion-title" class="font-display text-4xl font-light mb-4" style="color:#5C4D3C;">
-        Beautiful.
-      </p>
+</p>
 
      <p class="hidden font-light text-lg mb-2" style="color:#7A6B5A;">
   You thought: <span id="challenge-chosen-time"></span>
@@ -1805,7 +1804,7 @@
 <p id="challenge-reveal-text" class="font-light text-base mb-3" style="color:#9B8A78;">
 </p>
 
-<p id="challenge-reveal-subtext" class="font-light text-sm mb-10" style="color:#B09F8C;">
+<p id="challenge-reveal-subtext" class="hidden font-light text-sm mb-10" style="color:#B09F8C;">
 </p>
 
       <div class="flex flex-col gap-3 w-64">
@@ -4558,6 +4557,17 @@ function resetChallengeTimer() {
   hideHomeScreen();
 }
 
+   const calmQuotes = [
+  "Small pauses create big clarity.",
+  "You don’t need more time. Just this moment.",
+  "Nothing is missing in this moment.",
+  "Come back to yourself.",
+  "This is enough.",
+  "In stillness, things become clear.",
+  "You are already here.",
+  "Let this moment be enough."
+];
+
 function endChallengeEarly() {
   clearInterval(challengeTimerInterval);
   stopChallengeAudio();
@@ -4573,9 +4583,10 @@ function endChallengeEarly() {
   const revealSubtextEl = document.getElementById('challenge-reveal-subtext');
   const completionTitle = document.getElementById('challenge-completion-title');
 
-  if (completionTitle) {
-    completionTitle.textContent = 'Beautiful.';
-  }
+if (completionTitle) {
+  const randomQuote = calmQuotes[Math.floor(Math.random() * calmQuotes.length)];
+  completionTitle.textContent = `“${randomQuote}”`;
+}
 
   if (chosenTimeEl) {
     chosenTimeEl.textContent = `${chosenMinutes} min`;
@@ -4586,16 +4597,8 @@ function endChallengeEarly() {
   }
 
   if (revealSubtextEl) {
-    if (challengeElapsedSeconds <= 90) {
-      revealSubtextEl.textContent = 'It felt longer, didn’t it?';
-    } else if (challengeElapsedSeconds < challengeSelectedSeconds) {
-      revealSubtextEl.textContent = 'Your mind had other ideas.';
-    } else if (challengeElapsedSeconds === challengeSelectedSeconds) {
-      revealSubtextEl.textContent = 'Right on the feeling.';
-    } else {
-      revealSubtextEl.textContent = 'You stayed longer than you thought.';
-    }
-  }
+  revealSubtextEl.textContent = '';
+}
   updateProgressUI(challengeElapsedSeconds);
   createChallengeBloomEffects();
 
