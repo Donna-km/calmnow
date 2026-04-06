@@ -1601,7 +1601,7 @@
  
 
   <!-- Choose time -->
-<div class="mb-8">
+<div class="mb-8 hidden">
   <p class="text-sm font-light mb-3 text-center" style="color: #9B8A78;">
     How long would you like to stay?
   </p>
@@ -1798,7 +1798,7 @@
         Beautiful.
       </p>
 
-      <p class="font-light text-lg mb-2" style="color:#7A6B5A;">
+     <p class="hidden font-light text-lg mb-2" style="color:#7A6B5A;">
   You thought: <span id="challenge-chosen-time"></span>
 </p>
 
@@ -4719,12 +4719,6 @@ if (challengeEndBtn) {
   btn.addEventListener('click', () => {
     challengeSelectedSeconds = parseInt(btn.dataset.seconds, 10);
     setChallengeTimeButtonStyles(btn);
-
-    const durationEl = document.getElementById('challenge-card-duration');
-    if (durationEl) {
-      durationEl.textContent = `${Math.ceil(challengeSelectedSeconds / 60)} minute practice`;
-    }
-
     console.log('Selected time:', challengeSelectedSeconds);
   });
 });
