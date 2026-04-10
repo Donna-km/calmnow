@@ -5183,21 +5183,46 @@ const sendChatBtn = document.getElementById('sendChatBtn');
 const chatMessages = document.getElementById('chatMessages');
 
 if (sendChatBtn) {
-  sendChatBtn.addEventListener('click', () => {
+  sendChatBtn.addEventListener('click', async () => {
     const msg = chatInput.value.trim();
     if (!msg) return;
 
     // user message
     const userDiv = document.createElement('div');
     userDiv.textContent = "You: " + msg;
+    userDiv.style.marginBottom = '10px';
     chatMessages.appendChild(userDiv);
 
-    // fake AI reply (เดี๋ยวค่อยต่อ AI จริง)
+    chatInput.value = '';
+
+    // loading message
     const aiDiv = document.createElement('div');
-    aiDiv.textContent = "AI: I hear you… you're not alone.";
+    aiDiv.textContent = "AI: ...";
+    aiDiv.style.marginBottom = '10px';
     chatMessages.appendChild(aiDiv);
 
-    chatInput.value = '';
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    try {
+      const res = await fetch("https://primary-production-49d9.up.railway.app/webhook/d54a0cf0-9f9b-4d58-91d7-d2f29142f30f/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          message: msg
+        })
+      });
+
+      const data = await res.json();
+
+      aiDiv.textContent = "AI: " + (data.reply || data.output || "I'm here with you.");
+    } catch (err) {
+      console.error("chat error:", err);
+      aiDiv.textContent = "AI: Something went wrong. Please try again.";
+    }
+
+    chatMessages.scrollTop = chatMessages.scrollHeight;
   });
 }
     
