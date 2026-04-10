@@ -5233,10 +5233,89 @@ function showCalmyGreeting() {
   aiDiv.style.marginBottom = '8px';
   aiDiv.style.maxWidth = '70%';
 
-  chatMessages.appendChild(aiDiv);
-  chatMessages.scrollTop = chatMessages.scrollHeight;
+    addChatMessage('ai', randomText);
+  renderStoredChatHistory();
 
   localStorage.setItem('calmyGreetingDate', today);
+}
+
+const CHAT_STORAGE_KEY = 'calmnow_chat_history';
+const CHAT_EXPIRE_DAYS = 3;
+
+function getStoredChatHistory() {
+  try {
+    const raw = localStorage.getItem(CHAT_STORAGE_KEY);
+    if (!raw) return [];
+
+    const history = JSON.parse(raw);
+    if (!Array.isArray(history)) return [];
+
+    const now = Date.now();
+    const maxAge = CHAT_EXPIRE_DAYS * 24 * 60 * 60 * 1000;
+
+    const validHistory = history.filter(item => {
+      if (!item || !item.text || !item.role || !item.timestamp) return false;
+      return now - item.timestamp <= maxAge;
+    });
+
+    if (validHistory.length !== history.length) {
+      localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(validHistory));
+    }
+
+    return validHistory;
+  } catch (error) {
+    console.error('Failed to load chat history:', error);
+    return [];
+  }
+}
+
+function saveChatHistory(history) {
+  try {
+    localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(history));
+  } catch (error) {
+    console.error('Failed to save chat history:', error);
+  }
+}
+
+function addChatMessage(role, text) {
+  const history = getStoredChatHistory();
+
+  history.push({
+    role,
+    text,
+    timestamp: Date.now()
+  });
+
+  saveChatHistory(history);
+}
+
+function renderStoredChatHistory() {
+  const chatMessages = document.getElementById('chatMessages');
+  if (!chatMessages) return;
+
+  const history = getStoredChatHistory();
+  chatMessages.innerHTML = '';
+
+  history.forEach(item => {
+    const div = document.createElement('div');
+    div.textContent = item.text;
+
+    div.style.alignSelf = item.role === 'user' ? 'flex-end' : 'flex-start';
+    div.style.background = item.role === 'user' ? '#B4A591' : '#F4EFEA';
+    div.style.color = item.role === 'user' ? 'white' : '#6B5D4D';
+    div.style.padding = '10px 14px';
+    div.style.borderRadius = '18px';
+    div.style.marginBottom = '8px';
+    div.style.maxWidth = '70%';
+
+    chatMessages.appendChild(div);
+  });
+
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function clearExpiredChatHistory() {
+  getStoredChatHistory();
 }
    
 const chatInput = document.getElementById('chatInput');
@@ -5250,19 +5329,8 @@ if (sendChatBtn) {
 
    
     // user message
-   const userDiv = document.createElement('div');
-userDiv.textContent = msg;
-
-userDiv.style.alignSelf = 'flex-end';
-userDiv.style.background = '#B4A591';
-userDiv.style.color = 'white';
-userDiv.style.padding = '10px 14px';
-userDiv.style.borderRadius = '18px';
-userDiv.style.marginBottom = '8px';
-userDiv.style.maxWidth = '70%';
-   
-    userDiv.style.marginBottom = '10px';
-    chatMessages.appendChild(userDiv);
+   addChatMessage('user', msg);
+renderStoredChatHistory();
 
     chatInput.value = '';
 
@@ -5287,7 +5355,11 @@ userDiv.style.maxWidth = '70%';
 
       const data = await res.json();
 
-      aiDiv.textContent = data.reply || data.output || "I'm here with you.";
+      const aiText = data.reply || data.output || "I'm here with you.";
+aiDiv.remove();
+
+addChatMessage('ai', aiText);
+renderStoredChatHistory();
 
 aiDiv.style.alignSelf = 'flex-start';
 aiDiv.style.background = '#F4EFEA';
@@ -5298,7 +5370,10 @@ aiDiv.style.marginBottom = '8px';
 aiDiv.style.maxWidth = '70%';
 } catch (err) {
   console.error("chat error:", err);
-  aiDiv.textContent = "Something went wrong. Please try again.";
+  aiDiv.remove();
+
+addChatMessage('ai', 'Something went wrong. Please try again.');
+renderStoredChatHistory();
 
   aiDiv.style.alignSelf = 'flex-start';
   aiDiv.style.background = '#F4EFEA';
@@ -5313,7 +5388,9 @@ chatMessages.scrollTop = chatMessages.scrollHeight;
   });
 }
     
+clearExpiredChatHistory();
 initApp();
+renderStoredChatHistory();
    
    </script>
   
