@@ -509,6 +509,38 @@
       background: rgba(255, 253, 250, 0.9);
       transform: scale(1.05);
     }
+   .moment-chat-btn {
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  padding: 1rem 2.2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(180, 165, 145, 0.28);
+  background: rgba(255, 252, 247, 0.35);
+  backdrop-filter: blur(10px);
+  color: #B09F8C;
+  font-family: 'Jost', system-ui, sans-serif;
+  font-weight: 300;
+  font-size: 0.72rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.4s ease;
+  z-index: 12;
+}
+
+.moment-overlay.active .moment-chat-btn {
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: 3s;
+}
+
+.moment-chat-btn:hover {
+  background: rgba(255, 252, 247, 0.55);
+  color: #8B7355;
+}
     
     /* Close moment button */
     .close-moment {
@@ -1324,7 +1356,9 @@
      <p class="breathing-title" id="breathingInstruction">Inhale</p>
      <p class="breathing-subtitle">Take a quiet moment</p>
     </div>
-   </div><button id="closeMoment" class="close-moment">Return</button>
+   </div>
+   <button id="momentChatBtn" class="moment-chat-btn">Share a feeling</button>
+   <button id="closeMoment" class="close-moment">Return</button>
   </div><!-- Sounds Section -->
   <section id="soundsSection" class="section-panel"><button class="back-button" data-back>
     <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="#8B7355" stroke-width="1.5"><path d="M15 18l-6-6 6-6" />
@@ -3125,6 +3159,7 @@ const mixData = {
     const momentOverlay = document.getElementById('momentOverlay');
     const momentMessage = document.getElementById('momentMessage');
     const closeMoment = document.getElementById('closeMoment');
+    const momentChatBtn = document.getElementById('momentChatBtn');
     const navItems = document.querySelectorAll('.nav-item');
     const sections = {
   sounds: document.getElementById('soundsSection'),
