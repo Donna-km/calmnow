@@ -3366,6 +3366,7 @@ if (stage.text === 'HoldBig') {
     }
 
     takeAMomentBtn.addEventListener('click', () => {
+  currentMode = 'breathing';
   momentOverlay.classList.add('active');
 
   if (breathingSound) {
@@ -3374,6 +3375,54 @@ if (stage.text === 'HoldBig') {
   }
 
   startBreathingGuide();
+
+  let shareBtn = document.getElementById('shareFeelingBtn');
+
+  if (!shareBtn) {
+    shareBtn = document.createElement('button');
+    shareBtn.id = 'shareFeelingBtn';
+    shareBtn.textContent = 'Share a Feeling';
+    shareBtn.style.cssText = `
+      position: absolute;
+      top: 2rem;
+      right: 1.5rem;
+      padding: 0.75rem 2rem;
+      color: #A89880;
+      font-family: 'Jost', system-ui, sans-serif;
+      font-weight: 300;
+      font-size: 0.8rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      cursor: pointer;
+      background: rgba(255, 252, 247, 0.6);
+      border: 1px solid rgba(180, 165, 145, 0.3);
+      border-radius: 20px;
+      transition: all 0.3s ease;
+      opacity: 0;
+      z-index: 10;
+    `;
+
+    shareBtn.addEventListener('mouseenter', () => {
+      shareBtn.style.background = 'rgba(255, 253, 250, 0.8)';
+      shareBtn.style.color = '#8B7355';
+    });
+
+    shareBtn.addEventListener('mouseleave', () => {
+      shareBtn.style.background = 'rgba(255, 252, 247, 0.6)';
+      shareBtn.style.color = '#A89880';
+    });
+
+    shareBtn.addEventListener('click', () => {
+      console.log('open chat here');
+    });
+
+    momentOverlay.appendChild(shareBtn);
+  }
+
+  shareBtn.style.display = 'block';
+  setTimeout(() => {
+    shareBtn.style.opacity = '1';
+  }, 3000);
 });
 
     closeMoment.addEventListener('click', () => {
@@ -3412,6 +3461,8 @@ if (stage.text === 'HoldBig') {
           breathingInstruction.classList.remove('active');
           breathingInstruction.textContent = 'Inhale';
         }
+         const shareBtn = document.getElementById('shareFeelingBtn');
+         if (shareBtn) shareBtn.style.display = 'none';
       } else if (currentMode === 'mix') {
         // Hide mix elements and show breathing circle again
         const mixCircle = document.getElementById('mixCircle');
