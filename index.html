@@ -1992,7 +1992,7 @@
 
    <div id="chatMessages"
      class="flex-1 overflow-y-auto mb-4 text-sm"
-     style="color:#6B5D4D; display:flex; flex-direction:column; gap:6px;"
+     style="color:#6B5D4D; display:flex; flex-direction:column; gap:6px;">
     
       <!-- messages -->
     </div>
@@ -5184,15 +5184,6 @@ async function loadUserChallengeProgress() {
 
   return data;
 }
-
-const chatInput = document.getElementById('chatInput');
-const sendChatBtn = document.getElementById('sendChatBtn');
-const chatMessages = document.getElementById('chatMessages');
-
-if (sendChatBtn) {
-  sendChatBtn.addEventListener('click', async () => {
-    const msg = chatInput.value.trim();
-    if (!msg) return;
 const calmyGreetings = [
   "How are you feeling right now?",
   "Have you smiled today?",
@@ -5234,6 +5225,16 @@ function showCalmyGreeting() {
 
   localStorage.setItem('calmyGreetingDate', today);
 }
+   
+const chatInput = document.getElementById('chatInput');
+const sendChatBtn = document.getElementById('sendChatBtn');
+const chatMessages = document.getElementById('chatMessages');
+
+if (sendChatBtn) {
+  sendChatBtn.addEventListener('click', async () => {
+    const msg = chatInput.value.trim();
+    if (!msg) return;
+
    
     // user message
    const userDiv = document.createElement('div');
