@@ -1990,7 +1990,10 @@
       Share a Feeling
     </h2>
 
-    <div id="chatMessages" class="flex-1 overflow-y-auto mb-4 text-sm" style="color:#6B5D4D;">
+   <div id="chatMessages"
+     class="flex-1 overflow-y-auto mb-4 text-sm"
+     style="color:#6B5D4D; display:flex; flex-direction:column; gap:6px;"
+    
       <!-- messages -->
     </div>
 
@@ -5188,8 +5191,17 @@ if (sendChatBtn) {
     if (!msg) return;
 
     // user message
-    const userDiv = document.createElement('div');
-    userDiv.textContent = "You: " + msg;
+   const userDiv = document.createElement('div');
+userDiv.textContent = msg;
+
+userDiv.style.alignSelf = 'flex-end';
+userDiv.style.background = '#B4A591';
+userDiv.style.color = 'white';
+userDiv.style.padding = '10px 14px';
+userDiv.style.borderRadius = '18px';
+userDiv.style.marginBottom = '8px';
+userDiv.style.maxWidth = '70%';
+   
     userDiv.style.marginBottom = '10px';
     chatMessages.appendChild(userDiv);
 
@@ -5197,7 +5209,7 @@ if (sendChatBtn) {
 
     // loading message
     const aiDiv = document.createElement('div');
-    aiDiv.textContent = "AI: ...";
+    aiDiv.textContent = "Calmy: ...";
     aiDiv.style.marginBottom = '10px';
     chatMessages.appendChild(aiDiv);
 
@@ -5216,13 +5228,29 @@ if (sendChatBtn) {
 
       const data = await res.json();
 
-      aiDiv.textContent = "AI: " + (data.reply || data.output || "I'm here with you.");
-    } catch (err) {
-      console.error("chat error:", err);
-      aiDiv.textContent = "AI: Something went wrong. Please try again.";
-    }
+      aiDiv.textContent = data.reply || data.output || "I'm here with you.";
 
-    chatMessages.scrollTop = chatMessages.scrollHeight;
+aiDiv.style.alignSelf = 'flex-start';
+aiDiv.style.background = '#F4EFEA';
+aiDiv.style.color = '#6B5D4D';
+aiDiv.style.padding = '10px 14px';
+aiDiv.style.borderRadius = '18px';
+aiDiv.style.marginBottom = '8px';
+aiDiv.style.maxWidth = '70%';
+} catch (err) {
+  console.error("chat error:", err);
+  aiDiv.textContent = "Something went wrong. Please try again.";
+
+  aiDiv.style.alignSelf = 'flex-start';
+  aiDiv.style.background = '#F4EFEA';
+  aiDiv.style.color = '#6B5D4D';
+  aiDiv.style.padding = '10px 14px';
+  aiDiv.style.borderRadius = '18px';
+  aiDiv.style.marginBottom = '8px';
+  aiDiv.style.maxWidth = '70%';
+}
+
+chatMessages.scrollTop = chatMessages.scrollHeight;
   });
 }
     
