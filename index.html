@@ -3163,7 +3163,8 @@ const mixData = {
   affirmations: document.getElementById('affirmationsSection'),
   challenge: document.getElementById('challengeSection'),
   challengeSession: document.getElementById('challengeSessionSection'),
-  progress: document.getElementById('progressSection')
+  progress: document.getElementById('progressSection'),
+  chat: document.getElementById('chatSection')
 };
     const backButtons = document.querySelectorAll('[data-back]');
 const mainScreen = document.getElementById('mainScreen');
@@ -3443,9 +3444,32 @@ if (stage.text === 'HoldBig') {
     });
 
     shareBtn.addEventListener('click', () => {
-  momentOverlay.classList.remove('active'); // ปิดหน้า breathing
+  const chatSection = document.getElementById('chatSection');
 
-  document.getElementById('chatSection').classList.add('active');
+  if (breathingSound && !breathingSound.paused) {
+    const fadeAudio = setInterval(() => {
+      if (breathingSound.volume > 0.05) {
+        breathingSound.volume -= 0.05;
+      } else {
+        clearInterval(fadeAudio);
+        breathingSound.pause();
+        breathingSound.currentTime = 0;
+        breathingSound.volume = 1;
+      }
+    }, 80);
+  }
+
+  momentOverlay.classList.remove('active');
+
+  const shareBtnEl = document.getElementById('shareFeelingBtn');
+  if (shareBtnEl) shareBtnEl.style.display = 'none';
+
+  if (chatSection) {
+    Object.values(sections).forEach(s => s.classList.remove('active'));
+    chatSection.classList.add('active');
+  }
+
+  hideHomeScreen();
 });
    
     momentOverlay.appendChild(shareBtn);
@@ -3543,7 +3567,11 @@ document.querySelectorAll('[data-back]').forEach(btn => {
       currentSoundAudio.currentTime = 0;
       currentSoundAudio = null;
     }
-
+ if (breathingSound) {
+      breathingSound.pause();
+      breathingSound.currentTime = 0;
+      breathingSound.volume = 1;
+    }
     Object.values(sections).forEach(s => s.classList.remove('active'));
     showHomeScreen();
 
