@@ -3473,6 +3473,7 @@ if (stage.text === 'HoldBig') {
   }
 
   hideHomeScreen();
+  setTimeout(showCalmyGreeting, 300);
 });
    
     momentOverlay.appendChild(shareBtn);
@@ -5189,7 +5190,44 @@ if (sendChatBtn) {
   sendChatBtn.addEventListener('click', async () => {
     const msg = chatInput.value.trim();
     if (!msg) return;
+const calmyGreetings = [
+  "How are you feeling right now?",
+  "Have you smiled today?",
+  "Are you feeling a little tired?",
+  "What’s on your mind right now?",
+  "Take a breath. I’m here.",
+  "You can say as little or as much as you want.",
+  "What feels heavy today?"
+];
 
+function showCalmyGreeting() {
+  const chatMessages = document.getElementById('chatMessages');
+  if (!chatMessages) return;
+
+  const today = new Date().toLocaleDateString('en-CA');
+  const lastGreetingDate = localStorage.getItem('calmyGreetingDate');
+
+  if (lastGreetingDate === today) return;
+
+  const randomText = calmyGreetings[Math.floor(Math.random() * calmyGreetings.length)];
+
+  const aiDiv = document.createElement('div');
+  aiDiv.textContent = randomText;
+
+  aiDiv.style.alignSelf = 'flex-start';
+  aiDiv.style.background = '#F4EFEA';
+  aiDiv.style.color = '#6B5D4D';
+  aiDiv.style.padding = '10px 14px';
+  aiDiv.style.borderRadius = '18px';
+  aiDiv.style.marginBottom = '8px';
+  aiDiv.style.maxWidth = '70%';
+
+  chatMessages.appendChild(aiDiv);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+
+  localStorage.setItem('calmyGreetingDate', today);
+}
+   
     // user message
    const userDiv = document.createElement('div');
 userDiv.textContent = msg;
