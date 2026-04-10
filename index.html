@@ -1325,6 +1325,9 @@
      <p class="breathing-subtitle">Take a quiet moment</p>
     </div>
    </div><button id="closeMoment" class="close-moment">Return</button>
+   <button id="shareFeelingBtn" class="close-moment" style="bottom: 6rem;">
+  Share a feeling
+</button>
   </div><!-- Sounds Section -->
   <section id="soundsSection" class="section-panel"><button class="back-button" data-back>
     <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="#8B7355" stroke-width="1.5"><path d="M15 18l-6-6 6-6" />
@@ -5066,10 +5069,79 @@ async function loadUserChallengeProgress() {
 
   return data;
 }
-    
+const shareFeelingBtn = document.getElementById('shareFeelingBtn');
+const chatModal = document.getElementById('chatModal');
+const sendChatBtn = document.getElementById('sendChatBtn');
+const chatInput = document.getElementById('chatInput');
+const chatReply = document.getElementById('chatReply');
+
+if (shareFeelingBtn) {
+  shareFeelingBtn.addEventListener('click', () => {
+    chatModal.style.display = 'flex';
+  });
+}
+
+if (chatModal) {
+  chatModal.addEventListener('click', (e) => {
+    if (e.target === chatModal) {
+      chatModal.style.display = 'none';
+    }
+  });
+}
+
+if (sendChatBtn) {
+  sendChatBtn.addEventListener('click', () => {
+    const text = chatInput.value;
+
+    if (!text) return;
+
+    // ✨ temporary AI reply (mock)
+    chatReply.textContent = "I hear you… it's okay to feel this way.";
+
+    chatInput.value = '';
+  });
+}
+   
 initApp();
    
    </script>
+  <div id="chatModal" style="
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+">
+
+  <div style="
+    width: 90%;
+    max-width: 400px;
+    background: rgba(255,252,247,0.95);
+    border-radius: 20px;
+    padding: 1.5rem;
+    backdrop-filter: blur(10px);
+  ">
+
+    <p style="color:#8B7355; margin-bottom:1rem;">What are you feeling?</p>
+
+    <textarea id="chatInput" style="
+      width:100%;
+      height:80px;
+      border-radius:10px;
+      padding:0.5rem;
+      border:1px solid rgba(180,165,145,0.3);
+    "></textarea>
+
+    <button id="sendChatBtn" class="calm-button w-full mt-3">
+      Send
+    </button>
+
+    <p id="chatReply" style="margin-top:1rem; color:#A89880;"></p>
+
+  </div>
+</div>
   
  </body>
 </html>
