@@ -3446,7 +3446,10 @@ if (stage.text === 'HoldBig') {
       shareBtn.style.color = '#A89880';
     });
 
-    shareBtn.addEventListener('click', () => {
+    const shareFeelingBtn = document.getElementById('shareFeelingBtn');
+
+if (shareFeelingBtn) {
+  shareFeelingBtn.addEventListener('click', () => {
   const chatSection = document.getElementById('chatSection');
 
   if (breathingSound && !breathingSound.paused) {
@@ -5202,7 +5205,11 @@ const calmyGreetings = [
 
 function showCalmyGreeting() {
   const chatMessages = document.getElementById('chatMessages');
-  if (!chatMessages) return;
+
+  if (!chatMessages) {
+    setTimeout(showCalmyGreeting, 200); // retry
+    return;
+  }
 
   const today = new Date().toLocaleDateString('en-CA');
   const lastGreetingDate = localStorage.getItem('calmyGreetingDate');
