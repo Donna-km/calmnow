@@ -1318,6 +1318,17 @@
    </div>
   </div><!-- Moment Overlay -->
   <div id="momentOverlay" class="moment-overlay">
+   
+    <!-- ✅ ปุ่มใหม่ (วางตรงนี้) -->
+  <div id="momentTopActions">
+    <button id="shareFeelingBtn" class="icon-btn">
+      Share
+    </button>
+
+    <button id="closeMoment" class="icon-btn">
+      ✕
+    </button>
+  </div>
    <div class="breathing-circle">
     <div class="breathing-inner"></div>
     <div class="breathing-text" id="breathingText">
@@ -1325,10 +1336,7 @@
      <p class="breathing-subtitle">Take a quiet moment</p>
     </div>
    </div><button id="closeMoment" class="close-moment">Return</button>
-   <button id="shareFeelingBtn" class="close-moment" style="bottom: 6rem;">
-  Share a feeling
-</button>
-  </div><!-- Sounds Section -->
+   </div><!-- Sounds Section -->
   <section id="soundsSection" class="section-panel"><button class="back-button" data-back>
     <svg width="20" height="20" viewbox="0 0 24 24" fill="none" stroke="#8B7355" stroke-width="1.5"><path d="M15 18l-6-6 6-6" />
     </svg></button>
@@ -5101,11 +5109,7 @@ if (sendChatBtn) {
     chatInput.value = '';
   });
 }
-   
-initApp();
-   
-   </script>
-  <div id="chatModal" style="
+   <div id="chatModal" style="
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.3);
@@ -5142,7 +5146,11 @@ initApp();
 
   </div>
 </div>
-  
+   
+initApp();
+   
+   </script>
+    
  </body>
 </html>
 
