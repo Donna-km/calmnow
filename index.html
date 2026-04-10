@@ -1976,6 +1976,36 @@
    
   </div>
 </div>
+
+<section id="chatSection" class="section-panel">
+  <button class="back-button" data-back>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8B7355" stroke-width="1.5">
+      <path d="M15 18l-6-6 6-6" />
+    </svg>
+  </button>
+
+  <div class="max-w-md mx-auto pt-16 flex flex-col h-full">
+    
+    <h2 class="font-display text-3xl text-center mb-4" style="color:#8B7355;">
+      Share a Feeling
+    </h2>
+
+    <div id="chatMessages" class="flex-1 overflow-y-auto mb-4 text-sm" style="color:#6B5D4D;">
+      <!-- messages -->
+    </div>
+
+    <div class="flex gap-2">
+      <input id="chatInput" type="text" placeholder="Type your feeling..."
+        class="flex-1 px-3 py-2 rounded-full border border-gray-300 text-sm" />
+
+      <button id="sendChatBtn" class="px-4 py-2 rounded-full"
+        style="background:#B4A591; color:white;">
+        Send
+      </button>
+    </div>
+
+  </div>
+</section>
   
   <script>
     
@@ -3413,9 +3443,11 @@ if (stage.text === 'HoldBig') {
     });
 
     shareBtn.addEventListener('click', () => {
-      console.log('open chat here');
-    });
+  momentOverlay.classList.remove('active'); // ปิดหน้า breathing
 
+  document.getElementById('chatSection').classList.add('active');
+});
+   
     momentOverlay.appendChild(shareBtn);
   }
 
@@ -5116,6 +5148,29 @@ async function loadUserChallengeProgress() {
   }
 
   return data;
+}
+
+const chatInput = document.getElementById('chatInput');
+const sendChatBtn = document.getElementById('sendChatBtn');
+const chatMessages = document.getElementById('chatMessages');
+
+if (sendChatBtn) {
+  sendChatBtn.addEventListener('click', () => {
+    const msg = chatInput.value.trim();
+    if (!msg) return;
+
+    // user message
+    const userDiv = document.createElement('div');
+    userDiv.textContent = "You: " + msg;
+    chatMessages.appendChild(userDiv);
+
+    // fake AI reply (เดี๋ยวค่อยต่อ AI จริง)
+    const aiDiv = document.createElement('div');
+    aiDiv.textContent = "AI: I hear you… you're not alone.";
+    chatMessages.appendChild(aiDiv);
+
+    chatInput.value = '';
+  });
 }
     
 initApp();
