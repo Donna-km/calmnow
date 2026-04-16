@@ -1306,17 +1306,15 @@
      </button>
     </div>
    </div>
-  </div><!-- Soft Paywall -->
-  <div id="softPaywall" class="soft-paywall">
-   <div class="soft-paywall-card">
-    <h2 class="soft-paywall-title">Come back to the present, anytime</h2>
-    <p class="soft-paywall-subtitle">Pause when life feels too much</p>
+  </div><div id="softPaywall" class="soft-paywall">
+  <div class="soft-paywall-card">
+    <h2 class="soft-paywall-title">When it gets too much<br>come back here.</h2>
+    <p class="soft-paywall-subtitle">Just pause.</p>
     <div class="soft-paywall-actions">
-     <button id="paywallStartTrialBtn" class="calm-button">Start 7-day free trial</button>
-     <button id="paywallMaybeLaterBtn" class="paywall-secondary-btn">Maybe later</button>
+      <button id="paywallStartTrialBtn" class="calm-button">Free 7 days</button>
     </div>
-   </div>
-  </div><!-- Moment Overlay -->
+  </div>
+</div><!-- Moment Overlay -->
   <div id="momentOverlay" class="moment-overlay">
    <div class="breathing-circle">
     <div class="breathing-inner"></div>
@@ -3175,7 +3173,6 @@ const introScreen = document.getElementById('introScreen');
 const introTakeMomentBtn = document.getElementById('introTakeMomentBtn');
 const softPaywall = document.getElementById('softPaywall');
 const paywallStartTrialBtn = document.getElementById('paywallStartTrialBtn');
-const paywallMaybeLaterBtn = document.getElementById('paywallMaybeLaterBtn');
 
 const INTRO_SEEN_KEY = 'calmnow_intro_seen';
 const PAYWALL_LAST_SHOWN_KEY = 'calmnow_paywall_last_shown_date';
@@ -3386,11 +3383,7 @@ if (stage.text === 'HoldBig') {
       });
     }
 
-    if (paywallMaybeLaterBtn) {
-      paywallMaybeLaterBtn.addEventListener('click', () => {
-        hideSoftPaywall();
-      });
-    }
+    
 
     if (paywallStartTrialBtn) {
       paywallStartTrialBtn.addEventListener('click', () => {
