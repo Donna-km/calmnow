@@ -4256,6 +4256,49 @@ if (authUserAvatar) {
   }
 }
 
+   async function startTrialForUser(user) {
+  if (!user?.id) return false;
+
+  const { data: profile, error: profileError } = await supabaseClient
+    .from('profiles')
+    .select('id, trial_started_at')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (profileError) {
+    console.error('profile check error:', profileError);
+    return false;
+  }
+
+  // เคยเริ่ม trial แล้ว ไม่ต้องเริ่มซ้ำ
+  if (profile?.trial_started_at) {
+    return true;
+  }
+
+  const { error: upsertError } = await supabaseClient
+    .from('profiles')
+    .upsert({
+      id: user.id,
+      email: user.email || null,
+      full_name: user.user_metadata?.full_name || null,
+      avatar_url: user.user_metadata?.avatar_url || null,
+      provider: user.app_metadata?.provider || null,
+      trial_started_at: new Date().toISOString(),
+      trial_ends_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+      subscription_status: 'trial',
+      is_active: true
+    }, {
+      onConflict: 'id'
+    });
+
+  if (upsertError) {
+    console.error('start trial upsert error:', upsertError);
+    return false;
+  }
+
+  return true;
+}
+
 async function handlePostLogin() {
   const { data: userData } = await supabaseClient.auth.getUser();
   currentUser = userData?.user || null;
@@ -5182,12 +5225,22 @@ if (authSubmitBtn) {
 
     try {
       if (authMode === 'signup') {
-        const { error } = await supabaseClient.auth.signUp({
+        const { data, error } = await supabaseClient.auth.signUp({
           email,
           password
         });
 
         if (error) throw error;
+
+        // ถ้ากดมาจาก Free 7 days ให้เริ่ม trial ทันที
+        if (pendingTrialStart && data?.user) {
+          await startTrialForUser(data.user);
+          pendingTrialStart = false;
+          closeAuthModal();
+          hideAllPaywalls();
+          showHomeScreen();
+          return;
+        }
 
         authStatusText.textContent = 'Account created. Check your email if confirmation is enabled.';
       } else {
@@ -5197,6 +5250,18 @@ if (authSubmitBtn) {
         });
 
         if (error) throw error;
+
+        const { data: userData } = await supabaseClient.auth.getUser();
+        const user = userData?.user || null;
+
+        if (pendingTrialStart && user) {
+          await startTrialForUser(user);
+          pendingTrialStart = false;
+          closeAuthModal();
+          hideAllPaywalls();
+          showHomeScreen();
+          return;
+        }
 
         await handlePostLogin();
       }
@@ -5244,53 +5309,11 @@ if (authLogoutBtn) {
   });
 }
 
-supabaseClient.auth.onAuthStateChange(async (event, session) => {
+supabaseClient.auth.onAuthStateChange((event, session) => {
   updateAuthUI(session?.user || null);
-
-  if (event !== 'SIGNED_IN' || !session?.user) return;
-  if (!pendingTrialStart) return;
-
-  const user = session.user;
-
-  const { data: profile, error: profileError } = await supabaseClient
-    .from('profiles')
-    .select('id, trial_started_at')
-    .eq('id', user.id)
-    .maybeSingle();
-
-  if (profileError) {
-    console.error('profile check error:', profileError);
-    return;
-  }
-
-  if (!profile?.trial_started_at) {
-    const { error: upsertError } = await supabaseClient
-      .from('profiles')
-      .upsert({
-        id: user.id,
-        email: user.email || null,
-        full_name: user.user_metadata?.full_name || null,
-        avatar_url: user.user_metadata?.avatar_url || null,
-        provider: user.app_metadata?.provider || null,
-        trial_started_at: new Date().toISOString(),
-        trial_ends_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
-        subscription_status: 'trial',
-        is_active: true
-      }, {
-        onConflict: 'id'
-      });
-
-    if (upsertError) {
-      console.error('start trial upsert error:', upsertError);
-      return;
-    }
-  }
-
-  pendingTrialStart = false;
-  closeAuthModal();
-  hideAllPaywalls();
-  showHomeScreen();
 });
+
+ 
 async function loadUserChallengeProgress() {
   const { data: { user } } = await supabaseClient.auth.getUser();
   if (!user) return null;
