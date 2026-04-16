@@ -2091,7 +2091,8 @@ let personalBackTarget = 'sounds';
 let favoriteSoundIds = [];
 let deviceId = localStorage.getItem('calmnow_device_id');
 let authMode = 'login';
-let currentUser = null;   
+let currentUser = null;
+let pendingTrialStart = false;   
 
 let currentChallengeDayId = 1;
 let currentChallengeDay = null;
@@ -3229,16 +3230,36 @@ function hideSoftPaywall() {
   if (softPaywall) softPaywall.classList.remove('active');
 }
 
-function showSoftPaywallIfNeeded() {
+async function showSoftPaywallIfNeeded() {
+  if (!softPaywall) return;
+
+  const canAccess = await canUserAccess();
+  if (canAccess) return;
+
   const todayKey = getTodayKey();
   const lastShown = localStorage.getItem(PAYWALL_LAST_SHOWN_KEY);
-  if (lastShown === todayKey || !softPaywall) return;
+  if (lastShown === todayKey) return;
+
   localStorage.setItem(PAYWALL_LAST_SHOWN_KEY, todayKey);
+
   setTimeout(() => {
     if (!introFlowActive) {
       softPaywall.classList.add('active');
     }
   }, 450);
+}
+
+   async function canUserAccess() {
+  const { data: { user } } = await supabaseClient.auth.getUser();
+
+  if (!user) return false;
+
+  // expire ก่อน
+  await supabaseClient.rpc('expire_trial_if_needed', { uid: user.id });
+
+  const { data } = await supabaseClient.rpc('check_user_access', { uid: user.id });
+
+  return data === true;
 }
 
 function finishIntroFlow() {
@@ -3393,12 +3414,13 @@ if (stage.text === 'HoldBig') {
 
     
 
-    if (paywallStartTrialBtn) {
-      paywallStartTrialBtn.addEventListener('click', () => {
-        hideSoftPaywall();
-        openAuthModal('signup');
-      });
-    }
+   if (paywallStartTrialBtn) {
+  paywallStartTrialBtn.addEventListener('click', () => {
+    pendingTrialStart = true;
+    hideSoftPaywall();
+    openAuthModal('signup');
+  });
+}
 
     takeAMomentBtn.addEventListener('click', () => {
   currentMode = 'breathing';
@@ -5159,8 +5181,47 @@ if (authLogoutBtn) {
   });
 }
 
-supabaseClient.auth.onAuthStateChange(async (_event, session) => {
+supabaseClient.auth.onAuthStateChange(async (event, session) => {
   updateAuthUI(session?.user || null);
+
+  if (event !== 'SIGNED_IN' || !session?.user) return;
+  if (!pendingTrialStart) return;
+
+  const user = session.user;
+
+  const { data: profile, error: profileError } = await supabaseClient
+    .from('profiles')
+    .select('trial_started_at')
+    .eq('id', user.id)
+    .single();
+
+  if (profileError) {
+    console.error('profile check error:', profileError);
+    return;
+  }
+
+  // ถ้ายังไม่เคยเริ่ม trial ค่อยบันทึก
+  if (!profile?.trial_started_at) {
+    const { error: updateError } = await supabaseClient
+      .from('profiles')
+      .update({
+        trial_started_at: new Date().toISOString(),
+        trial_ends_at: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString(),
+        subscription_status: 'trial',
+        is_active: true
+      })
+      .eq('id', user.id);
+
+    if (updateError) {
+      console.error('start trial error:', updateError);
+      return;
+    }
+  }
+
+  pendingTrialStart = false;
+  closeAuthModal();
+  hideSoftPaywall();
+  showHomeScreen();
 });
 async function loadUserChallengeProgress() {
   const { data: { user } } = await supabaseClient.auth.getUser();
