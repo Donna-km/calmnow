@@ -1312,15 +1312,25 @@
      </button>
     </div>
    </div>
-  </div><div id="softPaywall" class="soft-paywall">
+  </div><div id="trialStartPopup" class="soft-paywall">
   <div class="soft-paywall-card">
-   <h2 class="soft-paywall-title">
-  When it feels too heavy</h2>
+    <h2 class="soft-paywall-title">When it feels too heavy</h2>
     <p class="soft-paywall-subtitle">Just pause.</p>
     <div class="soft-paywall-actions">
-  <button id="paywallStartTrialBtn" class="calm-button">Free 7 days</button>
-  <p class="paywall-note">No card needed. Just try it</p>
+      <button id="paywallStartTrialBtn" class="calm-button">Free 7 days</button>
+      <p class="paywall-note">No card needed. Just try it</p>
+    </div>
+  </div>
 </div>
+
+  
+<div id="trialEndedPopup" class="soft-paywall">
+  <div class="soft-paywall-card">
+    <h2 class="soft-paywall-title">Your 7-day free trial has ended.</h2>
+    <p class="soft-paywall-subtitle">If you want to continue, you can stay.</p>
+    <div class="soft-paywall-actions">
+      <button id="paywallContinueBtn" class="calm-button">Continue</button>
+    </div>
   </div>
 </div><!-- Moment Overlay -->
   <div id="momentOverlay" class="moment-overlay">
@@ -3180,8 +3190,10 @@ const mixData = {
 const mainScreen = document.getElementById('mainScreen');
 const introScreen = document.getElementById('introScreen');
 const introTakeMomentBtn = document.getElementById('introTakeMomentBtn');
-const softPaywall = document.getElementById('softPaywall');
+const trialStartPopup = document.getElementById('trialStartPopup');
+const trialEndedPopup = document.getElementById('trialEndedPopup');
 const paywallStartTrialBtn = document.getElementById('paywallStartTrialBtn');
+const paywallContinueBtn = document.getElementById('paywallContinueBtn');
 
 const INTRO_SEEN_KEY = 'calmnow_intro_seen';
 const PAYWALL_LAST_SHOWN_KEY = 'calmnow_paywall_last_shown_date';
@@ -3226,27 +3238,72 @@ function getTodayKey() {
   return new Date().toISOString().slice(0, 10);
 }
 
-function hideSoftPaywall() {
-  if (softPaywall) softPaywall.classList.remove('active');
+function hideAllPaywalls() {
+  if (trialStartPopup) trialStartPopup.classList.remove('active');
+  if (trialEndedPopup) trialEndedPopup.classList.remove('active');
 }
 
 async function showSoftPaywallIfNeeded() {
-  if (!softPaywall) return;
+  if (!trialStartPopup || !trialEndedPopup) return;
+  if (pendingTrialStart) return;
 
-  const canAccess = await canUserAccess();
-  if (canAccess) return;
+  const { data: { user } } = await supabaseClient.auth.getUser();
+
+  // ยังไม่ login = ให้เด้ง popup เริ่ม trial
+  if (!user) {
+    const todayKey = getTodayKey();
+    const lastShown = localStorage.getItem(PAYWALL_LAST_SHOWN_KEY);
+    if (lastShown === todayKey) return;
+
+    localStorage.setItem(PAYWALL_LAST_SHOWN_KEY, todayKey);
+
+    setTimeout(() => {
+      if (!introFlowActive) {
+        trialStartPopup.classList.add('active');
+      }
+    }, 450);
+    return;
+  }
+
+  await supabaseClient.rpc('expire_trial_if_needed', { uid: user.id });
+
+  const { data: profile, error } = await supabaseClient
+    .from('profiles')
+    .select('trial_started_at, subscription_status')
+    .eq('id', user.id)
+    .single();
+
+  if (error) {
+    console.error('load profile for popup error:', error);
+    return;
+  }
 
   const todayKey = getTodayKey();
   const lastShown = localStorage.getItem(PAYWALL_LAST_SHOWN_KEY);
   if (lastShown === todayKey) return;
 
-  localStorage.setItem(PAYWALL_LAST_SHOWN_KEY, todayKey);
+  // หมด trial แล้ว = เด้ง popup continue
+  if (profile?.subscription_status === 'expired') {
+    localStorage.setItem(PAYWALL_LAST_SHOWN_KEY, todayKey);
 
-  setTimeout(() => {
-    if (!introFlowActive) {
-      softPaywall.classList.add('active');
-    }
-  }, 450);
+    setTimeout(() => {
+      if (!introFlowActive) {
+        trialEndedPopup.classList.add('active');
+      }
+    }, 450);
+    return;
+  }
+
+  // ยังไม่เคยเริ่ม trial = เด้ง popup free 7 days
+  if (!profile?.trial_started_at) {
+    localStorage.setItem(PAYWALL_LAST_SHOWN_KEY, todayKey);
+
+    setTimeout(() => {
+      if (!introFlowActive) {
+        trialStartPopup.classList.add('active');
+      }
+    }, 450);
+  }
 }
 
    async function canUserAccess() {
@@ -3299,7 +3356,7 @@ function startFirstTimeIntroFlow() {
   if (!introScreen || !momentOverlay) return;
 
   introFlowActive = true;
-  hideSoftPaywall();
+  hideAllPaywalls();
   clearIntroTimers();
   introScreen.classList.remove('active');
   hideHomeScreen();
@@ -3417,11 +3474,17 @@ if (stage.text === 'HoldBig') {
    if (paywallStartTrialBtn) {
   paywallStartTrialBtn.addEventListener('click', () => {
     pendingTrialStart = true;
-    hideSoftPaywall();
+    hideAllPaywalls();
     openAuthModal('signup');
   });
 }
-
+// 👇 วางตรงนี้เลย
+if (paywallContinueBtn) {
+  paywallContinueBtn.addEventListener('click', () => {
+    hideAllPaywalls();
+    openAuthModal('login');
+  });
+}
     takeAMomentBtn.addEventListener('click', () => {
   currentMode = 'breathing';
   momentOverlay.classList.add('active');
@@ -5220,7 +5283,7 @@ supabaseClient.auth.onAuthStateChange(async (event, session) => {
 
   pendingTrialStart = false;
   closeAuthModal();
-  hideSoftPaywall();
+  hideAllPaywalls();
   showHomeScreen();
 });
 async function loadUserChallengeProgress() {
