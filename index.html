@@ -1376,6 +1376,17 @@
 #homeCardControls.active .return {
   opacity: 1;
 }
+
+   #homeIntroText,
+#homeIntroBottom {
+  opacity: 1;
+  transition: opacity 0.8s ease;
+}
+
+#homeIntroText.fade-out,
+#homeIntroBottom.fade-out {
+  opacity: 0;
+}
   </style>
   <style>body { box-sizing: border-box; }</style>
  
@@ -1438,55 +1449,67 @@
     <h1 id="appTitle" class="font-display text-3xl font-light text-center mb-2" style="color: #8B7355; letter-spacing: 0.04em;">
       Affirmations Cards
     </h1>
+<!-- TEXT (จะ fade ออก) -->
+<div id="homeIntroText">
 
-    <p class="text-center text-sm mb-12 opacity-0 animate-fade-in delay-200" style="color: #A89880; line-height: 1.8;">
-      Take a deep breath.<br>
-      Close your eyes. Think of what your heart is seeking.<br>
-      Trust the card that finds you.
-    </p>
+  <p class="text-center text-sm mb-12 opacity-0 animate-fade-in delay-200">
+    Close your eyes. Think of what your heart is seeking.<br>
+    Trust the card that finds you.
+  </p>
 
-    <div class="home-card-stage opacity-0 animate-fade-in delay-300">
-      <div class="affirmation-container main-affirmation-wrap" id="mainAffirmationWrap">
-        <div class="affirmation-card" id="mainAffirmationCard">
-          <div class="affirmation-card-inner">
-            <div class="affirmation-card-face affirmation-front">
-              <div class="card-front-content">
-                <div class="card-star">✦</div>
-                <div class="card-title">
-                  THE UNIVERSE
-                </div>
-                <div class="card-divider"></div>
-                <div class="card-subtitle">
-                  IS SENDING YOU A SIGN
-                </div>
-                <div class="card-tap">
-                  tap to reveal
-                </div>
-              </div>
+</div>
+
+
+<!-- CARD + BUTTON (ไม่โดน fade) -->
+<div class="home-card-stage opacity-0 animate-fade-in delay-300">
+
+  <div class="affirmation-container main-affirmation-wrap" id="mainAffirmationWrap">
+    <div class="affirmation-card" id="mainAffirmationCard">
+      <div class="affirmation-card-inner">
+
+        <div class="affirmation-card-face affirmation-front">
+          <div class="card-front-content">
+            <div class="card-star">✦</div>
+            <div class="card-title">
+              THE UNIVERSE
             </div>
-
-            <div class="affirmation-card-face affirmation-back">
-              <p class="affirmation-text" id="mainAffirmationText">
-                I trust the timing of my life.
-              </p>
+            <div class="card-divider"></div>
+            <div class="card-subtitle">
+              IS SENDING YOU A SIGN
+            </div>
+            <div class="card-tap">
+              tap to reveal
             </div>
           </div>
         </div>
-      </div>
 
-      <div class="home-card-controls" id="homeCardControls">
-        <button id="takeAMomentBtn" class="calm-button">
-          <span id="mainButtonText">Pause a moment</span>
-        </button>
-        <button id="homeReturnBtn" class="home-return-btn">Return</button>
+        <div class="affirmation-card-face affirmation-back">
+          <p class="affirmation-text" id="mainAffirmationText">
+            I trust the timing of my life.
+          </p>
+        </div>
+
       </div>
     </div>
-
-    <p class="card-limit-text opacity-0 animate-fade-in delay-400">
-      This card should be opened no more than three times each day.
-      <br>The message will arrive when you are ready.
-    </p>
   </div>
+
+  <div class="home-card-controls" id="homeCardControls">
+    <button id="takeAMomentBtn" class="calm-button">
+      <span id="mainButtonText">Pause a moment</span>
+    </button>
+    <button id="homeReturnBtn" class="home-return-btn">Return</button>
+  </div>
+
+</div>
+
+
+<!-- BOTTOM TEXT (จะ fade ด้วย) -->
+<div id="homeIntroBottom">
+  <p class="card-limit-text opacity-0 animate-fade-in delay-400">
+    This card should be opened no more than three times each day.
+    <br>The message will arrive when you are ready.
+  </p>
+</div>
 
   <!-- Navigation -->
   <nav class="absolute bottom-6 left-0 w-full flex justify-center gap-3 opacity-0 animate-fade-in delay-400">
@@ -3760,6 +3783,8 @@ if (paywallContinueBtn) {
 }
     if (takeAMomentBtn) {
       takeAMomentBtn.addEventListener('click', () => {
+       document.getElementById('homeIntroText')?.classList.add('fade-out');
+       document.getElementById('homeIntroBottom')?.classList.add('fade-out');
         currentMode = 'breathing';
         momentOverlay.classList.add('active');
 
