@@ -1354,6 +1354,28 @@
   opacity: 0.7;
 }
 
+   #homeCardControls {
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition: all 0.8s ease;
+}
+
+#homeCardControls.active {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ปุ่ม return นุ่มขึ้น */
+#homeCardControls .return {
+  opacity: 0.6;
+  transition: opacity 0.8s ease;
+}
+
+#homeCardControls.active .return {
+  opacity: 1;
+}
   </style>
   <style>body { box-sizing: border-box; }</style>
  
