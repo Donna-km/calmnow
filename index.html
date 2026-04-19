@@ -2591,6 +2591,11 @@ let challengeTimerInterval = null;
 const challengeTimerDisplay = document.getElementById('challenge-timer-display');
 const challengeCalmMessageEl = document.getElementById('challenge-calm-message');
 const challengeStartBtn = document.getElementById('challenge-start-btn');
+if (challengeStartBtn && takeAMomentBtn) {
+  challengeStartBtn.addEventListener('click', () => {
+    takeAMomentBtn.click(); // 👈 reuse logic เดิมทั้งหมด
+  });
+}   
 const challengeActiveControls = document.getElementById('challenge-active-controls');
 const challengeEndBtn = document.getElementById('challenge-end-btn');
 const challengeStatusBadge = document.getElementById('challenge-status-badge'); 
@@ -5462,8 +5467,26 @@ async function showTomorrowsChallenge() {
   }
 }
 
-   if (challengeStartBtn) {
-  challengeStartBtn.addEventListener('click', startChallengeTimer);
+  if (challengeStartBtn) {
+  challengeStartBtn.addEventListener('click', () => {
+    currentMode = 'breathing';
+    momentOverlay.classList.add('active');
+
+    if (breathingSound) {
+      breathingSound.currentTime = 0;
+      breathingSound.play().catch(() => {});
+    }
+
+    startBreathingGuide();
+
+    const shareBtn = document.getElementById('shareFeelingBtn');
+    if (shareBtn) {
+      shareBtn.style.display = 'block';
+      setTimeout(() => {
+        shareBtn.style.opacity = '1';
+      }, 3000);
+    }
+  });
 }
 
 if (challengeEndBtn) {
