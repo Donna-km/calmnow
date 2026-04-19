@@ -640,15 +640,18 @@
 
 .card-title {
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(2.05rem, 7vw, 3rem);
+  font-size: clamp(1.6rem, 5vw, 2.4rem); /* ↓ ลดขนาดลง */
   font-weight: 400;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.12em; /* ↓ ลดความห่าง */
   text-transform: uppercase;
   color: #9B825F;
-  line-height: 1.16;
+  line-height: 1.3; /* ↑ เพิ่มระยะบรรทัด */
   white-space: normal;
   text-align: center;
   margin: 0;
+}
+   .card-front-content {
+  gap: 12px; /* แยกแต่ละบรรทัดให้หายใจ */
 }
 
 .card-divider {
