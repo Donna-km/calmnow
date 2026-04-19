@@ -2591,11 +2591,7 @@ let challengeTimerInterval = null;
 const challengeTimerDisplay = document.getElementById('challenge-timer-display');
 const challengeCalmMessageEl = document.getElementById('challenge-calm-message');
 const challengeStartBtn = document.getElementById('challenge-start-btn');
-if (challengeStartBtn && takeAMomentBtn) {
-  challengeStartBtn.addEventListener('click', () => {
-    takeAMomentBtn.click(); // 👈 reuse logic เดิมทั้งหมด
-  });
-}   
+
 const challengeActiveControls = document.getElementById('challenge-active-controls');
 const challengeEndBtn = document.getElementById('challenge-end-btn');
 const challengeStatusBadge = document.getElementById('challenge-status-badge'); 
@@ -3632,6 +3628,11 @@ const mixData = {
 
     // DOM Elements
     const takeAMomentBtn = document.getElementById('takeAMomentBtn');
+   if (challengeStartBtn && takeAMomentBtn) {
+  challengeStartBtn.addEventListener('click', () => {
+    takeAMomentBtn.click();
+  });
+}
     const breathingSound = document.getElementById("breathingSound");
     const momentOverlay = document.getElementById('momentOverlay');
     const momentMessage = document.getElementById('momentMessage');
