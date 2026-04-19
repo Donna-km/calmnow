@@ -1391,15 +1391,41 @@
 
    #homeCardControls {
   opacity: 0;
-  transform: translateY(10px);
+  transform: translateY(22px) scale(0.985);
+  filter: blur(6px);
   pointer-events: none;
-  transition: all 0.8s ease;
+  transition:
+    opacity 1.7s ease,
+    transform 1.7s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 1.7s ease;
+}
+
+#homeCardControls .calm-button,
+#homeCardControls .home-return-btn {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 1.2s ease,
+    transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 #homeCardControls.active {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
+  filter: blur(0);
   pointer-events: auto;
+}
+
+#homeCardControls.active .calm-button {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.18s;
+}
+
+#homeCardControls.active .home-return-btn {
+  opacity: 1;
+  transform: translateY(0);
+  transition-delay: 0.34s;
 }
 
 /* ปุ่ม return นุ่มขึ้น */
