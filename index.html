@@ -1437,7 +1437,32 @@
 #homeCardControls.active .return {
   opacity: 1;
 }
+.emergency-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(10px);
+  
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  
+  color: #fff;
+  font-size: 18px;
+  letter-spacing: 1px;
+  
+  transition: all 0.3s ease;
+}
 
+.emergency-btn:active {
+  transform: translate(-50%, -50%) scale(0.95);
+  background: rgba(255, 255, 255, 0.12);
+}
      
   </style>
   <style>body { box-sizing: border-box; }</style>
@@ -1554,7 +1579,7 @@
     <button class="nav-item" data-section="personal">Personal</button>
     
     <button class="nav-item" data-section="journey">Journey</button>
-    <button class="nav-item" data-section="challenge">Moments</button>
+    <button class="nav-item" data-section="challenge">Pause</button>
   </nav>
 </main><!-- First-time Intro -->
   <div id="introScreen" class="intro-screen">
