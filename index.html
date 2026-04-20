@@ -806,16 +806,24 @@
 .affirmation-text .affirmation-line {
   display: block;
   opacity: 0;
-  transform: translateY(12px);
+  transform: translateY(16px);
+  filter: blur(6px);
+
   transition:
-    opacity 1.35s ease,
-    transform 1.35s cubic-bezier(0.22, 1, 0.36, 1);
+    opacity 2.4s ease,
+    transform 2.4s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 2.4s ease;
+}
+
+.affirmation-text .affirmation-line.show {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
 }
 
 .affirmation-text .affirmation-line + .affirmation-line {
   margin-top: 0.18em;
 }
-
 .affirmation-card.flipped .affirmation-text .affirmation-line.show {
   opacity: 1;
   transform: translateY(0);
