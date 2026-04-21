@@ -6005,7 +6005,7 @@ if (authPasswordInput) {
 
 if (authLogoutBtn) {
   authLogoutBtn.addEventListener('click', async () => {
-    const { error } = await supabaseClient.auth.signOut({ scope: 'local' });
+    const { error } = await supabaseClient.auth.signOut();
 
     if (error) {
       console.error('logout error:', error);
