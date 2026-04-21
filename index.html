@@ -6133,7 +6133,7 @@ renderStoredChatHistory();
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
     try {
-  const { data } = await supabaseClient
+  const { data: profile } = await supabaseClient
     .from('profiles')
     .select('id, full_name')
     .eq('id', currentUser.id)
@@ -6146,8 +6146,8 @@ renderStoredChatHistory();
     },
     body: JSON.stringify({
       message: msg,
-      userId: data?.id || currentUser?.id,
-      full_name: data?.full_name || null,
+      userId: profile?.id || currentUser?.id,
+      full_name: profile?.full_name || null,
       sessionId: currentUser?.id || deviceId || 'guest-session'
     })
   });
