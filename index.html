@@ -5027,10 +5027,14 @@ async function handlePostLogin() {
   showNotification('Logged in successfully');
 }  
    
-   async function initApp() {
+  async function initApp() {
   const { data: sessionData } = await supabaseClient.auth.getSession();
   currentUser = sessionData?.session?.user || null;
   updateAuthUI(currentUser);
+
+  if (window.location.hash) {
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
 
   if (currentUser) {
     await ensureProfileForUser(currentUser);
@@ -5052,7 +5056,7 @@ async function handlePostLogin() {
   await ensureFirstChallengeUnlocked();
   await unlockNextDayIfDue();
   bootEntryFlow();
- }  
+}
    // =========================
 // Challenge sound selection
 // =========================
