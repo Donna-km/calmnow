@@ -6139,8 +6139,15 @@ renderStoredChatHistory();
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          message: msg
-        })
+  message: msg,
+  userId: currentUser?.id || null,
+  full_name:
+    currentProfile?.full_name ||
+    currentUser?.user_metadata?.full_name ||
+    currentUser?.user_metadata?.name ||
+    null,
+  sessionId: currentUser?.id || deviceId || 'guest-session'
+})
       });
 
       const data = await res.json();
