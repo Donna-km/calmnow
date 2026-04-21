@@ -6132,13 +6132,7 @@ renderStoredChatHistory();
 
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
-    try {
-  const { data: profile } = await supabaseClient
-    .from('profiles')
-    .select('id, full_name')
-    .eq('id', currentUser.id)
-    .single();
-
+   try {
   const res = await fetch("https://primary-production-49d9.up.railway.app/webhook/d54a0cf0-9f9b-4d58-91d7-d2f29142f30f/chat", {
     method: "POST",
     headers: {
@@ -6146,12 +6140,14 @@ renderStoredChatHistory();
     },
     body: JSON.stringify({
       message: msg,
-      userId: profile?.id || currentUser?.id,
-      full_name: profile?.full_name || null,
+      userId: currentUser?.id || null,
+      full_name:
+        currentUser?.user_metadata?.full_name ||
+        currentUser?.user_metadata?.name ||
+        null,
       sessionId: currentUser?.id || deviceId || 'guest-session'
     })
   });
-
       const data = await res.json();
 
       const aiText = data.reply || data.output || "I'm here with you.";
