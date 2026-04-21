@@ -6133,15 +6133,24 @@ renderStoredChatHistory();
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
     try {
-      const res = await fetch("https://primary-production-49d9.up.railway.app/webhook/d54a0cf0-9f9b-4d58-91d7-d2f29142f30f/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          message: msg
-        })
-      });
+  const { data } = await supabaseClient
+    .from('profiles')
+    .select('id, full_name')
+    .eq('id', currentUser.id)
+    .single();
+
+  const res = await fetch("https://primary-production-49d9.up.railway.app/webhook/d54a0cf0-9f9b-4d58-91d7-d2f29142f30f/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      message: msg,
+      userId: data?.id || currentUser?.id,
+      full_name: data?.full_name || null,
+      sessionId: currentUser?.id || deviceId || 'guest-session'
+    })
+  });
 
       const data = await res.json();
 
