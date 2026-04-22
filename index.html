@@ -2892,7 +2892,7 @@ async function ensureCustomMixAudiosReady() {
 async function loadSavedMixes() {
   const owner = getAuthOwnerFilter();
 
-  if (!owner.user_id) {
+  if (!owner?.user_id) {
     savedMixes = [];
     return;
   }
@@ -2944,7 +2944,7 @@ async function loadSoundsFromSupabase() {
   async function loadFavoritesFromSupabase() {
   const owner = getAuthOwnerFilter();
 
-  if (!owner.user_id) {
+  if (!owner?.user_id) {
     favoriteSoundIds = [];
     return;
   }
@@ -4724,7 +4724,7 @@ function requireLoggedIn(message = 'Please log in first.') {
 async function loadChallengeProgressRows() {
   const owner = getAuthOwnerFilter();
 
-  if (!owner.user_id) {
+  if (!owner?.user_id) {
     challengeProgressRows = [];
     return [];
   }
@@ -4771,7 +4771,7 @@ function getLatestUnlockedOrInProgressDayRow() {
 
 async function ensureFirstChallengeUnlocked() {
   const owner = getAuthOwnerFilter();
-  if (!owner.user_id) return [];
+  if (!owner?.user_id) return [];
 
   const rows = await loadChallengeProgressRows();
   if (rows.length > 0) return rows;
@@ -4825,7 +4825,7 @@ async function saveChallengeProgressStatus({
 }) {
   const owner = getAuthOwnerFilter();
 
-  if (!owner.user_id) return false;
+  if (!owner?.user_id) return false;
 
   const { data: existingRow, error: findError } = await supabaseClient
     .from('user_challenge_progress')
@@ -5980,8 +5980,10 @@ if (authPasswordInput) {
 if (authLogoutBtn) {
   authLogoutBtn.addEventListener('click', async () => {
     try {
-      const { error } = await supabaseClient.auth.signOut();
-      if (error) throw error;
+      const { error } = await supabaseClient.auth.signOut({ scope: 'local' });
+      if (error) {
+        console.warn('local signOut warning:', error);
+      }
 
       Object.keys(localStorage).forEach((key) => {
         if (key.startsWith('sb-') || key === 'calmnow_device_id') {
@@ -6435,7 +6437,6 @@ renderJourneySummary();
   
  </body>
 </html>
-
 
 
 
