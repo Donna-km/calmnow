@@ -4706,7 +4706,12 @@ function updateAuthModalUI() {
 }
 
 function getAuthOwnerFilter() {
-  return { user_id: currentUser?.id || null };
+  if (!currentUser?.id) {
+    console.warn('User not authenticated');
+    return null;
+  }
+
+  return { user_id: currentUser.id };
 }
 
 function requireLoggedIn(message = 'Please log in first.') {
@@ -5974,34 +5979,47 @@ if (authPasswordInput) {
 
 if (authLogoutBtn) {
   authLogoutBtn.addEventListener('click', async () => {
-    const { error } = await supabaseClient.auth.signOut({ scope: 'local' });
+    try {
+      const { error } = await supabaseClient.auth.signOut();
+      if (error) throw error;
 
-    if (error) {
-      console.error('logout error:', error);
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith('sb-') || key === 'calmnow_device_id') {
+          localStorage.removeItem(key);
+        }
+      });
+
+      Object.keys(sessionStorage).forEach((key) => {
+        if (key.startsWith('sb-')) {
+          sessionStorage.removeItem(key);
+        }
+      });
+
+      currentUser = null;
+      updateAuthUI(null);
+      closeAuthModal(true);
+
+      savedMixes = [];
+      favoriteSoundIds = [];
+      challengeProgressRows = [];
+      currentChallengeProgressRow = null;
+
+      renderSoundTabs();
+
+      if (currentCategory === 'your-mix') {
+        renderYourMixOnly();
+      } else if (currentCategory === 'favorites') {
+        renderFavoriteSounds();
+      } else {
+        renderSoundsFromDb(currentCategory);
+      }
+
+      lockAppUntilLogin();
+      window.location.href = window.location.pathname + '?logout=' + Date.now();
+    } catch (err) {
+      console.error('logout error:', err);
       showNotification('Could not log out');
-      return;
     }
-
-    localStorage.removeItem('calmnow_device_id');
-
-    currentUser = null;
-    updateAuthUI(null);
-    closeAuthModal(true);
-
-    await loadSavedMixes();
-    await loadFavoritesFromSupabase();
-    renderSoundTabs();
-
-    if (currentCategory === 'your-mix') {
-      renderYourMixOnly();
-    } else if (currentCategory === 'favorites') {
-      renderFavoriteSounds();
-    } else {
-      renderSoundsFromDb(currentCategory);
-    }
-
-    lockAppUntilLogin();
-    showNotification('Logged out');
   });
 }
 
