@@ -6325,6 +6325,9 @@ async function loadJourneyData() {
     loadDailyReflectionsFromDB(sessionId)
   ]);
 
+  console.log('chatRows:', chatRows);
+  console.log('reflectionRows:', reflectionRows);
+
   renderJourneyChatFromDB(chatRows);
   renderJourneyReflections(reflectionRows);
 }
@@ -6349,7 +6352,6 @@ function setJourneyTab(tab = 'chat') {
     if (input) setTimeout(() => input.focus(), 80);
   }
 }
-
 const journeyTabChat = document.getElementById('journeyTabChat');
 const journeyTabSummary = document.getElementById('journeyTabSummary');
 
