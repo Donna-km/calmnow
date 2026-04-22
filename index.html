@@ -6437,7 +6437,7 @@ async function submitJourneyChat() {
 
     // กัน AI เด้งเร็วเกิน
     const elapsed = Date.now() - startedAt;
-    const minDelay = 900;
+    const minDelay = 1200;
     if (elapsed < minDelay) {
       await new Promise(resolve => setTimeout(resolve, minDelay - elapsed));
     }
