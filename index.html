@@ -6172,6 +6172,18 @@ async function loadDailyReflectionsFromDB(sessionId) {
   return data || [];
 }
 
+function extractRealMessageFromMemoryContent(content) {
+  const text = String(content || '').trim();
+  if (!text) return '';
+
+  const match = text.match(/Message\s*:(.*?)(?:\n\s*\n|$)/is);
+  if (match && match[1]) {
+    return match[1].trim();
+  }
+
+  return text;
+}
+
 function normalizeChatMessage(row) {
   const msg = row?.message;
 
@@ -6180,23 +6192,28 @@ function normalizeChatMessage(row) {
   }
 
   if (typeof msg === 'string') {
-    return { role: 'ai', text: msg };
+    return {
+      role: 'user',
+      text: extractRealMessageFromMemoryContent(msg)
+    };
+  }
+
+  const rawType = msg.type || msg.role || msg.sender || 'ai';
+  const rawContent = msg.content || msg.message || msg.text || '';
+
+  let role = rawType === 'human' ? 'user' : 'ai';
+  let text = rawContent;
+
+  if (rawType === 'human') {
+    text = extractRealMessageFromMemoryContent(rawContent);
+    role = 'user';
   }
 
   return {
-    role:
-      msg.role ||
-      msg.sender ||
-      (msg.type === 'human' ? 'user' : 'ai') ||
-      'ai',
-    text:
-      msg.content ||
-      msg.message ||
-      msg.text ||
-      ''
+    role,
+    text: String(text || '').trim()
   };
 }
-
 function renderJourneyChatFromDB(rows) {
   const container = document.getElementById('journeyChatMessages');
   if (!container) return;
@@ -6368,6 +6385,8 @@ async function submitJourneyChat() {
   loadingDiv.style.borderRadius = '18px';
   loadingDiv.style.marginBottom = '8px';
   loadingDiv.style.maxWidth = '78%';
+  loadingDiv.style.lineHeight = '1.7';
+  loadingDiv.style.whiteSpace = 'pre-wrap';
 
   if (chatMessages) {
     chatMessages.appendChild(loadingDiv);
@@ -6375,6 +6394,8 @@ async function submitJourneyChat() {
   }
 
   try {
+    const startedAt = Date.now();
+
     const res = await fetch("https://primary-production-49d9.up.railway.app/webhook/d54a0cf0-9f9b-4d58-91d7-d2f29142f30f/chat", {
       method: "POST",
       headers: {
@@ -6393,6 +6414,12 @@ async function submitJourneyChat() {
 
     await res.json();
 
+    const elapsed = Date.now() - startedAt;
+    const minDelay = 900;
+    if (elapsed < minDelay) {
+      await new Promise(resolve => setTimeout(resolve, minDelay - elapsed));
+    }
+
     loadingDiv.remove();
     await loadJourneyData();
 
@@ -6400,7 +6427,6 @@ async function submitJourneyChat() {
     console.error('chat error:', err);
     loadingDiv.remove();
     showNotification('Something went wrong. Please try again.');
-    await loadJourneyData();
   }
 }
 
