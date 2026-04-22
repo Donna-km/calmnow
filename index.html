@@ -6237,9 +6237,9 @@ function setJourneyTab(tab = 'chat') {
   if (summaryView) summaryView.classList.toggle('active', tab === 'journey');
 
   if (tab === 'chat') {
-  const input = document.getElementById('journeyChatInput');
-  if (input) setTimeout(() => input.focus(), 80);
-} else {
+    const input = document.getElementById('journeyChatInput');
+    if (input) setTimeout(() => input.focus(), 80);
+  } else {
     renderJourneySummary();
   }
 }
@@ -6260,10 +6260,14 @@ const sendChatBtn = document.getElementById('journeySendBtn');
 const chatMessages = document.getElementById('journeyChatMessages');
 
 async function submitJourneyChat() {
+ if (!currentUser?.id) {
+    lockAppUntilLogin();
+    return;
+  }
+
   const msg = chatInput?.value.trim();
   if (!msg) return;
 
- 
   if (chatInput) chatInput.value = '';
 
   const loadingDiv = document.createElement('div');
@@ -6275,6 +6279,7 @@ async function submitJourneyChat() {
   loadingDiv.style.borderRadius = '18px';
   loadingDiv.style.marginBottom = '8px';
   loadingDiv.style.maxWidth = '78%';
+
   if (chatMessages) {
     chatMessages.appendChild(loadingDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -6293,21 +6298,21 @@ async function submitJourneyChat() {
           currentUser?.user_metadata?.full_name ||
           currentUser?.user_metadata?.name ||
           null,
-        sessionId: currentUser?.id || 'guest-session'
+        sessionId: currentUser.id
       })
     });
 
-    const data = await res.json();
-    const aiText = data.reply || data.output || "I'm here with you.";
+    await res.json();
 
-   loadingDiv.remove();
-await loadJourneyData();
+    loadingDiv.remove();
+    await loadJourneyData();
 
-} catch (err) {
-  console.error('chat error:', err);
-  loadingDiv.remove();
-  showNotification('Something went wrong. Please try again.');
-  await loadJourneyData();
+  } catch (err) {
+    console.error('chat error:', err);
+    loadingDiv.remove();
+    showNotification('Something went wrong. Please try again.');
+    await loadJourneyData();
+  }
 }
 
 if (sendChatBtn) {
@@ -6322,10 +6327,8 @@ if (chatInput) {
     }
   });
 }
-    
 
 initApp();
-  
    </script>
   
  </body>
