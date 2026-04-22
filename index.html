@@ -6374,8 +6374,29 @@ async function submitJourneyChat() {
   const msg = chatInput?.value.trim();
   if (!msg) return;
 
+  const pendingUserText = msg;
+
   if (chatInput) chatInput.value = '';
 
+  // 1) โชว์ human ก่อนทันที
+  const userDiv = document.createElement('div');
+  userDiv.textContent = pendingUserText;
+  userDiv.style.alignSelf = 'flex-end';
+  userDiv.style.background = '#B4A591';
+  userDiv.style.color = 'white';
+  userDiv.style.padding = '10px 14px';
+  userDiv.style.borderRadius = '18px';
+  userDiv.style.marginBottom = '8px';
+  userDiv.style.maxWidth = '78%';
+  userDiv.style.lineHeight = '1.7';
+  userDiv.style.whiteSpace = 'pre-wrap';
+
+  if (chatMessages) {
+    chatMessages.appendChild(userDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  // 2) แล้วค่อยโชว์ Calmy...
   const loadingDiv = document.createElement('div');
   loadingDiv.textContent = 'Calmy: ...';
   loadingDiv.style.alignSelf = 'flex-start';
@@ -6402,7 +6423,7 @@ async function submitJourneyChat() {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        message: msg,
+        message: pendingUserText,
         userId: currentUser.id,
         full_name:
           currentUser?.user_metadata?.full_name ||
@@ -6414,22 +6435,26 @@ async function submitJourneyChat() {
 
     await res.json();
 
+    // กัน AI เด้งเร็วเกิน
     const elapsed = Date.now() - startedAt;
     const minDelay = 900;
     if (elapsed < minDelay) {
       await new Promise(resolve => setTimeout(resolve, minDelay - elapsed));
     }
 
+    // 3) ลบของชั่วคราวก่อน แล้วค่อยดึงของจริงจาก DB
+    userDiv.remove();
     loadingDiv.remove();
+
     await loadJourneyData();
 
   } catch (err) {
     console.error('chat error:', err);
+    userDiv.remove();
     loadingDiv.remove();
     showNotification('Something went wrong. Please try again.');
   }
 }
-
 if (sendChatBtn) {
   sendChatBtn.addEventListener('click', submitJourneyChat);
 }
