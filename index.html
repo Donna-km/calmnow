@@ -2903,11 +2903,7 @@ async function loadSavedMixes() {
     .select('*')
     .order('created_at', { ascending: false });
 
-  if (owner.user_id) {
-    query = query.eq('user_id', owner.user_id);
-  } else {
-    query = query.eq('device_id', owner.device_id);
-  }
+  query = applyOwnerFilter(query, owner);
 
   const { data, error } = await query;
 
@@ -2956,11 +2952,7 @@ async function loadSoundsFromSupabase() {
     .from('user_favorite_sounds')
     .select('sound_id');
 
-  if (owner.user_id) {
-    query = query.eq('user_id', owner.user_id);
-  } else {
-    query = query.eq('device_id', owner.device_id);
-  }
+  query = applyOwnerFilter(query, owner);
 
   const { data, error } = await query;
 
@@ -2988,9 +2980,7 @@ async function toggleFavorite(soundId) {
       .delete()
       .eq('sound_id', id);
 
-    del = owner.user_id
-      ? del.eq('user_id', owner.user_id)
-      : del.eq('device_id', owner.device_id);
+    del = applyOwnerFilter(del, owner);
 
     const { error } = await del;
 
@@ -3003,9 +2993,10 @@ async function toggleFavorite(soundId) {
     favoriteSoundIds = favoriteSoundIds.filter(favId => favId !== id);
     showNotification('Removed from Favorites');
   } else {
-    const payload = owner.user_id
-      ? { user_id: owner.user_id, sound_id: id }
-      : { device_id: owner.device_id, sound_id: id };
+    const payload = {
+      ...getOwnerPayload(owner),
+      sound_id: id
+    };
 
     const { error } = await supabaseClient
       .from('user_favorite_sounds')
@@ -3410,9 +3401,7 @@ function renderYourMixOnly() {
     .delete()
     .eq('id', mix.id);
 
-  del = owner.user_id
-    ? del.eq('user_id', owner.user_id)
-    : del.eq('device_id', owner.device_id);
+  del = applyOwnerFilter(del, owner);
 
   const { error } = await del;
 
@@ -3539,9 +3528,7 @@ const mixData = {
     audio_path: sound.audio_path || '',
     volume: parseInt(sound.volume || 0, 10)
   })),
-  ...(owner.user_id
-    ? { user_id: owner.user_id }
-    : { device_id: owner.device_id })
+  ...getOwnerPayload(owner)
 };
 
   const { error } = await supabaseClient
@@ -4722,10 +4709,34 @@ function updateAuthModalUI() {
 }
 
 function getAuthOwnerFilter() {
-  if (currentUser?.id) {
-    return { user_id: currentUser.id, device_id: null };
+  return {
+    user_id: currentUser?.id || null,
+    device_id: deviceId || null
+  };
+}
+
+function applyOwnerFilter(query, owner) {
+  if (owner.user_id && owner.device_id) {
+    return query.or(`user_id.eq.${owner.user_id},device_id.eq.${owner.device_id}`);
   }
-  return { user_id: null, device_id: deviceId };
+
+  if (owner.user_id) {
+    return query.eq('user_id', owner.user_id);
+  }
+
+  return query.eq('device_id', owner.device_id);
+}
+
+function getOwnerPayload(owner) {
+  if (owner.user_id && owner.device_id) {
+    return { user_id: owner.user_id, device_id: owner.device_id };
+  }
+
+  if (owner.user_id) {
+    return { user_id: owner.user_id };
+  }
+
+  return { device_id: owner.device_id };
 }
 
 async function loadChallengeProgressRows() {
@@ -4736,11 +4747,7 @@ async function loadChallengeProgressRows() {
     .select('*')
     .order('day_number', { ascending: true });
 
-  if (owner.user_id) {
-    query = query.eq('user_id', owner.user_id);
-  } else {
-    query = query.eq('device_id', owner.device_id);
-  }
+  query = applyOwnerFilter(query, owner);
 
   const { data, error } = await query;
 
@@ -4806,9 +4813,7 @@ async function ensureFirstChallengeUnlocked() {
     selected_type: 'silent',
     selected_sound_id: null,
     selected_mix_id: null,
-    ...(owner.user_id
-      ? { user_id: owner.user_id }
-      : { device_id: owner.device_id })
+    ...getOwnerPayload(owner)
   };
 
   const { error: insertError } = await supabaseClient
@@ -4840,11 +4845,7 @@ async function saveChallengeProgressStatus({
     .select('id')
     .eq('challenge_day_id', challengeDayId);
 
-  if (owner.user_id) {
-    findQuery = findQuery.eq('user_id', owner.user_id);
-  } else {
-    findQuery = findQuery.eq('device_id', owner.device_id);
-  }
+  findQuery = applyOwnerFilter(findQuery, owner);
 
   const { data: existingRow, error: findError } = await findQuery.maybeSingle();
 
@@ -4877,9 +4878,7 @@ async function saveChallengeProgressStatus({
   } else {
     const insertPayload = {
       ...basePayload,
-      ...(owner.user_id
-        ? { user_id: owner.user_id }
-        : { device_id: owner.device_id })
+      ...getOwnerPayload(owner)
     };
 
     const { error: insertError } = await supabaseClient
@@ -6005,7 +6004,7 @@ if (authPasswordInput) {
 
 if (authLogoutBtn) {
   authLogoutBtn.addEventListener('click', async () => {
-    const { error } = await supabaseClient.auth.signOut({ scope: 'local' });
+    const { error } = await supabaseClient.auth.signOut();
 
     if (error) {
       console.error('logout error:', error);
