@@ -2892,7 +2892,7 @@ async function ensureCustomMixAudiosReady() {
 async function loadSavedMixes() {
   const owner = getAuthOwnerFilter();
 
-  if (!owner.user_id) {
+ if (!owner?.user_id) {
     savedMixes = [];
     return;
   }
@@ -2944,7 +2944,7 @@ async function loadSoundsFromSupabase() {
   async function loadFavoritesFromSupabase() {
   const owner = getAuthOwnerFilter();
 
-  if (!owner.user_id) {
+ if (!owner?.user_id) {
     favoriteSoundIds = [];
     return;
   }
@@ -4706,14 +4706,9 @@ function updateAuthModalUI() {
 }
 
 function getAuthOwnerFilter() {
-  if (!currentUser?.id) {
-    console.warn('User not authenticated');
-    return null;
-  }
-
-  return { user_id: currentUser.id };
+  return { user_id: currentUser?.id || null };
 }
-
+   
 function requireLoggedIn(message = 'Please log in first.') {
   if (currentUser?.id) return true;
   showNotification(message);
@@ -4724,7 +4719,7 @@ function requireLoggedIn(message = 'Please log in first.') {
 async function loadChallengeProgressRows() {
   const owner = getAuthOwnerFilter();
 
-  if (!owner.user_id) {
+if (!owner?.user_id) {
     challengeProgressRows = [];
     return [];
   }
