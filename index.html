@@ -6443,32 +6443,27 @@ async function loadMonthlyReviewFromDB(sessionId) {
 
   return data || null;
 }
-
-   function renderJourneyMonthlyHighlight(row) {
+function renderJourneyMonthlyHighlight(row) {
   const wrap = document.getElementById('journeyMonthlyHighlight');
   const titleEl = document.getElementById('journeyMonthlyTitle');
   const summaryEl = document.getElementById('journeyMonthlySummary');
   const tagsWrap = document.getElementById('journeyMonthlyTags');
-  const closeEl = document.getElementById('journeyMonthlyClose');
+  const closeBox = document.getElementById('journeyMonthlyCloseBox');
 
-  if (!wrap || !titleEl || !summaryEl || !tagsWrap || !closeEl) return;
+  if (!wrap || !titleEl || !summaryEl || !tagsWrap || !closeBox) return;
 
   if (!row) {
     wrap.style.display = 'none';
     titleEl.textContent = 'Monthly Reflection';
     summaryEl.textContent = '';
     tagsWrap.innerHTML = '';
-    closeEl.textContent = '';
+    closeBox.textContent = '';
     return;
   }
 
   titleEl.textContent = row.title || 'Monthly Reflection';
   summaryEl.textContent = row.summary || '';
-  const closeBox = document.getElementById('journeyMonthlyCloseBox');
-
-if (closeBox) {
   closeBox.textContent = row.gentle_close || '';
-}
   tagsWrap.innerHTML = '';
 
   const tags = Array.isArray(row.tags) ? row.tags : [];
@@ -6482,6 +6477,7 @@ if (closeBox) {
 
   wrap.style.display = 'block';
 }
+   
 async function submitJourneyChat() {
   if (!currentUser?.id) {
     lockAppUntilLogin();
