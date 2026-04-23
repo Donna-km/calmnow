@@ -2308,12 +2308,12 @@
       </div>
 
       <div id="journeySummaryView" class="journey-view">
-       <div class="journey-highlight" style="display:none;">
-          <div class="journey-date">Today’s reflection</div>
-          <p id="journeyLatestReflection" class="journey-summary" style="margin:0;">
-            When you begin sharing here, your Daily Reflection will gently gather what your heart has been saying.
-          </p>
-        </div>
+       <div id="journeyMonthlyHighlight" class="journey-highlight" style="display:none;">
+  <div id="journeyMonthlyTitle" class="journey-date">Monthly Reflection</div>
+  <p id="journeyMonthlySummary" class="journey-summary" style="margin:0;"></p>
+  <div id="journeyMonthlyTags" class="journey-tag-row"></div>
+  <p id="journeyMonthlyClose" class="journey-summary" style="margin-top:1rem;"></p>
+</div>
 
         <div id="journeyTimelineList" class="journey-list mt-5">
           <div class="journey-empty-state">
@@ -6252,15 +6252,11 @@ function renderJourneyChatFromDB(rows) {
 }
 
 function renderJourneyReflections(rows) {
-  const latestEl = document.getElementById('journeyLatestReflection');
   const listEl = document.getElementById('journeyTimelineList');
 
-  if (!latestEl || !listEl) return;
+  if (!listEl) return;
 
   if (!rows || rows.length === 0) {
-    latestEl.textContent =
-      'When you begin sharing here, your Daily Reflection will gently gather what your heart has been saying.';
-
     listEl.innerHTML = `
       <div class="journey-empty-state">
         Start a chat first, then Daily Reflection will turn it into a soft reflection for you.
@@ -6268,9 +6264,6 @@ function renderJourneyReflections(rows) {
     `;
     return;
   }
-
-  const latest = rows[0];
-  latestEl.textContent = latest.reflection || '';
 
   listEl.innerHTML = rows.map(row => {
     let tags = [];
@@ -6311,25 +6304,19 @@ function renderJourneyReflections(rows) {
     `;
   }).join('');
 }
-
 async function loadJourneyData() {
   const sessionId = getCurrentSessionId();
+  if (!sessionId) return;
 
-  if (!sessionId) {
-    lockAppUntilLogin();
-    return;
-  }
-
-  const [chatRows, reflectionRows] = await Promise.all([
+  const [chatRows, reflectionRows, monthlyRow] = await Promise.all([
     loadChatHistoryFromDB(sessionId),
-    loadDailyReflectionsFromDB(sessionId)
+    loadDailyReflectionsFromDB(sessionId),
+    loadMonthlyReviewFromDB(sessionId)
   ]);
-
-  console.log('chatRows:', chatRows);
-  console.log('reflectionRows:', reflectionRows);
 
   renderJourneyChatFromDB(chatRows);
   renderJourneyReflections(reflectionRows);
+  renderJourneyMonthlyHighlight(monthlyRow);
 }
 
 let activeJourneyTab = 'chat';
@@ -6367,6 +6354,63 @@ const chatInput = document.getElementById('journeyChatInput');
 const sendChatBtn = document.getElementById('journeySendBtn');
 const chatMessages = document.getElementById('journeyChatMessages');
 
+async function loadMonthlyReviewFromDB(sessionId) {
+  if (!sessionId) return null;
+
+  const now = new Date();
+  const targetMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+    .toISOString()
+    .slice(0, 10);
+
+  const { data, error } = await supabaseClient
+    .from('monthly_reviews')
+    .select('*')
+    .eq('session_id', sessionId)
+    .eq('review_month', targetMonth)
+    .maybeSingle();
+
+  if (error) {
+    console.error('loadMonthlyReviewFromDB error:', error);
+    return null;
+  }
+
+  return data || null;
+}   
+
+   function renderJourneyMonthlyHighlight(row) {
+  const wrap = document.getElementById('journeyMonthlyHighlight');
+  const titleEl = document.getElementById('journeyMonthlyTitle');
+  const summaryEl = document.getElementById('journeyMonthlySummary');
+  const tagsWrap = document.getElementById('journeyMonthlyTags');
+  const closeEl = document.getElementById('journeyMonthlyClose');
+
+  if (!wrap || !titleEl || !summaryEl || !tagsWrap || !closeEl) return;
+
+  if (!row) {
+    wrap.style.display = 'none';
+    titleEl.textContent = 'Monthly Reflection';
+    summaryEl.textContent = '';
+    tagsWrap.innerHTML = '';
+    closeEl.textContent = '';
+    return;
+  }
+
+  titleEl.textContent = row.title || 'Monthly Reflection';
+  summaryEl.textContent = row.summary || '';
+  closeEl.textContent = row.gentle_close || '';
+  tagsWrap.innerHTML = '';
+
+  const tags = Array.isArray(row.tags) ? row.tags : [];
+
+  tags.forEach(tag => {
+    const tagEl = document.createElement('span');
+    tagEl.className = 'journey-tag';
+    tagEl.textContent = tag;
+    tagsWrap.appendChild(tagEl);
+  });
+
+  wrap.style.display = 'block';
+}
 async function submitJourneyChat() {
   if (!currentUser?.id) {
     lockAppUntilLogin();
