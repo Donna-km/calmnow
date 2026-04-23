@@ -1806,7 +1806,43 @@
   color: #A78868;
   margin-bottom: 1.1rem;
 }
-     
+
+   .journey-close-box {
+  margin-top: 1.4rem;
+  padding: 1rem 1.4rem;
+  border-radius: 24px;
+
+  background:
+    linear-gradient(135deg, rgba(255,250,244,0.9), rgba(244,236,226,0.9));
+
+  border: 1px solid rgba(191, 170, 145, 0.25);
+
+  box-shadow:
+    0 8px 20px rgba(180, 165, 145, 0.08),
+    inset 0 1px 0 rgba(255,255,255,0.5);
+
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #8B7355;
+
+  text-align: center;
+  font-weight: 300;
+
+  transition: all 0.4s ease;
+}
+   .journey-close-box {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: gentleFadeIn 0.8s ease forwards;
+  animation-delay: 0.2s;
+}
+
+@keyframes gentleFadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
   </style>
   <style>body { box-sizing: border-box; }</style>
  
@@ -2339,7 +2375,7 @@
   </p>
   <p id="journeyMonthlySummary" class="journey-summary" style="margin:0;"></p>
   <div id="journeyMonthlyTags" class="journey-tag-row"></div>
-  <p id="journeyMonthlyClose" class="journey-summary" style="margin-top:1rem;"></p>
+  <div id="journeyMonthlyCloseBox" class="journey-close-box"></div>
 </div>
 
         <div id="journeyTimelineList" class="journey-list mt-5">
@@ -6428,7 +6464,11 @@ async function loadMonthlyReviewFromDB(sessionId) {
 
   titleEl.textContent = row.title || 'Monthly Reflection';
   summaryEl.textContent = row.summary || '';
-  closeEl.textContent = row.gentle_close || '';
+  const closeBox = document.getElementById('journeyMonthlyCloseBox');
+
+if (closeBox) {
+  closeBox.textContent = row.gentle_close || '';
+}
   tagsWrap.innerHTML = '';
 
   const tags = Array.isArray(row.tags) ? row.tags : [];
