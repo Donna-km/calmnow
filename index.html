@@ -6358,9 +6358,13 @@ async function loadMonthlyReviewFromDB(sessionId) {
   if (!sessionId) return null;
 
   const now = new Date();
-  const targetMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1)
-    .toISOString()
-    .slice(0, 10);
+  const prevMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+
+  const yyyy = prevMonth.getFullYear();
+  const mm = String(prevMonth.getMonth() + 1).padStart(2, '0');
+  const dd = '01';
+
+  const targetMonth = `${yyyy}-${mm}-${dd}`;
 
   const { data, error } = await supabaseClient
     .from('monthly_reviews')
@@ -6375,7 +6379,7 @@ async function loadMonthlyReviewFromDB(sessionId) {
   }
 
   return data || null;
-}   
+}
 
    function renderJourneyMonthlyHighlight(row) {
   const wrap = document.getElementById('journeyMonthlyHighlight');
