@@ -1939,7 +1939,7 @@
 
       <div class="home-card-controls" id="homeCardControls">
         <button id="takeAMomentBtn" class="calm-button">
-          <span id="mainButtonText">Stay with yourself</span>
+          <span id="mainButtonText">Share a Feeling</span>
         </button>
         <button id="homeReturnBtn" class="home-return-btn">Return</button>
       </div>
@@ -3772,7 +3772,17 @@ const mixData = {
     }
 
     // DOM Elements
-    const takeAMomentBtn = document.getElementById('takeAMomentBtn');
+    takeAMomentBtn?.addEventListener('click', () => {
+  const chatSection = document.getElementById('chatSection');
+  if (chatSection) {
+    chatSection.style.display = 'block';
+
+    // ซ่อน section อื่น (กันซ้อน)
+    document.querySelectorAll('.section-panel').forEach(sec => {
+      if (sec.id !== 'chatSection') sec.style.display = 'none';
+    });
+  }
+});
     const breathingSound = document.getElementById("breathingSound");
     const momentOverlay = document.getElementById('momentOverlay');
    function showPauseShareButton() {
