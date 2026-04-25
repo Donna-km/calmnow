@@ -6624,6 +6624,7 @@ async function submitJourneyChat() {
       currentUser?.user_metadata?.name ||
       null,
     sessionId: currentUser.id,
+    card_session_id: localStorage.getItem('currentCardSessionId') || null
 
     // 🔥 ADD THIS LINE
     card_session_id: localStorage.getItem('currentCardSessionId') || null
