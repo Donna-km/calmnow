@@ -4604,14 +4604,15 @@ function revealAffirmation(targetCard = affirmationCard, targetText = affirmatio
     return; // ❌ ไม่เปิดการ์ด ไม่ยิง backend
   }
 
-  const cardMessage = getRandomAffirmation();
+  const card = getRandomAffirmation();
+  const cardMessage = card.text;
 
   fetch('https://primary-production-49d9.up.railway.app/webhook/open_card', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
       user_id: currentUser?.id,
-      card_id: null,
+      card_id: card.id,
       card_text: cardMessage,
       card_category: 'universal',
       card_emotion: 'overthinking'
