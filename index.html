@@ -3812,6 +3812,9 @@ const mixData = {
     });
 
     shareBtn.addEventListener('click', async () => {
+     console.log('🔥 SHARE CLICKED');
+  console.log('user:', currentUser?.id);
+  console.log('cardSessionId:', localStorage.getItem('currentCardSessionId'));
   if (breathingSound && !breathingSound.paused) {
     const fadeAudio = setInterval(() => {
       if (breathingSound.volume > 0.05) {
