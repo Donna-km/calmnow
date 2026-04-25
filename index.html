@@ -3812,7 +3812,18 @@ const mixData = {
     });
 
     shareBtn.addEventListener('click', async () => {
-  const chatSection = document.getElementById('chatSection');
+  if (breathingSound && !breathingSound.paused) {
+    const fadeAudio = setInterval(() => {
+      if (breathingSound.volume > 0.05) {
+        breathingSound.volume -= 0.05;
+      } else {
+        clearInterval(fadeAudio);
+        breathingSound.pause();
+        breathingSound.currentTime = 0;
+        breathingSound.volume = 1;
+      }
+    }, 80);
+  }
 
   momentOverlay.classList.remove('active');
 
@@ -3844,27 +3855,6 @@ const mixData = {
     }
   }
 });
-      if (breathingSound && !breathingSound.paused) {
-        const fadeAudio = setInterval(() => {
-          if (breathingSound.volume > 0.05) {
-            breathingSound.volume -= 0.05;
-          } else {
-            clearInterval(fadeAudio);
-            breathingSound.pause();
-            breathingSound.currentTime = 0;
-            breathingSound.volume = 1;
-          }
-        }, 80);
-      }
-
-      momentOverlay.classList.remove('active');
-
-      if (shareBtn) shareBtn.style.display = 'none';
-
-      openJourneySection('chat');
-      setTimeout(showCalmyGreeting, 300);
-    });
-
     momentOverlay.appendChild(shareBtn);
   }
 
