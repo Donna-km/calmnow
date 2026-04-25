@@ -3812,9 +3812,10 @@ const mixData = {
     });
 
     shareBtn.addEventListener('click', async () => {
-     console.log('🔥 SHARE CLICKED');
+  console.log('🔥 SHARE CLICKED');
   console.log('user:', currentUser?.id);
   console.log('cardSessionId:', localStorage.getItem('currentCardSessionId'));
+
   if (breathingSound && !breathingSound.paused) {
     const fadeAudio = setInterval(() => {
       if (breathingSound.volume > 0.05) {
@@ -3829,7 +3830,6 @@ const mixData = {
   }
 
   momentOverlay.classList.remove('active');
-
   if (shareBtn) shareBtn.style.display = 'none';
 
   openJourneySection('chat');
@@ -3837,7 +3837,24 @@ const mixData = {
   const cardSessionId = localStorage.getItem('currentCardSessionId');
 
   if (cardSessionId && currentUser?.id) {
-    const loadingBubble = appendJourneyAiBubble('Calmy: ...', { loading: true });
+
+    // ✅ 1. สร้าง Calmy loading ก่อน
+    const loadingBubble = document.createElement('div');
+    loadingBubble.textContent = 'Calmy: ...';
+    loadingBubble.style.alignSelf = 'flex-start';
+    loadingBubble.style.background = '#F4EFEA';
+    loadingBubble.style.color = '#6B5D4D';
+    loadingBubble.style.padding = '10px 14px';
+    loadingBubble.style.borderRadius = '18px';
+    loadingBubble.style.marginBottom = '8px';
+    loadingBubble.style.maxWidth = '78%';
+    loadingBubble.style.lineHeight = '1.7';
+    loadingBubble.style.whiteSpace = 'pre-wrap';
+
+    if (chatMessages) {
+      chatMessages.appendChild(loadingBubble);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 
     try {
       const res = await fetch('https://primary-production-49d9.up.railway.app/webhook/card_chat_open', {
@@ -3851,22 +3868,24 @@ const mixData = {
 
       const data = await res.json();
 
-      const replyText = extractAiReplyText(data);
+      // ✅ 2. ดึงข้อความจริงจาก AI
+      let replyText = data?.reply || '';
 
-      if (replyText) {
-        appendCardChatReplyAndRefresh(replyText, loadingBubble);
-      } else {
-        removeJourneyBubble(loadingBubble);
-        if (typeof loadJourneyData === 'function') {
-          setTimeout(() => {
-            loadJourneyData().catch(err => console.error('loadJourneyData error:', err));
-          }, 600);
-        }
+      try {
+        const parsed = typeof replyText === 'string' ? JSON.parse(replyText) : replyText;
+        if (parsed?.reply) replyText = parsed.reply;
+      } catch (e) {}
+
+      // ✅ 3. แทนที่ Calmy... (ไม่ลบ ไม่ reload)
+      loadingBubble.textContent = replyText || 'I’m here with you 🤍';
+
+      if (chatMessages) {
+        chatMessages.scrollTop = chatMessages.scrollHeight;
       }
 
     } catch (err) {
-      removeJourneyBubble(loadingBubble);
       console.error('card_chat_open error:', err);
+      loadingBubble.textContent = 'Something went wrong. Please try again.';
     }
   }
 });
