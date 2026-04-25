@@ -4598,6 +4598,11 @@ function buildAffirmationLines(targetText, message) {
 
 function revealAffirmation(targetCard = affirmationCard, targetText = affirmationText) {
   if (!targetCard || !targetText) return;
+ // 🔥 เช็ค login ก่อน
+  if (!currentUser?.id) {
+    openAuthModal('login'); // ใช้ของเดิมในระบบเทอ
+    return; // ❌ ไม่เปิดการ์ด ไม่ยิง backend
+  }
 
   const cardMessage = getRandomAffirmation();
 
@@ -4684,7 +4689,7 @@ if (mainAffirmationCard) {
       }
       if (homeCardControls) {
         homeCardControls.classList.add('active');
-      }
+       }
     }, 10000);
   });
 }
