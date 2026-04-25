@@ -4532,7 +4532,7 @@ async function loadAffirmations() {
 
   const { data, error } = await supabaseClient
     .from('affirmations')
-    .select('text')
+    .select('id, text, category, emotion_group')
     .eq('is_active', true);
 
   if (error) {
@@ -4561,19 +4561,26 @@ if (cardSound) {
 
 function getRandomAffirmation() {
 
-  if (dbAffirmations.length === 0) return "You are exactly where you need to be right now.";
+  if (dbAffirmations.length === 0) {
+    return {
+      id: null,
+      text: "You are exactly where you need to be right now.",
+      category: "universal",
+      emotion_group: "general"
+    };
+  }
 
   let random;
 
   do {
-    random = dbAffirmations[Math.floor(Math.random() * dbAffirmations.length)].text;
-  } while (random === currentAffirmation);
+    random = dbAffirmations[Math.floor(Math.random() * dbAffirmations.length)];
+  } while (random.text === currentAffirmation);
 
-  currentAffirmation = random;
+  currentAffirmation = random.text;
 
-  return random;
+  return random; // 🔥 return ทั้ง object
 }
-
+   
 function buildAffirmationLines(targetText, message) {
   if (!targetText) return [];
 
