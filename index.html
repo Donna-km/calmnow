@@ -6563,24 +6563,26 @@ async function submitJourneyChat() {
   try {
     const startedAt = Date.now();
 
-    const res = await fetch("https://primary-production-49d9.up.railway.app/webhook/d54a0cf0-9f9b-4d58-91d7-d2f29142f30f/chat", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        message: pendingUserText,
-        userId: currentUser.id,
-        full_name:
-          currentUser?.user_metadata?.full_name ||
-          currentUser?.user_metadata?.name ||
-          null,
-        sessionId: currentUser.id
-      })
-    });
+   const res = await fetch("https://primary-production-49d9.up.railway.app/webhook/d54a0cf0-9f9b-4d58-91d7-d2f29142f30f/chat", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    message: pendingUserText,
+    userId: currentUser.id,
+    full_name:
+      currentUser?.user_metadata?.full_name ||
+      currentUser?.user_metadata?.name ||
+      null,
+    sessionId: currentUser.id,
 
-    await res.json();
+    // 🔥 ADD THIS LINE
+    card_session_id: localStorage.getItem('currentCardSessionId') || null
+  })
+});
 
+await res.json();
     // กัน AI เด้งเร็วเกิน
     const elapsed = Date.now() - startedAt;
     const minDelay = 1200;
