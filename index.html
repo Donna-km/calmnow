@@ -4599,6 +4599,29 @@ function buildAffirmationLines(targetText, message) {
 function revealAffirmation(targetCard = affirmationCard, targetText = affirmationText) {
   if (!targetCard || !targetText) return;
 
+  const cardMessage = getRandomAffirmation();
+
+  fetch('https://primary-production-49d9.up.railway.app/webhook/open_card', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      user_id: currentUser?.id,
+      card_id: null,
+      card_text: cardMessage,
+      card_category: 'universal',
+      card_emotion: 'overthinking'
+    })
+  })
+    .then(res => res.json())
+    .then(data => {
+      if (data?.card_session_id) {
+        localStorage.setItem('currentCardSessionId', data.card_session_id);
+      }
+    })
+    .catch(err => {
+      console.error('open-card webhook error:', err);
+    });
+
   if (cardSound) {
     cardSound.volume = 1;
     cardSound.currentTime = 0;
@@ -4608,7 +4631,7 @@ function revealAffirmation(targetCard = affirmationCard, targetText = affirmatio
   targetCard.classList.remove('flipped');
 
   setTimeout(() => {
-    const lineElements = buildAffirmationLines(targetText, getRandomAffirmation());
+    const lineElements = buildAffirmationLines(targetText, cardMessage);
     targetCard.classList.add('flipped');
 
     lineElements.forEach((lineEl, index) => {
@@ -4665,7 +4688,6 @@ if (mainAffirmationCard) {
     }, 10000);
   });
 }
-
 // =========================
 // Auth helpers
 // =========================
