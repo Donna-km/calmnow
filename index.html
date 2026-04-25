@@ -3811,9 +3811,39 @@ const mixData = {
       shareBtn.style.color = '#A89880';
     });
 
-    shareBtn.addEventListener('click', () => {
-      const chatSection = document.getElementById('chatSection');
+    shareBtn.addEventListener('click', async () => {
+  const chatSection = document.getElementById('chatSection');
 
+  momentOverlay.classList.remove('active');
+
+  if (shareBtn) shareBtn.style.display = 'none';
+
+  openJourneySection('chat');
+
+  const cardSessionId = localStorage.getItem('currentCardSessionId');
+
+  if (cardSessionId && currentUser?.id) {
+    try {
+      const res = await fetch('https://primary-production-49d9.up.railway.app/webhook/card_chat_open', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: currentUser.id,
+          card_session_id: cardSessionId
+        })
+      });
+
+      const data = await res.json();
+
+      if (data?.reply) {
+        addChatMessage('ai', data.reply);
+      }
+
+    } catch (err) {
+      console.error('card_chat_open error:', err);
+    }
+  }
+});
       if (breathingSound && !breathingSound.paused) {
         const fadeAudio = setInterval(() => {
           if (breathingSound.volume > 0.05) {
