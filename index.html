@@ -3850,7 +3850,7 @@ const mixData = {
       const data = await res.json();
 
       if (data?.reply) {
-        addChatMessage('ai', data.reply);
+        appendJourneyMessage('ai', data.reply);
       }
 
     } catch (err) {
@@ -4222,7 +4222,7 @@ if (paywallContinueBtn) {
         const data = await res.json();
 
         if (data?.reply) {
-          addChatMessage('ai', data.reply);
+          appendJourneyMessage('ai', data.reply);
         }
 
       } catch (err) {
