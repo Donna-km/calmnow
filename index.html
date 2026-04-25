@@ -3857,36 +3857,42 @@ const mixData = {
     }
 
     try {
-      const res = await fetch('https://primary-production-49d9.up.railway.app/webhook/card_chat_open', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: currentUser.id,
-          card_session_id: cardSessionId
-        })
-      });
+  const startedAt = Date.now();
 
-      const data = await res.json();
+  const res = await fetch('https://primary-production-49d9.up.railway.app/webhook/card_chat_open', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      user_id: currentUser.id,
+      card_session_id: cardSessionId
+    })
+  });
 
-      // ✅ 2. ดึงข้อความจริงจาก AI
-      let replyText = data?.reply || '';
+  const data = await res.json();
 
-      try {
-        const parsed = typeof replyText === 'string' ? JSON.parse(replyText) : replyText;
-        if (parsed?.reply) replyText = parsed.reply;
-      } catch (e) {}
+  const elapsed = Date.now() - startedAt;
+  const minDelay = 1200;
+  if (elapsed < minDelay) {
+    await new Promise(resolve => setTimeout(resolve, minDelay - elapsed));
+  }
 
-      // ✅ 3. แทนที่ Calmy... (ไม่ลบ ไม่ reload)
-      loadingBubble.textContent = replyText || 'I’m here with you 🤍';
+  let replyText = data?.reply || '';
 
-      if (chatMessages) {
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      }
+  try {
+    const parsed = typeof replyText === 'string' ? JSON.parse(replyText) : replyText;
+    if (parsed?.reply) replyText = parsed.reply;
+  } catch (e) {}
 
-    } catch (err) {
-      console.error('card_chat_open error:', err);
-      loadingBubble.textContent = 'Something went wrong. Please try again.';
-    }
+  loadingBubble.textContent = replyText || 'I’m here with you 🤍';
+
+  if (chatMessages) {
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+} catch (err) {
+  console.error('card_chat_open error:', err);
+  loadingBubble.textContent = 'Something went wrong. Please try again.';
+}
   }
 });
     momentOverlay.appendChild(shareBtn);
