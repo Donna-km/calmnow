@@ -4000,6 +4000,57 @@ function hideAllPaywalls() {
   if (trialEndedPopup) trialEndedPopup.classList.remove('active');
 }
 
+   async function activateFreeTrialForUser(user) {
+  if (!user?.id) return false;
+
+  const trialStartedAt = new Date();
+  const trialEndsAt = new Date();
+  trialEndsAt.setDate(trialEndsAt.getDate() + 7);
+
+  const { error } = await supabaseClient
+    .from('profiles')
+    .update({
+      trial_started_at: trialStartedAt.toISOString(),
+      trial_ends_at: trialEndsAt.toISOString(),
+      subscription_status: 'trial',
+      is_active: true
+    })
+    .eq('id', user.id)
+    .is('trial_started_at', null);
+
+  if (error) {
+    console.error('activate trial error:', error);
+    showNotification('Could not start trial');
+    return false;
+  }
+
+  return true;
+}
+   async function activateFreeTrialForUser(user) {
+  if (!user?.id) return false;
+
+  const trialStartedAt = new Date();
+  const trialEndsAt = new Date();
+  trialEndsAt.setDate(trialEndsAt.getDate() + 7);
+
+  const { error } = await supabaseClient
+    .from('profiles')
+    .update({
+      trial_started_at: trialStartedAt.toISOString(),
+      trial_ends_at: trialEndsAt.toISOString(),
+      subscription_status: 'trial',
+      is_active: true
+    })
+    .eq('id', user.id)
+    .is('trial_started_at', null);
+
+  if (error) {
+    console.error('activate trial error:', error);
+    return false;
+  }
+
+  return true;
+}
    async function joinEarlyAccess() {
   if (!currentUser?.id) {
     hideAllPaywalls();
@@ -4268,12 +4319,22 @@ if (stage.text === 'HoldBig') {
     
 
    if (paywallStartTrialBtn) {
-  paywallStartTrialBtn.addEventListener('click', () => {
+  paywallStartTrialBtn.addEventListener('click', async () => {
     pendingTrialStart = true;
     hideAllPaywalls();
+
+    if (currentUser?.id) {
+      await activateFreeTrialForUser(currentUser);
+      pendingTrialStart = false;
+      showNotification('Your 7-day free trial has started');
+      showHomeScreen();
+      return;
+    }
+
     openAuthModal('signup');
   });
 }
+   
 // 👇 วางตรงนี้เลย
 if (paywallContinueBtn) {
   paywallContinueBtn.addEventListener('click', joinEarlyAccess);
@@ -5199,9 +5260,14 @@ async function handlePostLogin() {
   currentUser = userData?.user || null;
   updateAuthUI(currentUser);
 
-  if (currentUser) {
-    await ensureProfileForUser(currentUser);
+ if (currentUser) {
+  await ensureProfileForUser(currentUser);
+
+  if (pendingTrialStart) {
+    await activateFreeTrialForUser(currentUser);
+    pendingTrialStart = false;
   }
+}
 
   await loadSavedMixes();
   await loadFavoritesFromSupabase();
