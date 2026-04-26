@@ -4016,7 +4016,8 @@ function hideAllPaywalls() {
       is_active: true,
       updated_at: new Date().toISOString()
     })
-    .eq('id', user.id)
+    .eq('id', user.id) // ✅ user นี้
+    .is('trial_started_at', null) // ✅ กันไม่ให้เริ่มซ้ำ
     .select();
 
   if (error) {
@@ -4295,12 +4296,20 @@ if (stage.text === 'HoldBig') {
     }
 
     
-
-   if (paywallStartTrialBtn) {
-  paywallStartTrialBtn.addEventListener('click', async () => {
-    pendingTrialStart = true;
+if (paywallStartTrialBtn) {
+  paywallStartTrialBtn.addEventListener('click', () => {
     hideAllPaywalls();
 
+    if (!currentUser) {
+      openAuthModal('signup');
+      return;
+    }
+
+    // ถ้า login อยู่แล้ว → เริ่ม trial ทันที
+    activateFreeTrialForUser(currentUser);
+    showNotification('Your 7-day free trial has started');
+  });
+}
     if (currentUser?.id) {
       await activateFreeTrialForUser(currentUser);
       pendingTrialStart = false;
@@ -5240,11 +5249,7 @@ async function handlePostLogin() {
 
  if (currentUser) {
   await ensureProfileForUser(currentUser);
-
-  if (pendingTrialStart) {
-    await activateFreeTrialForUser(currentUser);
-    pendingTrialStart = false;
-  }
+  await activateFreeTrialForUser(currentUser);
 }
 
   await loadSavedMixes();
