@@ -4310,18 +4310,7 @@ if (paywallStartTrialBtn) {
     showNotification('Your 7-day free trial has started');
   });
 }
-    if (currentUser?.id) {
-      await activateFreeTrialForUser(currentUser);
-      pendingTrialStart = false;
-      showNotification('Your 7-day free trial has started');
-      showHomeScreen();
-      return;
-    }
-
-    openAuthModal('signup');
-  });
-}
-   
+      
 // 👇 วางตรงนี้เลย
 if (paywallContinueBtn) {
   paywallContinueBtn.addEventListener('click', joinEarlyAccess);
