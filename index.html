@@ -4026,31 +4026,7 @@ function hideAllPaywalls() {
 
   return true;
 }
-   async function activateFreeTrialForUser(user) {
-  if (!user?.id) return false;
-
-  const trialStartedAt = new Date();
-  const trialEndsAt = new Date();
-  trialEndsAt.setDate(trialEndsAt.getDate() + 7);
-
-  const { error } = await supabaseClient
-    .from('profiles')
-    .update({
-      trial_started_at: trialStartedAt.toISOString(),
-      trial_ends_at: trialEndsAt.toISOString(),
-      subscription_status: 'trial',
-      is_active: true
-    })
-    .eq('id', user.id)
-    .is('trial_started_at', null);
-
-  if (error) {
-    console.error('activate trial error:', error);
-    return false;
-  }
-
-  return true;
-}
+   
    async function joinEarlyAccess() {
   if (!currentUser?.id) {
     hideAllPaywalls();
