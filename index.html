@@ -4007,16 +4007,17 @@ function hideAllPaywalls() {
   const trialEndsAt = new Date();
   trialEndsAt.setDate(trialEndsAt.getDate() + 7);
 
-  const { error } = await supabaseClient
+  const { data, error } = await supabaseClient
     .from('profiles')
     .update({
       trial_started_at: trialStartedAt.toISOString(),
       trial_ends_at: trialEndsAt.toISOString(),
       subscription_status: 'trial',
-      is_active: true
+      is_active: true,
+      updated_at: new Date().toISOString()
     })
     .eq('id', user.id)
-    .is('trial_started_at', null);
+    .select();
 
   if (error) {
     console.error('activate trial error:', error);
@@ -4024,6 +4025,7 @@ function hideAllPaywalls() {
     return false;
   }
 
+  console.log('trial updated:', data);
   return true;
 }
    
