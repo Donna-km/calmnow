@@ -1984,10 +1984,14 @@
   
 <div id="trialEndedPopup" class="soft-paywall">
   <div class="soft-paywall-card">
-    <h2 class="soft-paywall-title">Your 7-day free trial has ended.</h2>
-    <p class="soft-paywall-subtitle">If you want to continue, you can stay.</p>
+    <h2 class="soft-paywall-title">Early access is open</h2>
+    <p class="soft-paywall-subtitle">
+      CalmNow is still growing softly.<br>
+      You can continue for free during early access.
+    </p>
     <div class="soft-paywall-actions">
-      <button id="paywallContinueBtn" class="calm-button">Continue</button>
+      <button id="paywallContinueBtn" class="calm-button">Join Early Access</button>
+      <p class="paywall-note">No payment needed now.</p>
     </div>
   </div>
 </div><!-- Moment Overlay -->
@@ -3996,6 +4000,45 @@ function hideAllPaywalls() {
   if (trialEndedPopup) trialEndedPopup.classList.remove('active');
 }
 
+   async function joinEarlyAccess() {
+  if (!currentUser?.id) {
+    hideAllPaywalls();
+    openAuthModal('login');
+    return;
+  }
+
+  if (paywallContinueBtn) {
+    paywallContinueBtn.disabled = true;
+    paywallContinueBtn.textContent = 'Joining...';
+  }
+
+  const { error } = await supabaseClient
+    .from('early_access_requests')
+    .upsert(
+      {
+        user_id: currentUser.id,
+        email: currentUser.email || null,
+        source: 'trial_ended_popup',
+        clicked_at: new Date().toISOString()
+      },
+      { onConflict: 'user_id' }
+    );
+
+  if (paywallContinueBtn) {
+    paywallContinueBtn.disabled = false;
+    paywallContinueBtn.textContent = 'Join Early Access';
+  }
+
+  if (error) {
+    console.error('early access error:', error);
+    showNotification('Something went wrong. Please try again.');
+    return;
+  }
+
+  hideAllPaywalls();
+  showNotification("You're on the early access list");
+}
+
 async function showSoftPaywallIfNeeded() {
   if (!trialStartPopup || !trialEndedPopup) return;
   if (pendingTrialStart) return;
@@ -4233,10 +4276,7 @@ if (stage.text === 'HoldBig') {
 }
 // 👇 วางตรงนี้เลย
 if (paywallContinueBtn) {
-  paywallContinueBtn.addEventListener('click', () => {
-    hideAllPaywalls();
-    openAuthModal('login');
-  });
+  paywallContinueBtn.addEventListener('click', joinEarlyAccess);
 }
    if (takeAMomentBtn) {
   takeAMomentBtn.addEventListener('click', async () => {
