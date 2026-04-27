@@ -2173,7 +2173,7 @@
   <div class="max-w-2xl mx-auto pt-16">
   <div class="sounds-sticky-header">
     <h2 class="font-display text-3xl font-light text-center mb-2" style="color: #8B7355;">Sounds</h2>
-    <p class="text-center text-sm mb-6" style="color: #A89880;">Choose a sound for this moment</p>
+    <p class="text-center text-sm mb-6" style="color: #A89880;">Just choose what feels right</p>
 
     <!-- Category Navigation -->
 <div class="sound-tabs" id="soundTabs"></div>
@@ -2191,7 +2191,7 @@
 
   <div class="max-w-2xl mx-auto pt-16 pb-10">
     <h2 id="soundCategoryTitle" class="font-display text-3xl font-light text-center mb-2" style="color: #8B7355;">Sounds</h2>
-    <p id="soundCategorySubtitle" class="text-center text-sm mb-6" style="color: #A89880; line-height: 1.8;">Choose a sound for this moment</p>
+    <p id="soundCategorySubtitle" class="text-center text-sm mb-6" style="color: #A89880; line-height: 1.8;">Just choose what feels right</p>
 
     <div id="soundsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6"></div>
   </div>
@@ -3384,7 +3384,7 @@ function getSoundCategoryMeta(categoryKey) {
     'your-mix': { label: 'Your Mix', subtitle: 'mix your own' }
   };
 
-  return categories[categoryKey] || { label: 'Sounds', subtitle: 'Choose a sound for this moment' };
+  return categories[categoryKey] || { label: 'Sounds', subtitle: 'Just choose what feels right' };
 }
 
 function openSoundCategory(categoryKey) {
