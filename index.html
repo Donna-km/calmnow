@@ -2302,7 +2302,7 @@
   + Add to Your Mix
 </button>
      <button id="detailAddToChallengeBtn" class="calm-button w-full mt-3" style="font-size: 0.9rem;">
-  + Add to Challenge
+  Use for Pause
 </button>
     </div>
   </div>
@@ -2325,7 +2325,7 @@
 </button>
 
 <button class="calm-button w-full mt-3 text-center" id="useMixForChallengeBtn" style="font-size: 0.9rem;">
-  <span>+ Add to Challenge</span>
+  <span>Use for Pause</span>
 </button>
    </div>
   </section><!-- Affirmations Section -->
@@ -3522,7 +3522,7 @@ if (detailAddToChallengeBtn) {
   detailAddToChallengeBtn.style.display = 'block';
   detailAddToChallengeBtn.textContent = (challengeSelectedSoundId === sound.id && pauseSoundMode === 'sound')
     ? 'Selected for Pause'
-    : '+ Add to Challenge';
+    : 'Use for Pause';
 
   detailAddToChallengeBtn.onclick = () => {
     if (currentSoundAudio) {
