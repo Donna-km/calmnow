@@ -756,14 +756,10 @@
 
    @media (min-width: 768px) {
   .affirmation-card {
-    width: 100%;
-    max-width: 230px;
+    width: min(22vw, 260px);  /* 🔥 ปรับตามจอ */
     height: auto;
     aspect-ratio: 5 / 7;
     min-height: unset;
-
-    transform: scale(0.85);   /* 🔥 ลดทั้งการ์ด + font พร้อมกัน */
-    transform-origin: top center;
   }
 }
     
