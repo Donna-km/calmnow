@@ -5388,6 +5388,7 @@ const saveCardImageBtn = document.getElementById('saveCardImageBtn');
 const homeReturnBtn = document.getElementById('homeReturnBtn');
 const cardSound = document.getElementById('cardSound');
 let mainCardPauseTimeout = null;
+let currentCardTextForSave = '';
 
 async function loadAffirmations() {
 
@@ -5474,6 +5475,7 @@ function revealAffirmation(targetCard = affirmationCard, targetText = affirmatio
 
   const card = getRandomAffirmation();
   const cardMessage = card.text;
+  currentCardTextForSave = cardMessage;
 
   fetch('https://primary-production-49d9.up.railway.app/webhook/open_card', {
     method: 'POST',
@@ -5550,7 +5552,7 @@ if (homeReturnBtn) {
 
 if (saveCardImageBtn) {
   saveCardImageBtn.addEventListener('click', () => {
-    showNotification('Saved image feature is ready to connect');
+    downloadCalmNowCardImage(currentCardTextForSave);
   });
 }
 
@@ -5573,6 +5575,101 @@ if (mainAffirmationCard) {
         saveCardImageBtn.classList.add('active');
       }
     }, 10000);
+  });
+}
+
+   function downloadCalmNowCardImage(cardText) {
+  if (!cardText) {
+    showNotification('Open a card first');
+    return;
+  }
+
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+
+  canvas.width = 1080;
+  canvas.height = 1350;
+
+  const bg = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  bg.addColorStop(0, '#FAF7F2');
+  bg.addColorStop(1, '#EFE7DC');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  const cardX = 120;
+  const cardY = 160;
+  const cardW = 840;
+  const cardH = 1030;
+
+  ctx.fillStyle = 'rgba(255, 252, 247, 0.94)';
+  roundRect(ctx, cardX, cardY, cardW, cardH, 52);
+  ctx.fill();
+
+  ctx.strokeStyle = 'rgba(180, 165, 145, 0.28)';
+  ctx.lineWidth = 2;
+  roundRect(ctx, cardX, cardY, cardW, cardH, 52);
+  ctx.stroke();
+
+  ctx.fillStyle = '#C9AA4A';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.font = '52px "Cormorant Garamond", Georgia, serif';
+
+  wrapCanvasText(ctx, cardText, canvas.width / 2, cardY + 420, 680, 72);
+
+  ctx.fillStyle = '#8B7355';
+  ctx.font = '64px "Cormorant Garamond", Georgia, serif';
+  ctx.fillText('Calm Now', canvas.width / 2, cardY + 790);
+
+  ctx.fillStyle = '#A89880';
+  ctx.font = '24px Jost, sans-serif';
+  ctx.fillText('DIGITAL SANCTUARY', canvas.width / 2, cardY + 835);
+
+  ctx.font = '26px Jost, sans-serif';
+  ctx.fillText('calm-now.com', canvas.width / 2, cardY + 900);
+
+  const link = document.createElement('a');
+  link.download = 'calmnow-card.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+
+  showNotification('Saved to your device 🤍');
+}
+
+function roundRect(ctx, x, y, width, height, radius) {
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + width - radius, y);
+  ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+  ctx.lineTo(x + width, y + height - radius);
+  ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+  ctx.lineTo(x + radius, y + height);
+  ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+}
+
+function wrapCanvasText(ctx, text, x, y, maxWidth, lineHeight) {
+  const words = String(text).split(' ');
+  const lines = [];
+  let line = '';
+
+  words.forEach(word => {
+    const testLine = line ? line + ' ' + word : word;
+    if (ctx.measureText(testLine).width > maxWidth && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = testLine;
+    }
+  });
+
+  lines.push(line);
+
+  const startY = y - ((lines.length - 1) * lineHeight) / 2;
+  lines.forEach((lineText, index) => {
+    ctx.fillText(lineText, x, startY + index * lineHeight);
   });
 }
 // =========================
