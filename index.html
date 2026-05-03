@@ -5474,9 +5474,12 @@ async function revealAffirmation(targetCard = affirmationCard, targetText = affi
     return false;
   }
 
-  const { data, error } = await supabaseClient.rpc('get_next_card_for_user', {
-    p_user_id: currentUser.id
-  });
+ const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Bangkok';
+
+const { data, error } = await supabaseClient.rpc('get_next_card_for_user', {
+  p_user_id: currentUser.id,
+  p_timezone: userTimezone
+});
 
   if (error || !data || !data[0]) {
     console.error('get_next_card_for_user error:', error);
