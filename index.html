@@ -3409,6 +3409,7 @@ let challengeTimerMode = 'feel'; // feel | see
 
 let challengeTimerState = 'idle'; // idle, running, paused
 let challengeTimerInterval = null;
+let selectedEarlyRating = null;
 
 const challengeTimerDisplay = document.getElementById('challenge-timer-display');
 const challengeCalmMessageEl = document.getElementById('challenge-calm-message');
@@ -5105,19 +5106,20 @@ async function submitEarlyAccessQuestions() {
   }
 
   const { error } = await supabaseClient
-    .from('early_access_requests')
-    .upsert(
-      {
-        user_id: currentUser.id,
-        email: currentUser.email || null,
-        source: 'trial_ended_popup',
-        pain,
-        use_case: useCase,
-        liked_most: likedMost || null,
-        clicked_at: new Date().toISOString()
-      },
-      { onConflict: 'user_id' }
-    );
+  .from('early_access_requests')
+  .upsert(
+    {
+      user_id: currentUser.id,
+      email: currentUser.email || null,
+      source: 'trial_ended_popup',
+      pain,
+      use_case: useCase,
+      liked_most: likedMost || null,
+      moment_rating: selectedEarlyRating || null,
+      clicked_at: new Date().toISOString()
+    },
+    { onConflict: 'user_id' }
+  );
 
   if (earlyAccessQuestionContinueBtn) {
     earlyAccessQuestionContinueBtn.disabled = false;
