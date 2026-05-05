@@ -2591,45 +2591,102 @@
 }
 
 .onboarding-analysis-card {
-  background: rgba(255, 250, 244, 0.65);
-  box-shadow: 0 30px 80px rgba(120, 95, 70, 0.12);
-  border-radius: 28px;
-  padding: 3rem 1.6rem;
-  min-height: 70vh;
+  width: min(88vw, 520px);
+  min-height: 68vh;
+  padding: 3.2rem 2rem 2.6rem;
+  border-radius: 34px;
+
+  background: rgba(255, 250, 244, 0.72);
+  border: 1px solid rgba(185, 160, 130, 0.16);
+  box-shadow:
+    0 28px 80px rgba(120, 95, 70, 0.10),
+    inset 0 1px 0 rgba(255,255,255,0.5);
 
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
   text-align: center;
-}
-
-.onboarding-analysis-box {
-  background: none;
-  border: none;
-  padding: 0;
-  margin: 2.5rem auto 3rem;
-  max-width: 320px;
-
-  font-family: 'Cormorant Garamond', serif;
-  font-size: clamp(1.8rem, 6vw, 2.5rem);
-  line-height: 1.4;
-  color: #8B7355;
+  overflow: hidden;
 }
 
 .onboarding-analysis-card .onboarding-step {
-  font-size: 0.85rem;
-  letter-spacing: 0.18em;
-  opacity: 0.7;
+  margin: 0 0 2.6rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #B3A08C;
+  opacity: 0.82;
+}
+
+.onboarding-analysis-box {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto 3.1rem;
+  padding: 0;
+
+  background: transparent;
+  border: none;
+
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2.05rem, 6.7vw, 3rem);
+  line-height: 1.32;
+  font-weight: 300;
+  letter-spacing: 0.005em;
+  color: #8B7355;
+  text-align: center;
+  text-wrap: balance;
 }
 
 .onboarding-analysis-card .calm-button {
-  margin-top: 0;
+  width: min(76vw, 340px);
+  max-width: 340px;
+  padding: 1rem 1.4rem;
+
+  border-radius: 999px;
+  border: 1px solid rgba(180, 155, 125, 0.26);
+  background: rgba(255, 252, 247, 0.52);
+  box-shadow: none;
+
+  color: #9A8064;
+  font-size: 0.76rem;
+  letter-spacing: 0.2em;
+}
+
+.onboarding-analysis-card .calm-button:hover {
+  background: rgba(255, 252, 247, 0.82);
+  box-shadow: 0 10px 30px rgba(120, 95, 70, 0.08);
 }
 
 .onboarding-analysis-card .onboarding-soft-line {
-  margin-top: 1.5rem;
-  font-size: 0.9rem;
-  opacity: 0.55;
+  margin: 1.35rem 0 0;
+  max-width: 320px;
+
+  font-size: 0.86rem;
+  line-height: 1.7;
+  color: #B5A592;
+  opacity: 0.68;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .onboarding-analysis-card {
+    width: min(92vw, 430px);
+    min-height: 66vh;
+    padding: 2.8rem 1.35rem 2.3rem;
+    border-radius: 30px;
+  }
+
+  .onboarding-analysis-box {
+    max-width: 340px;
+    font-size: clamp(2rem, 9vw, 2.65rem);
+    line-height: 1.28;
+    margin-bottom: 2.7rem;
+  }
+
+  .onboarding-analysis-card .calm-button {
+    width: min(78vw, 300px);
+  }
 }
 
 </style>
@@ -5826,7 +5883,7 @@ function buildOnboardingAnalysisText() {
   onboardingAnswers.suggested_route = getOnboardingRoute();
   localStorage.setItem('calmnow_pending_onboarding', JSON.stringify(onboardingAnswers));
 
-  return insight;
+  return insight.replace('… ', '…<br><br>');
 }
 
 async function savePendingOnboardingAnswersToDb() {
