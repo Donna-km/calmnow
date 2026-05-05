@@ -2584,6 +2584,54 @@
   margin: 0 auto;
 }
 
+   .onboarding-analysis-special {
+  background:
+    radial-gradient(circle at top, rgba(255,255,255,0.6), transparent 40%),
+    linear-gradient(180deg, #F7EFE6 0%, #EADDCF 100%);
+}
+
+.onboarding-analysis-card {
+  background: rgba(255, 250, 244, 0.65);
+  box-shadow: 0 30px 80px rgba(120, 95, 70, 0.12);
+  border-radius: 28px;
+  padding: 3rem 1.6rem;
+  min-height: 70vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.onboarding-analysis-box {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 2.5rem auto 3rem;
+  max-width: 320px;
+
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.8rem, 6vw, 2.5rem);
+  line-height: 1.4;
+  color: #8B7355;
+}
+
+.onboarding-analysis-card .onboarding-step {
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+  opacity: 0.7;
+}
+
+.onboarding-analysis-card .calm-button {
+  margin-top: 0;
+}
+
+.onboarding-analysis-card .onboarding-soft-line {
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  opacity: 0.55;
+}
+
 </style>
   <style>body { box-sizing: border-box; }</style>
  
@@ -2723,14 +2771,19 @@
 </div>
 
 <!-- Intro Onboarding Analysis -->
-<div id="onboardingAnalysisFlow" class="onboarding-flow" aria-hidden="true">
-  <div class="onboarding-card">
-    <div class="onboarding-step">A soft read</div>
-    <h2 class="onboarding-title">You may not need to explain everything.</h2>
-    <p class="onboarding-subtitle">CalmNow will start from where you are, not where you think you should be.</p>
+<div id="onboardingAnalysisFlow" class="onboarding-flow onboarding-analysis-special" aria-hidden="true">
+  <div class="onboarding-card onboarding-analysis-card">
+
+    <div class="onboarding-step">A reflection of where you are</div>
+
     <div id="onboardingAnalysisText" class="onboarding-analysis-box"></div>
-    <button id="onboardingAnalysisContinueBtn" class="calm-button" type="button">Continue</button>
-    <p class="onboarding-soft-line">A quiet space is ready for you.</p>
+
+    <button id="onboardingAnalysisContinueBtn" class="calm-button" type="button">
+      Continue softly
+    </button>
+
+    <p class="onboarding-soft-line">Your sanctuary… for when it feels like too much.</p>
+
   </div>
 </div>
 <div id="trialStartPopup" class="soft-paywall">
