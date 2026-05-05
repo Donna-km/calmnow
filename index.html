@@ -2886,6 +2886,45 @@
   }
 }
 
+   /* CalmNow onboarding start screen */
+.onboarding-start-card {
+  min-height: min(64vh, 560px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.15rem;
+}
+
+.onboarding-start-title {
+  margin: 0;
+  max-width: 340px;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2rem, 8vw, 2.75rem);
+  font-weight: 300;
+  line-height: 1.18;
+  color: #8B7355;
+  text-align: center;
+}
+
+.onboarding-start-subtitle {
+  margin: 0 0 1.7rem;
+  max-width: 310px;
+  font-family: 'Jost', system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.7;
+  color: #8B7355;
+  opacity: 0.78;
+  text-align: center;
+}
+
+.onboarding-start-card .calm-button {
+  width: min(68vw, 240px);
+  padding: 0.95rem 1.5rem;
+  font-size: 0.82rem;
+  letter-spacing: 0.16em;
+}
 
 </style>
   <style>body { box-sizing: border-box; }</style>
@@ -3014,6 +3053,23 @@
     </div>
    </div>
   </div>
+
+  <!-- Intro Before Onboarding Questions -->
+<div id="onboardingStartFlow" class="onboarding-flow" aria-hidden="true">
+  <div class="onboarding-card onboarding-start-card">
+    <h2 class="onboarding-start-title">
+      You’ve been feeling something.
+    </h2>
+
+    <p class="onboarding-start-subtitle">
+      Let’s figure out what it is.
+    </p>
+
+    <button id="onboardingStartBtn" class="calm-button" type="button">
+      Start
+    </button>
+  </div>
+</div>
 
 <!-- Intro Onboarding Questions -->
 <div id="onboardingQuestionFlow" class="onboarding-flow" aria-hidden="true">
@@ -5703,7 +5759,7 @@ function finishIntroFlow() {
     }
   }, stepTime);
 }
-  startOnboardingQuestionFlow();
+  showOnboardingStartFlow();
 }
 
 
@@ -5793,6 +5849,32 @@ function escapeOnboardingHtml(value) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
+}
+
+   function showOnboardingStartFlow() {
+  hideAllPaywalls();
+  hideHomeScreen();
+
+  const startFlow = document.getElementById('onboardingStartFlow');
+  if (startFlow) {
+    startFlow.classList.add('active');
+    startFlow.setAttribute('aria-hidden', 'false');
+  }
+}
+
+   const onboardingStartBtn = document.getElementById('onboardingStartBtn');
+
+if (onboardingStartBtn) {
+  onboardingStartBtn.addEventListener('click', () => {
+    const startFlow = document.getElementById('onboardingStartFlow');
+
+    if (startFlow) {
+      startFlow.classList.remove('active');
+      startFlow.setAttribute('aria-hidden', 'true');
+    }
+
+    startOnboardingQuestionFlow();
+  });
 }
 
 function startOnboardingQuestionFlow() {
