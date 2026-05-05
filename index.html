@@ -5528,22 +5528,252 @@ function getOnboardingRoute() {
   return 'A Message From Within';
 }
 
+function pickOnboardingInsight(variations) {
+  if (!Array.isArray(variations) || variations.length === 0) {
+    return "Something about this moment… feels a little far from yourself.";
+  }
+
+  return variations[Math.floor(Math.random() * variations.length)];
+}
+
+function normalizeOnboardingText(text) {
+  return String(text || '').trim();
+}
+
 function buildOnboardingAnalysisText() {
-  const route = getOnboardingRoute();
-  const line1 = onboardingAnswers.emotion_group
-    ? `Right now, it sounds closest to “${onboardingAnswers.emotion_group}.”`
-    : 'Right now, something in you may be asking for a softer place to land.';
+  const q1 = normalizeOnboardingText(onboardingAnswers.emotion_group);
 
-  const line2 = onboardingAnswers.need_state
-    ? `And underneath it, you may simply want to ${onboardingAnswers.need_state.toLowerCase()}.`
-    : 'You do not have to make it clear before you begin.';
+  // ✅ Q5 จริงในไฟล์ล่าสุดคือ drift_level
+  // เผื่อไฟล์เก่าเคยใช้ pattern เลย fallback ไว้ให้
+  const q5 = normalizeOnboardingText(onboardingAnswers.drift_level || onboardingAnswers.pattern);
 
-  const line3 = `CalmNow will gently start with ${route}.`;
+  const insightMap = {
+    "Chest feels tight|Are okay, just tired": [
+      "Your chest feels tight… like you’ve been holding more than just tiredness.",
+      "It may look like tiredness… but your body seems to be holding something heavier.",
+      "You’re still okay… but your chest knows this has been a lot."
+    ],
+    "Chest feels tight|Not fully here": [
+      "Your chest feels tight… and you don’t quite feel fully here.",
+      "Something feels close in your body… but far away in yourself.",
+      "You’re here… but your body feels like it’s bracing for something."
+    ],
+    "Chest feels tight|Kind of drifting": [
+      "Your chest feels tight… while everything else feels a little far away.",
+      "Part of you feels tense… and part of you has already drifted somewhere else.",
+      "Your body is holding on… even as your mind starts to float away."
+    ],
+    "Chest feels tight|Don’t feel like yourself": [
+      "Your chest feels tight… and something about you doesn’t feel like yourself.",
+      "It’s not just tightness… it’s that you don’t feel quite like you right now.",
+      "Your body feels close to panic… while you feel far from yourself."
+    ],
+    "Chest feels tight|Numb most of the time": [
+      "Your chest feels tight… even when everything else feels quiet.",
+      "It’s strange… feeling tight and numb at the same time.",
+      "Something in you is tense… even if the rest of you feels muted."
+    ],
+    "Chest feels tight|Don’t know anymore": [
+      "Your chest feels tight… like nothing inside feels clear anymore.",
+      "You don’t have the words yet… but your body already knows it’s too much.",
+      "Something feels stuck in your chest… and nothing feels simple right now."
+    ],
 
-  onboardingAnswers.suggested_route = route;
+    "Just scrolling… nothing inside|Are okay, just tired": [
+      "You keep scrolling… like you’re tired, but not in a way rest can fix.",
+      "You say it’s just tiredness… but something still feels empty underneath.",
+      "You’re moving through the screen… but not really coming back to yourself."
+    ],
+    "Just scrolling… nothing inside|Not fully here": [
+      "You keep scrolling… but you’re not really inside anything.",
+      "Your eyes are here… but the rest of you feels somewhere else.",
+      "You’re passing through things… without fully being in them."
+    ],
+    "Just scrolling… nothing inside|Kind of drifting": [
+      "You keep scrolling… as everything drifts a little further away.",
+      "Nothing really holds you… so you keep moving through it.",
+      "You’re not looking for anything exactly… just drifting through the noise."
+    ],
+    "Just scrolling… nothing inside|Don’t feel like yourself": [
+      "You keep scrolling… like you don’t quite feel like yourself anymore.",
+      "It’s not really the phone… it’s that you feel far from you.",
+      "You keep touching the screen… like something inside you has gone quiet."
+    ],
+    "Just scrolling… nothing inside|Numb most of the time": [
+      "You keep scrolling… but nothing really reaches you.",
+      "Everything passes by… and nothing seems to touch the inside of you.",
+      "You’re still moving… but something in you feels muted."
+    ],
+    "Just scrolling… nothing inside|Don’t know anymore": [
+      "You keep scrolling… and nothing inside feels clear.",
+      "You don’t know what you’re looking for… only that nothing feels enough.",
+      "You keep moving through things… but nothing feels like the answer."
+    ],
+
+    "Can’t stop checking my phone|Are okay, just tired": [
+      "You keep checking your phone… like something in you won’t settle down.",
+      "You’re tired… but something still keeps reaching for the outside.",
+      "It looks like checking… but maybe it’s really waiting."
+    ],
+    "Can’t stop checking my phone|Not fully here": [
+      "You keep checking… but you’re not really here for any of it.",
+      "Part of you keeps reaching out… while the rest of you feels far away.",
+      "You’re looking at the screen… but not fully inside this moment."
+    ],
+    "Can’t stop checking my phone|Kind of drifting": [
+      "You keep checking… as everything else drifts further away.",
+      "The phone keeps pulling you back… but not all the way.",
+      "You keep returning to it… even though you still feel far from everything."
+    ],
+    "Can’t stop checking my phone|Don’t feel like yourself": [
+      "You keep checking… like you’re not quite yourself right now.",
+      "It’s not just the phone… something about you feels unsettled.",
+      "You keep reaching for something… maybe because you don’t feel like you."
+    ],
+    "Can’t stop checking my phone|Numb most of the time": [
+      "You keep checking… even though nothing really lands.",
+      "You keep reaching outward… but everything still feels muted inside.",
+      "Nothing quite touches you… so you keep checking again."
+    ],
+    "Can’t stop checking my phone|Don’t know anymore": [
+      "You keep checking… but nothing feels like the answer.",
+      "You don’t know what you’re waiting for… only that you keep looking.",
+      "Something keeps pulling you back to the screen… even when nothing feels clear."
+    ],
+
+    "Body is tired, mind still on|Are okay, just tired": [
+      "Your body is tired… but your mind still hasn’t slowed down.",
+      "You’re tired… but not all of you knows how to stop.",
+      "Your body wants rest… while your mind keeps standing guard."
+    ],
+    "Body is tired, mind still on|Not fully here": [
+      "Your body is tired… and your mind isn’t fully here either.",
+      "You’re exhausted… but still not fully inside the quiet.",
+      "Your body is here… but your mind keeps slipping away."
+    ],
+    "Body is tired, mind still on|Kind of drifting": [
+      "Your body feels done… but your mind hasn’t found where to land yet.",
+      "You’re tired… and still somehow floating above it all.",
+      "Your body wants to stop… but your mind keeps drifting."
+    ],
+    "Body is tired, mind still on|Don’t feel like yourself": [
+      "Your body is tired… and something about you feels off.",
+      "It’s more than being tired… you don’t quite feel like you.",
+      "Your body wants rest… but you don’t feel fully like yourself right now."
+    ],
+    "Body is tired, mind still on|Numb most of the time": [
+      "Your body is tired… even if everything else feels muted.",
+      "You’re exhausted… but the feeling has gone strangely quiet.",
+      "Your mind keeps running… through a place that feels numb."
+    ],
+    "Body is tired, mind still on|Don’t know anymore": [
+      "Your body is tired… and your mind doesn’t know where to land.",
+      "You need rest… but nothing inside feels clear enough to stop.",
+      "Your body wants quiet… but your mind doesn’t know how to let go."
+    ],
+
+    "Want to disappear for a bit|Are okay, just tired": [
+      "You don’t really want to disappear… you’re just more tired than you admit.",
+      "Maybe you don’t want to vanish… maybe you just need everything to stop asking from you.",
+      "You’re okay, maybe… but you still need somewhere to disappear from the noise."
+    ],
+    "Want to disappear for a bit|Not fully here": [
+      "You want to disappear… like you’re not fully here anyway.",
+      "Maybe disappearing feels easier… because you already feel far from this moment.",
+      "You’re here… but not all of you feels present enough to stay."
+    ],
+    "Want to disappear for a bit|Kind of drifting": [
+      "You want to disappear… as everything already feels far away.",
+      "Maybe you don’t want to leave… maybe you’ve just been drifting too long.",
+      "Everything feels distant… and part of you wants to follow it."
+    ],
+    "Want to disappear for a bit|Don’t feel like yourself": [
+      "You don’t really want to disappear… you just don’t feel like yourself right now.",
+      "Maybe it’s not disappearing you want… maybe it’s finding yourself again.",
+      "You want to step away… because being yourself feels hard right now."
+    ],
+    "Want to disappear for a bit|Numb most of the time": [
+      "You want to disappear… even though everything already feels quiet inside.",
+      "Maybe you don’t want to vanish… maybe you just want to feel something again.",
+      "You feel so quiet inside… disappearing almost feels like the same thing."
+    ],
+    "Want to disappear for a bit|Don’t know anymore": [
+      "You want to disappear… like nothing feels certain anymore.",
+      "Maybe you don’t know what you need… only that staying like this feels too much.",
+      "You don’t know where to go inside yourself… so disappearing starts to sound soft."
+    ],
+
+    "Want to step away for a bit|Are okay, just tired": [
+      "You don’t really want to disappear… you’re just more tired than you admit.",
+      "Maybe you don’t want to vanish… maybe you just need everything to stop asking from you.",
+      "You’re okay, maybe… but you still need somewhere to disappear from the noise."
+    ],
+    "Want to step away for a bit|Not fully here": [
+      "You want to step away… like you’re not fully here anyway.",
+      "Maybe stepping away feels easier… because you already feel far from this moment.",
+      "You’re here… but not all of you feels present enough to stay."
+    ],
+    "Want to step away for a bit|Kind of drifting": [
+      "You want to step away… as everything already feels far away.",
+      "Maybe you don’t want to leave… maybe you’ve just been drifting too long.",
+      "Everything feels distant… and part of you wants to follow it."
+    ],
+    "Want to step away for a bit|Don’t feel like yourself": [
+      "You don’t really want to disappear… you just don’t feel like yourself right now.",
+      "Maybe it’s not disappearing you want… maybe it’s finding yourself again.",
+      "You want to step away… because being yourself feels hard right now."
+    ],
+    "Want to step away for a bit|Numb most of the time": [
+      "You want to step away… even though everything already feels quiet inside.",
+      "Maybe you don’t want to vanish… maybe you just want to feel something again.",
+      "You feel so quiet inside… stepping away almost feels like the same thing."
+    ],
+    "Want to step away for a bit|Don’t know anymore": [
+      "You want to step away… like nothing feels certain anymore.",
+      "Maybe you don’t know what you need… only that staying like this feels too much.",
+      "You don’t know where to go inside yourself… so stepping away starts to sound soft."
+    ],
+
+    "Don’t feel anything at all|Are okay, just tired": [
+      "You don’t feel anything… even though you tell yourself you’re just tired.",
+      "Maybe it’s tiredness… but it feels quieter than that inside.",
+      "You keep calling it tired… because empty is harder to explain."
+    ],
+    "Don’t feel anything at all|Not fully here": [
+      "You don’t feel anything… like you’re not really here.",
+      "You’re here… but something in you feels switched off.",
+      "Nothing feels loud enough to reach the part of you that’s missing."
+    ],
+    "Don’t feel anything at all|Kind of drifting": [
+      "You don’t feel anything… as everything drifts further away.",
+      "It’s like you’re floating through this moment… without really touching it.",
+      "Everything keeps moving… but you feel a little outside of it."
+    ],
+    "Don’t feel anything at all|Don’t feel like yourself": [
+      "You don’t feel anything… and you don’t quite feel like yourself.",
+      "It’s not just empty… it’s that you feel far from who you are.",
+      "Nothing feels like much… including yourself right now."
+    ],
+    "Don’t feel anything at all|Numb most of the time": [
+      "You don’t feel anything… like everything has gone quiet inside.",
+      "The quiet inside you has been getting familiar… hasn’t it.",
+      "It’s not peace… it’s more like everything has gone muted."
+    ],
+    "Don’t feel anything at all|Don’t know anymore": [
+      "You don’t feel anything… and you don’t even know what you’re supposed to feel.",
+      "Nothing feels clear… not even what you need right now.",
+      "You don’t know anymore… because even your feelings feel far away."
+    ]
+  };
+
+  const key = `${q1}|${q5}`;
+
+  const insight = pickOnboardingInsight(insightMap[key]);
+
+  onboardingAnswers.suggested_route = getOnboardingRoute();
   localStorage.setItem('calmnow_pending_onboarding', JSON.stringify(onboardingAnswers));
 
-  return `${line1}<br><br>${line2}<br><br>${line3}`;
+  return insight;
 }
 
 async function savePendingOnboardingAnswersToDb() {
