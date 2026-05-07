@@ -3481,6 +3481,107 @@
     letter-spacing: 0.2em !important;
   }
 }
+
+   /* Warm sand tone override */
+:root {
+  --cn-bg-top: #F3ECE3;
+  --cn-bg-mid: #EFE4D8;
+  --cn-bg-bottom: #E7D8C9;
+  --cn-card-soft: rgba(246, 238, 229, 0.74);
+  --cn-text: #83674E;
+  --cn-text-soft: #A4876D;
+  --cn-muted: #B79F88;
+}
+
+.onboarding-flow,
+.onboarding-analysis-special,
+.calmnow-value-flow,
+.soft-paywall,
+#authModal {
+  background:
+    radial-gradient(circle at 50% 14%, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0) 36%),
+    radial-gradient(circle at 50% 80%, rgba(176,145,116,0.15) 0%, rgba(176,145,116,0) 50%),
+    linear-gradient(180deg, var(--cn-bg-top) 0%, var(--cn-bg-mid) 52%, var(--cn-bg-bottom) 100%) !important;
+}
+
+.onboarding-card,
+.onboarding-analysis-card,
+.soft-paywall-card,
+.calmnow-value-inner,
+#authModal > div {
+  background:
+    radial-gradient(circle at top center, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0) 48%),
+    linear-gradient(180deg, rgba(250,244,237,0.91) 0%, var(--cn-card-soft) 100%) !important;
+  border-color: rgba(178,151,124,0.22) !important;
+  box-shadow:
+    0 34px 92px rgba(118,93,68,0.16),
+    0 0 0 1px rgba(255,255,255,0.20) inset,
+    inset 0 1px 0 rgba(255,255,255,0.48) !important;
+}
+
+.onboarding-card::before,
+.onboarding-analysis-card::before,
+.soft-paywall-card::before,
+.calmnow-value-inner::before,
+#authModal > div::before {
+  border-color: rgba(184,158,132,0.15) !important;
+}
+
+.onboarding-start-title,
+.onboarding-start-subtitle,
+.onboarding-title,
+.onboarding-analysis-box,
+.onboarding-final-text,
+.calmnow-value-text,
+.soft-paywall-title,
+#authModalTitle {
+  color: var(--cn-text) !important;
+}
+
+.onboarding-subtitle,
+.soft-paywall-subtitle,
+.paywall-note,
+.onboarding-soft-line,
+.calmnow-value-logo,
+.onboarding-step,
+.early-rating-label,
+.early-question-title {
+  color: var(--cn-muted) !important;
+}
+
+.onboarding-flow .calm-button,
+.onboarding-analysis-card .calm-button,
+.soft-paywall .calm-button,
+#authModal .calm-button,
+#authSubmitBtn,
+#googleLoginBtn,
+#authTabLogin,
+#authTabSignup {
+  background: rgba(250,244,237,0.74) !important;
+  border-color: rgba(185,160,134,0.32) !important;
+  color: var(--cn-text-soft) !important;
+}
+
+.onboarding-option,
+.early-option {
+  background: rgba(139,115,85,0.12) !important;
+}
+
+.onboarding-option.selected,
+.early-option:has(input:checked) {
+  background: rgba(250,244,237,0.90) !important;
+}
+
+.early-feedback-box,
+#authEmailInput,
+#authPasswordInput {
+  background: rgba(250,244,237,0.78) !important;
+}
+
+#introScreen,
+#momentOverlay {
+  background: linear-gradient(180deg, #FAF7F2 0%, #F5F1EB 50%, #EBE4DA 100%) !important;
+}
 </style>
   <style>body { box-sizing: border-box; }</style>
  
