@@ -3587,6 +3587,22 @@
     0 0 0 1px rgba(255,255,255,0.20) inset,
     inset 0 1px 0 rgba(255,255,255,0.46) !important;
 }
+   /* 7 days paywall fade-in */
+.soft-paywall .soft-paywall-card {
+  opacity: 0;
+  transform: translateY(18px);
+  filter: blur(8px);
+  transition:
+    opacity 1.8s ease,
+    transform 1.8s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 1.8s ease;
+}
+
+.soft-paywall.active .soft-paywall-card {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
 
 </style>
   <style>body { box-sizing: border-box; }</style>
