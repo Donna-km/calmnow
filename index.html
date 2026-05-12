@@ -4862,6 +4862,9 @@
   <audio id="cardSound" preload="auto">
   <source src="https://lvtdqeerzxpznnayccmb.supabase.co/storage/v1/object/public/test-pics/sssreels.com_downloader%20(1).mp3" type="audio/mpeg">
 </audio>
+  <audio id="entryGateSound" preload="auto">
+  <source src="https://foizrwegmdnekaxsahxu.supabase.co/storage/v1/object/public/sounds/mindset%20(mp3cut%20(mp3cut.net).m4a" type="audio/mp4">
+</audio>
 
   <!-- Auth Modal -->
 <div
@@ -7819,7 +7822,22 @@ function startEntryGate() {
   clearTimeout(entryGateTimer);
   hideHomeScreen();
   hideAllPaywalls();
+if (entryGateSound) {
+  entryGateSound.volume = 0.22;
 
+  setTimeout(() => {
+    entryGateSound.currentTime = 0;
+
+    const playPromise = playAudioForIOS(entryGateSound, {
+      reset: false,
+      volume: 0.22
+    });
+
+    if (playPromise?.catch) {
+      playPromise.catch(() => {});
+    }
+  }, 950);
+}
  const entryWelcomeText = document.getElementById('entryWelcomeText');
 
 if (entryWelcomeText) {
@@ -8391,6 +8409,7 @@ const homeCardControls = document.getElementById('homeCardControls');
 const saveCardImageBtn = document.getElementById('saveCardImageBtn');
 const homeReturnBtn = document.getElementById('homeReturnBtn');
 const cardSound = document.getElementById('cardSound');
+const entryGateSound = document.getElementById('entryGateSound');
 let mainCardPauseTimeout = null;
 let currentCardTextForSave = '';
 
