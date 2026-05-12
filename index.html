@@ -3905,7 +3905,7 @@
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 1.45s ease, visibility 1.45s ease;
+   transition: opacity 2.4s ease, visibility 2.4s ease;
 }
 
 .entry-gate.active {
@@ -3931,9 +3931,9 @@
   transform: translateY(18px) scale(0.985);
   filter: blur(10px);
   transition:
-    opacity 2.2s ease,
-    transform 2.2s cubic-bezier(0.22, 1, 0.36, 1),
-    filter 2.2s ease;
+    opacity 2.8s ease,
+    transform 2.8s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 2.8s ease;
 }
 
 .entry-gate.active .entry-cloud {
@@ -3982,26 +3982,27 @@
 .entry-cloud-title {
   margin: 0;
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(1rem, 4vw, 1.35rem);
+  font-size: clamp(0.95rem, 3vw, 1.25rem);
   font-weight: 300;
-  line-height: 0.92;
+  line-height: 1;
   letter-spacing: 0.025em;
   color: rgba(255,255,255,0.96);
   text-shadow: 0 8px 32px rgba(116, 88, 64, 0.10);
 }
 
 .entry-cloud-subtitle {
-  margin: 1.25rem 0 0;
+  margin: 0.35rem 0 0;
   font-family: 'Jost', system-ui, sans-serif;
-  font-size: clamp(0.56rem, 2vw, 0.7rem);
+  font-size: clamp(0.42rem, 1.4vw, 0.56rem);
   font-weight: 300;
-  letter-spacing: 0.48em;
+  letter-spacing: 0.42em;
   text-transform: uppercase;
   color: rgba(255,255,255,0.92);
+  line-height: 1;
 }
    .entry-brand {
   opacity: 0.52;
-  margin-top: 1.4rem;
+  margin-top: 1.75rem;
 }
 
 .entry-cloud-welcome {
@@ -7838,8 +7839,8 @@ if (entryWelcomeText) {
       entryGate.classList.remove('active', 'leaving');
       showHomeScreen();
       showSoftPaywallIfNeeded();
-    }, 1450);
-  }, 3300);
+    }, 2400);
+  }, 5200);
 }
 
 function bootEntryFlow() {
