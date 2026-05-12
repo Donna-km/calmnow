@@ -3982,7 +3982,7 @@
 .entry-cloud-title {
   margin: 0;
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: clamp(3rem, 13vw, 5.4rem);
+  font-size: clamp(1rem, 4vw, 1.35rem);
   font-weight: 300;
   line-height: 0.92;
   letter-spacing: 0.025em;
@@ -3993,15 +3993,19 @@
 .entry-cloud-subtitle {
   margin: 1.25rem 0 0;
   font-family: 'Jost', system-ui, sans-serif;
-  font-size: clamp(0.62rem, 2.3vw, 0.78rem);
+  font-size: clamp(0.56rem, 2vw, 0.7rem);
   font-weight: 300;
   letter-spacing: 0.48em;
   text-transform: uppercase;
   color: rgba(255,255,255,0.92);
 }
+   .entry-brand {
+  opacity: 0.52;
+  margin-top: 1.4rem;
+}
 
 .entry-cloud-welcome {
-  margin: 1.45rem 0 0;
+  margin: 0;
   font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.25rem, 5vw, 1.72rem);
   font-weight: 300;
@@ -4011,6 +4015,8 @@
   transform: translateY(10px);
   transition: opacity 1.6s ease 0.75s, transform 1.6s cubic-bezier(0.22, 1, 0.36, 1) 0.75s;
 }
+   max-width: 320px;
+letter-spacing: -0.01em;
 
 .entry-gate.active .entry-cloud-welcome {
   opacity: 1;
@@ -4046,9 +4052,14 @@
 <div id="entryGate" class="entry-gate" aria-hidden="true">
   <div class="entry-cloud">
     <div class="entry-cloud-content">
-      <h1 class="entry-cloud-title">Calm Now</h1>
-      <p class="entry-cloud-subtitle">Digital Sanctuary</p>
-      <p class="entry-cloud-welcome">welcome back<br>come in softly.</p>
+
+      <p class="entry-cloud-welcome" id="entryWelcomeText"></p>
+
+      <div class="entry-brand">
+        <h1 class="entry-cloud-title">Calm Now</h1>
+        <p class="entry-cloud-subtitle">digital sanctuary</p>
+      </div>
+
     </div>
   </div>
 </div>
@@ -7755,6 +7766,50 @@ introTimers.push(setTimeout(() => {
 }, 13800));
 }
 
+const gateMessages = {
+  morning: [
+    "before the world gets loud…\nbreathe.",
+    "good morning.\ncome in softly.",
+    "arrive slowly.\nthere is no rush."
+  ],
+
+  afternoon: [
+    "pause for a moment.\nyou’re here now.",
+    "take one quiet breath.\nthen continue.",
+    "you can soften here."
+  ],
+
+  evening: [
+    "long day?\ncome in softly.",
+    "you made it here.\nthat’s enough.",
+    "put the day down\nfor a moment."
+  ],
+
+  night: [
+    "still awake?\nyou can rest here.",
+    "nothing to solve tonight.\njust arrive.",
+    "come back to yourself\nsoftly."
+  ]
+};
+
+function getGatePeriod() {
+  const hour = new Date().getHours();
+
+  if (hour >= 5 && hour < 12) return "morning";
+  if (hour >= 12 && hour < 17) return "afternoon";
+  if (hour >= 17 && hour < 22) return "evening";
+
+  return "night";
+}
+
+function getRandomGateMessage() {
+  const period = getGatePeriod();
+  const messages = gateMessages[period];
+
+  return messages[Math.floor(Math.random() * messages.length)];
+}   
+
+   
 function startEntryGate() {
   if (!entryGate) {
     showHomeScreen();
@@ -7765,6 +7820,13 @@ function startEntryGate() {
   clearTimeout(entryGateTimer);
   hideHomeScreen();
   hideAllPaywalls();
+
+ const entryWelcomeText = document.getElementById('entryWelcomeText');
+
+if (entryWelcomeText) {
+  entryWelcomeText.innerHTML =
+    getRandomGateMessage().replace(/\n/g, "<br>");
+}
 
   entryGate.classList.remove('leaving');
   entryGate.classList.add('active');
