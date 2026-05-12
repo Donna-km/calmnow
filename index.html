@@ -8004,9 +8004,19 @@ if (earlyAccessQuestionContinueBtn) {
         }
 
       } catch (err) {
-        removeJourneyBubble(loadingBubble);
-        console.error('card_chat_open error:', err);
-      }
+  console.error('card_chat_open error:', err);
+
+  const fallback =
+    calmyFallbackResponses[
+      Math.floor(Math.random() * calmyFallbackResponses.length)
+    ];
+
+  loadingBubble.textContent = fallback;
+
+  if (journeyChatMessages) {
+    journeyChatMessages.scrollTop = journeyChatMessages.scrollHeight;
+  }
+}
     }
 
   });
@@ -10204,6 +10214,20 @@ const calmyGreetings = [
   "If something is still on your mind… you can share it here.",
   "I’m here… whenever you’re ready."
 ];
+
+   const calmyFallbackResponses = [
+  "i’m here. take your time. 🤍",
+  "you don’t need to explain everything right now.",
+  "that felt real. I’m still with you.",
+  "it’s okay if words feel hard tonight.",
+  "you can stay here for a moment.",
+  "nothing to solve right now.\njust breathe.",
+  "i heard something underneath that.",
+  "you don’t have to carry this alone.",
+  "i’m not going anywhere.",
+  "let’s sit with this softly for a moment."
+];
+
 function isCardContextBubbleText(text) {
   const normalized = String(text || '').trim();
   return /^card\s*:/i.test(normalized) || /card_emotion\s*:/i.test(normalized);
