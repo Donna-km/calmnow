@@ -7979,13 +7979,19 @@ function buildOnboardingAnalysisText() {
 
   const insight = pickOnboardingInsight(insightMap[key]);
 
-  onboardingAnswers.suggested_route = getOnboardingRoute();
-  localStorage.setItem('calmnow_pending_onboarding', JSON.stringify(onboardingAnswers));
+const formattedInsight =
+  insight.replace('… ', '…<br><br>');
 
- onboardingAnswers.analysis_text = insight;
+onboardingAnswers.suggested_route = getOnboardingRoute();
 
-  return insight.replace('… ', '…<br><br>');
-}
+onboardingAnswers.analysis_text = formattedInsight;
+
+localStorage.setItem(
+  'calmnow_pending_onboarding',
+  JSON.stringify(onboardingAnswers)
+);
+
+return formattedInsight;
 
 async function savePendingOnboardingAnswersToDb() {
   const raw = localStorage.getItem('calmnow_pending_onboarding');
