@@ -8005,15 +8005,41 @@ async function savePendingOnboardingAnswersToDb() {
     return false;
   }
 
-  const payload = {
-    user_id: userId,
-    emotion_group: answers.emotion_group || null,
-    body_signal: answers.body_signal || null,
-    need_state: answers.need_state || null,
-    pattern: answers.self_connection || answers.drift_level || answers.pattern || null,
-    suggested_route: answers.suggested_route || null,
-    saved_at: new Date().toISOString()
-  };
+  const emotionTagMap = {
+  'Trying too hard to be happy.': 'self_worth',
+  'Pretending to be okay for everyone else.': 'self_worth',
+  "Tired... even when I'm doing nothing.": 'tired',
+  'Wanting to disappear for just a while.': 'grounding',
+  'Feeling nothing lately.': 'empty',
+  'Missing the person I used to be.': 'healing'
+};
+
+const mappedEmotionTag =
+  emotionTagMap[answers.emotion_group] || 'grounding';
+
+const payload = {
+  user_id: userId,
+
+  emotion_group: mappedEmotionTag,
+
+  body_signal:
+    answers.body_signal || null,
+
+  need_state:
+    answers.need_state || null,
+
+  pattern:
+    answers.pattern || null,
+
+  self_connection:
+    answers.self_connection || null,
+
+  analysis_text:
+    analysisText || null,
+
+  saved_at:
+    new Date().toISOString()
+};
 
   const { error } = await supabaseClient
     .from('user_onboarding')
