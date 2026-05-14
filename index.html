@@ -7982,6 +7982,8 @@ function buildOnboardingAnalysisText() {
   onboardingAnswers.suggested_route = getOnboardingRoute();
   localStorage.setItem('calmnow_pending_onboarding', JSON.stringify(onboardingAnswers));
 
+ onboardingAnswers.analysis_text = insight;
+
   return insight.replace('… ', '…<br><br>');
 }
 
@@ -8023,24 +8025,26 @@ const payload = {
   emotion_group: mappedEmotionTag,
 
   body_signal:
-    answers.body_signal || null,
+    answers.trigger_space || null,
 
   need_state:
-    answers.need_state || null,
+    answers.hidden_need || null,
 
   pattern:
-    answers.pattern || null,
+    answers.coping_pattern || null,
+
+  suggested_route:
+    answers.suggested_route || 'A Message From Within',
 
   self_connection:
     answers.self_connection || null,
 
   analysis_text:
-  answers.analysis_text || null,
+    answers.analysis_text || null,
 
   saved_at:
     new Date().toISOString()
 };
-
   const { error } = await supabaseClient
     .from('user_onboarding')
     .upsert(payload, { onConflict: 'user_id' });
