@@ -12743,11 +12743,15 @@ async function submitJourneyChat() {
       chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 
-  } catch (err) {
-    console.error('chat error:', err);
-    loadingDiv.textContent = 'Something went wrong. Please try again.';
-  }
+ } catch (err) {
+  console.error('chat error:', err);
+
+  loadingDiv.textContent =
+    calmyFallbackResponses[
+      Math.floor(Math.random() * calmyFallbackResponses.length)
+    ];
 }
+ 
 if (sendChatBtn) {
   sendChatBtn.addEventListener('click', (event) => {
     event.preventDefault();
