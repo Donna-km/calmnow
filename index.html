@@ -5789,27 +5789,33 @@
    ========================================================= */
 
 @keyframes calmyPopupCloudBreathe {
-
   0%, 100% {
-    transform:
-      translateY(0)
-      scale(1)
-      rotate(-1deg);
-
-    opacity: 0.84;
+    transform: translateY(0) scale(1) rotate(-1deg);
+    opacity: 0.72;
   }
 
   50% {
-    transform:
-      translateY(-3px)
-      scale(1.04)
-      rotate(1deg);
-
+    transform: translateY(-10px) scale(1.09) rotate(1deg);
     opacity: 1;
   }
-
+}
+.calmy-popup-cloud::before {
+  animation:
+    calmyCloudColorShift 11s ease-in-out infinite,
+    calmyCloudInnerPulse 8.4s ease-in-out infinite !important;
 }
 
+@keyframes calmyCloudInnerPulse {
+  0%, 100% {
+    transform: scale(0.96);
+    filter: blur(18px);
+  }
+
+  50% {
+    transform: scale(1.08);
+    filter: blur(22px);
+  }
+}
 /* =========================================================
    SOFT COLOR SHIFT
    ========================================================= */
