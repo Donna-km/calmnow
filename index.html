@@ -5346,6 +5346,85 @@
     border-radius: 22px;
   }
 }
+
+ .calmy-voice-btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.calmy-voice-btn::before {
+  content: "";
+  position: absolute;
+  inset: -12%;
+  border-radius: 50%;
+
+  background:
+    radial-gradient(circle at 30% 30%,
+      rgba(255,255,255,0.22),
+      rgba(255,255,255,0) 62%),
+    radial-gradient(circle at 70% 65%,
+      rgba(205, 188, 164, 0.18),
+      rgba(205, 188, 164, 0) 70%);
+
+  opacity: 0;
+  transform: scale(0.92);
+
+  transition:
+    opacity 0.8s ease,
+    transform 1.6s ease;
+}
+
+.calmy-voice-btn.speaking {
+  animation: calmyBreathing 7s ease-in-out infinite;
+  box-shadow:
+    0 0 42px rgba(196, 181, 160, 0.16),
+    0 0 90px rgba(196, 181, 160, 0.08);
+}
+
+.calmy-voice-btn.speaking::before {
+  opacity: 1;
+  transform: scale(1.08);
+}
+
+.calmy-voice-btn.speaking .calmy-voice-bars i {
+  animation: calmyWhisper 1.8s ease-in-out infinite;
+}
+
+.calmy-voice-btn.speaking .calmy-voice-bars i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.calmy-voice-btn.speaking .calmy-voice-bars i:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
+.calmy-voice-btn.speaking .calmy-voice-bars i:nth-child(4) {
+  animation-delay: 0.48s;
+}
+
+@keyframes calmyBreathing {
+  0%, 100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.045);
+  }
+}
+
+@keyframes calmyWhisper {
+  0%, 100% {
+    height: 10px;
+    opacity: 0.34;
+    transform: translateY(0px);
+  }
+
+  50% {
+    height: 22px;
+    opacity: 0.92;
+    transform: translateY(-1px);
+  }
+}
 </style>
 
 </head>
@@ -12399,10 +12478,35 @@ calmyVoice.volume = 0.75;
 
 async function playCalmyVoice() {
   try {
+
+    calmyVoice.currentTime = 0;
+
     await calmyVoice.play();
+
   } catch (err) {
     console.log(err);
   }
+}
+   const calmyVoiceBtn = document.getElementById('journeyVoiceBtn');
+
+if (calmyVoiceBtn) {
+
+  calmyVoiceBtn.addEventListener('click', async () => {
+
+    calmyVoiceBtn.classList.add('speaking');
+
+    await playCalmyVoice();
+
+  });
+
+  calmyVoice.addEventListener('ended', () => {
+    calmyVoiceBtn.classList.remove('speaking');
+  });
+
+  calmyVoice.addEventListener('pause', () => {
+    calmyVoiceBtn.classList.remove('speaking');
+  });
+
 }
     
 bindChatSoundPopup();
