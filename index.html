@@ -6422,6 +6422,10 @@
   </div>
 </div>
 
+  <button onclick="playCalmyVoice()">
+  test calmy
+</button>
+
   <script>
     
     // ===== Supabase =====
@@ -12390,6 +12394,20 @@ function bindChatSoundPopup() {
   });
 }
 
+const calmyVoice = new Audio(
+  'https://foizrwegmdnekaxsahxu.supabase.co/storage/v1/object/public/sounds/calmy-greeting-01.mp3'
+);
+
+calmyVoice.volume = 0.75;
+
+async function playCalmyVoice() {
+  try {
+    await calmyVoice.play();
+  } catch (err) {
+    console.log(err);
+  }
+}
+    
 bindChatSoundPopup();
 </script>
   
