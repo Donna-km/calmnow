@@ -2132,6 +2132,36 @@
 .pause-circle-btn:hover {
   box-shadow: 0 24px 56px rgba(184, 166, 143, 0.16), inset 0 1px 0 rgba(255,255,255,0.98);
 }
+   .pause-circle-btn::before {
+  content: '';
+  position: absolute;
+  inset: -22px;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle,
+      rgba(214, 191, 167, 0.22) 0%,
+      rgba(214, 191, 167, 0.12) 38%,
+      rgba(214, 191, 167, 0) 72%
+    );
+  filter: blur(24px);
+  opacity: 0.52;
+  animation: pauseGlowBreath 7.2s ease-in-out infinite;
+  z-index: -1;
+  pointer-events: none;
+}
+
+@keyframes pauseGlowBreath {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.42;
+  }
+
+  50% {
+    transform: scale(1.08);
+    opacity: 0.72;
+  }
+}
 
 .pause-support-text {
   margin: 0;
