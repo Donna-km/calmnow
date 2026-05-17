@@ -10925,7 +10925,17 @@ if (foundingMemberContinueBtn) {
          updateChallengeSelectedSoundButton();
 
          resetHomeCardFlow();
-         showPauseReturnCloudTransition('the moment passed.');
+         const pauseReturnMessages = [
+  'the moment passed.',
+  'the more you come back, the less you’ll need to.',
+  'you’re training something deeper than you know.',
+  'the mind remembers what you teach it.'
+];
+
+const randomPauseMessage =
+  pauseReturnMessages[Math.floor(Math.random() * pauseReturnMessages.length)];
+
+showPauseReturnCloudTransition(randomPauseMessage);
       } else if (currentMode === 'mix') {
         // Hide mix elements and show breathing circle again
         const mixCircle = document.getElementById('mixCircle');
