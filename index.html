@@ -10186,7 +10186,7 @@ function showFounderStoryFlow() {
     const revealDoneDelay = firstLineDelay + (lines.length * lineDelay);
 
     if (index === 0) {
-      const firstScreenHoldAfterLastLine = 12000;
+      const firstScreenHoldAfterLastLine = 9000;
 
       founderStoryTimers.push(setTimeout(() => {
         if (!screen.classList.contains('active')) return;
@@ -10370,7 +10370,7 @@ setTimeout(() => {
     screenTwo.classList.remove('active');
 
     showFounderStoryFlow();
-  }, 14200);
+  }, 12000);
 }
 
 function showOnboardingFinalFlow() {
