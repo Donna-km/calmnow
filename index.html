@@ -1557,10 +1557,6 @@
   opacity: 0.7;
 }
 
-.early-question-card {
-  max-height: min(82vh, 720px);
-  overflow-y: auto;
-}
 
 .early-question-title {
   margin: 1.1rem 0 0.55rem;
@@ -3794,10 +3790,6 @@
 }
 
 /* Trial + early access forms inside same card */
-.early-question-card {
-  overflow-y: auto !important;
-}
-
 .early-feedback-box,
 #authEmailInput,
 #authPasswordInput {
@@ -6764,13 +6756,16 @@
   <div class="soft-paywall-card">
     <h2 class="soft-paywall-title">Early access is open</h2>
 
-    <p class="soft-paywall-subtitle">
-      CalmNow is still growing softly.<br><br>
+   <p class="soft-paywall-subtitle">
+  CalmNow is still growing softly.
+</p>
 
-      before you continue, we’d love to understand<br>
-      what this space has felt like for you.
-    </p>
+<div class="card-divider"></div>
 
+<p class="soft-paywall-subtitle">
+  before you continue, we’d love to understand
+  what this space has felt like for you.
+</p>
     <div class="soft-paywall-actions">
       <button id="paywallContinueBtn" class="calm-button">
         Join Early Access
@@ -7020,9 +7015,29 @@
 
 
 /* Early access questions — split into calm step-by-step pages */
+
 .early-question-card {
-  max-height: min(82vh, 720px) !important;
+  width: min(92vw, 520px);
+
+  max-height: 88vh !important;
   overflow-y: auto !important;
+
+  padding: 2.8rem 2rem 2.4rem;
+
+  border-radius: 34px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.72) 0%,
+      rgba(248,242,234,0.92) 100%
+    );
+
+  border: 1px solid rgba(186, 162, 132, 0.14);
+
+  box-shadow:
+    0 30px 80px rgba(124, 97, 69, 0.12),
+    inset 0 1px 0 rgba(255,255,255,0.7);
 }
 
 .early-question-step {
@@ -7075,6 +7090,24 @@
     transform: translateY(0);
     filter: blur(0);
   }
+}
+
+   .card-divider {
+  width: 112px;
+  height: 1px;
+
+  margin:
+    1.2rem auto
+    2rem;
+
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(201,175,123,0.15) 20%,
+    rgba(201,175,123,0.55) 50%,
+    rgba(201,175,123,0.15) 80%,
+    transparent 100%
+  );
 }
 </style>
 
