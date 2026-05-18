@@ -10202,8 +10202,8 @@ function showFounderStoryFlow() {
   }
 
   let currentFounderScreenIndex = 0;
-  const lineDelay = 1750;
-  const firstLineDelay = 900;
+  const lineDelay = 2000;
+  const firstLineDelay = 1000;
   const buttonDelayAfterLastLine = 950;
 
   function resetFounderScreens() {
@@ -10256,7 +10256,7 @@ function showFounderStoryFlow() {
     const revealDoneDelay = firstLineDelay + (lines.length * lineDelay);
 
     if (index === 0) {
-      const firstScreenHoldAfterLastLine = 9000;
+      const firstScreenHoldAfterLastLine = 8600;
 
       founderStoryTimers.push(setTimeout(() => {
         if (!screen.classList.contains('active')) return;
