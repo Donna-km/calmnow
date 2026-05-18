@@ -6625,6 +6625,19 @@
     padding-bottom: 0.68rem !important;
   }
 }
+
+ /* Early access open page — tighter divider spacing */
+#trialEndedPopup .card-divider {
+  margin: 0.9rem auto 1.15rem !important;
+}
+
+/* Keep continue button always visible */
+#earlyAccessQuestionPopup #earlyAccessQuestionContinueBtn,
+#earlyAccessQuestionPopup .soft-paywall-actions {
+  display: flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
 </style>
 
 </head>
@@ -7225,103 +7238,6 @@
     width: 64px;
     height: 64px;
   }
-}
-
-
-/* Early access questions — split into calm step-by-step pages */
-
-.early-question-card {
-  width: min(92vw, 520px);
-
-  max-height: 88vh !important;
-  overflow-y: auto !important;
-
-  padding: 2.8rem 2rem 2.4rem;
-
-  border-radius: 34px;
-
-  background:
-    linear-gradient(
-      180deg,
-      rgba(255,255,255,0.72) 0%,
-      rgba(248,242,234,0.92) 100%
-    );
-
-  border: 1px solid rgba(186, 162, 132, 0.14);
-
-  box-shadow:
-    0 30px 80px rgba(124, 97, 69, 0.12),
-    inset 0 1px 0 rgba(255,255,255,0.7);
-}
-
-.early-question-step {
-  display: none !important;
-  animation: fadeSoftQuestion 0.7s ease;
-}
-
-.early-question-step.active {
-  display: block !important;
-}
-
-.early-question-thankyou {
-  display: none !important;
-  text-align: center;
-  padding: 2.4rem 1rem 1rem;
-  animation: fadeSoftQuestion 1.2s ease;
-}
-
-.early-question-thankyou.active {
-  display: block !important;
-}
-
-.early-thankyou-title {
-  font-size: clamp(2.1rem, 8vw, 3rem);
-  color: #A98868;
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-weight: 300;
-  line-height: 1.1;
-  margin: 0 0 1rem;
-  letter-spacing: 0.02em;
-  text-transform: lowercase;
-}
-
-.early-thankyou-text {
-  color: rgba(108, 84, 62, 0.78);
-  line-height: 1.9;
-  font-size: 1rem;
-  margin: 0;
-}
-
-@keyframes fadeSoftQuestion {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-    filter: blur(5px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-    filter: blur(0);
-  }
-}
-
-   .card-divider {
-  width: 112px;
-  height: 1px;
-
-  margin:
-    1.2rem auto
-    2rem;
-
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(201,175,123,0.15) 20%,
-    rgba(201,175,123,0.55) 50%,
-    rgba(201,175,123,0.15) 80%,
-    transparent 100%
-  );
 }
 </style>
 
