@@ -13660,6 +13660,12 @@ function setJourneyTab(tab = 'chat') {
   if (chatView) chatView.classList.toggle('active', tab === 'chat');
   if (summaryView) summaryView.classList.toggle('active', tab === 'journey');
 
+  if (summaryBtn) {
+    summaryBtn.innerHTML = tab === 'journey'
+      ? `<span class="journey-reflection-icon"><span></span><span></span><span></span></span> Chat`
+      : `<span class="journey-reflection-icon"><span></span><span></span><span></span></span> Reflection`;
+  }
+
   if (tab === 'chat') {
     const input = document.getElementById('journeyChatInput');
     if (input) setTimeout(() => input.focus(), 80);
