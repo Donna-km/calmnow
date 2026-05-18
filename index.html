@@ -6895,20 +6895,20 @@
 
 
 /* Early access questions — split into calm step-by-step pages */
-.early-question-card {
-  width: min(92vw, 430px) !important;
-  max-width: 430px !important;
-  min-height: auto !important;
-  max-height: min(82vh, 680px) !important;
-  padding: 2.2rem 1.35rem 1.55rem !important;
-  overflow-y: auto !important;
+
+/* หน้า Early access แรก — เส้นไม่ห่าง */
+#trialEndedPopup .soft-paywall-card {
+  gap: 1.25rem !important;
+}
+
+#trialEndedPopup .soft-paywall-subtitle {
+  margin: 0 !important;
 }
 
 #trialEndedPopup .card-divider {
   width: 112px;
   height: 1px;
-
-  margin: 0.25rem auto 0.35rem !important;
+  margin: 0.15rem auto !important;
 
   background: linear-gradient(
     90deg,
@@ -6920,8 +6920,14 @@
   );
 }
 
-#trialEndedPopup .soft-paywall-subtitle + .card-divider + .soft-paywall-subtitle {
-  margin-top: 0 !important;
+/* หน้าคำถาม */
+.early-question-card {
+  width: min(92vw, 430px) !important;
+  max-width: 430px !important;
+  min-height: auto !important;
+  max-height: min(82vh, 680px) !important;
+  padding: 2.2rem 1.35rem 1.55rem !important;
+  overflow-y: auto !important;
 }
 
 #earlyAccessQuestionPopup .early-question-title {
@@ -6935,6 +6941,44 @@
   text-align: left !important;
 }
 
+#earlyAccessQuestionPopup .early-question-options {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.85rem !important;
+}
+
+#earlyAccessQuestionPopup .early-option {
+  width: 100% !important;
+  min-height: 58px !important;
+
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.8rem !important;
+
+  padding: 0.9rem 1.1rem !important;
+
+  border-radius: 999px !important;
+  border: 1px solid rgba(180, 165, 145, 0.18) !important;
+
+  background: rgba(255, 252, 247, 0.72) !important;
+  color: #6B5D4D !important;
+
+  font-family: 'Jost', system-ui, sans-serif !important;
+  font-size: 0.95rem !important;
+  font-weight: 300 !important;
+  line-height: 1.45 !important;
+
+  text-align: left !important;
+  cursor: pointer !important;
+}
+
+#earlyAccessQuestionPopup .early-option input {
+  flex: 0 0 auto !important;
+  accent-color: #B4A591 !important;
+}
+
+/* step logic — ห้ามลบ */
 .early-question-step {
   display: none !important;
   animation: fadeSoftQuestion 0.7s ease;
