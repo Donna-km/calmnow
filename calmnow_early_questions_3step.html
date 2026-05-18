@@ -6786,41 +6786,57 @@
 <div id="earlyAccessQuestionPopup" class="soft-paywall">
   <div class="soft-paywall-card early-question-card">
     <h2 class="soft-paywall-title">Before you continue</h2>
+
     <p class="soft-paywall-subtitle">
-      Tell us a little about what brought you here.<br>
-      This helps CalmNow grow more gently.
+      before you continue, we’d love to understand<br>
+      what this space has felt like for you.
     </p>
 
     <div id="earlyQuestionStep1" class="early-question-step active">
-      <div class="early-question-title">What brought you here today?</div>
+      <div class="early-question-title">
+        What brought you here<br>
+        in the first place?
+      </div>
 
       <div class="early-question-options">
-        <label class="early-option"><input type="radio" name="earlyPain" value="overwhelmed"> I felt overwhelmed</label>
-        <label class="early-option"><input type="radio" name="earlyPain" value="couldnt_stop_thinking"> I couldn’t stop thinking</label>
-        <label class="early-option"><input type="radio" name="earlyPain" value="empty"> I felt empty</label>
-        <label class="early-option"><input type="radio" name="earlyPain" value="just_needed_a_pause"> I just needed a pause</label>
-        <label class="early-option"><input type="radio" name="earlyPain" value="i_dont_know"> I’m not sure</label>
+        <label class="early-option"><input type="radio" name="earlyPain" value="couldnt_stop_thinking"> I couldn't stop thinking</label>
+        <label class="early-option"><input type="radio" name="earlyPain" value="empty_without_knowing_why"> I felt empty without knowing why</label>
+        <label class="early-option"><input type="radio" name="earlyPain" value="needed_somewhere_quiet"> I needed somewhere quiet</label>
+        <label class="early-option"><input type="radio" name="earlyPain" value="about_to_regret"> I was about to do something<br>I'd regret</label>
+        <label class="early-option"><input type="radio" name="earlyPain" value="shared_by_someone"> Someone shared this space with me</label>
+        <label class="early-option"><input type="radio" name="earlyPain" value="not_sure"> I'm not sure</label>
       </div>
     </div>
 
     <div id="earlyQuestionStep2" class="early-question-step">
-      <div class="early-question-title">How did this moment feel?</div>
-
-      <div class="early-rating-row" aria-label="How did this moment feel? still heavy to lighter">
-        <label class="early-rating-option"><input type="radio" name="earlyUseCase" value="1"><span class="early-rating-star">★</span></label>
-        <label class="early-rating-option"><input type="radio" name="earlyUseCase" value="2"><span class="early-rating-star">★</span></label>
-        <label class="early-rating-option"><input type="radio" name="earlyUseCase" value="3"><span class="early-rating-star">★</span></label>
-        <label class="early-rating-option"><input type="radio" name="earlyUseCase" value="4"><span class="early-rating-star">★</span></label>
-        <label class="early-rating-option"><input type="radio" name="earlyUseCase" value="5"><span class="early-rating-star">★</span></label>
+      <div class="early-question-title">
+        In these 7 days,<br>
+        was there a moment<br>
+        that felt different?
       </div>
 
-      <p class="early-rating-label">still heavy → lighter</p>
+      <div class="early-question-options">
+        <label class="early-option"><input type="radio" name="earlyMoment" value="opened_card"> When I opened a card</label>
+        <label class="early-option"><input type="radio" name="earlyMoment" value="talked_to_calmy"> When I talked to Calmy</label>
+        <label class="early-option"><input type="radio" name="earlyMoment" value="used_pause"> When I used Pause</label>
+        <label class="early-option"><input type="radio" name="earlyMoment" value="sat_quietly"> When I just sat quietly</label>
+        <label class="early-option"><input type="radio" name="earlyMoment" value="not_sure_yet"> I'm not sure yet</label>
+        <label class="early-option"><input type="radio" name="earlyMoment" value="dont_know_yet"> I don't know yet</label>
+      </div>
     </div>
 
     <div id="earlyQuestionStep3" class="early-question-step">
-      <div class="early-question-title">What did you need in that moment, but didn’t find here?</div>
+      <div class="early-question-title">
+        Is there something<br>
+        you needed here<br>
+        but didn't find?
+      </div>
 
-      <textarea id="earlyAccessFeedback" class="early-feedback-box" placeholder="I needed..."></textarea>
+      <textarea
+        id="earlyAccessFeedback"
+        class="early-feedback-box"
+        placeholder="You don't have to answer this."
+      ></textarea>
     </div>
 
     <div id="earlyQuestionThankYou" class="early-question-thankyou">
@@ -9318,9 +9334,9 @@ function getSelectedEarlyAccessValue(name) {
 }
 
 function resetEarlyAccessQuestionForm() {
-  document.querySelectorAll('input[name="earlyPain"], input[name="earlyUseCase"]').forEach(input => {
-    input.checked = false;
-  });
+  document.querySelectorAll('input[name="earlyPain"], input[name="earlyMoment"]').forEach(input => {
+  input.checked = false;
+});
 
   if (earlyAccessFeedback) earlyAccessFeedback.value = '';
   if (earlyAccessQuestionError) earlyAccessQuestionError.textContent = '';
@@ -9350,8 +9366,8 @@ async function submitEarlyAccessQuestions() {
   }
 
   const pain = getSelectedEarlyAccessValue('earlyPain');
-  const momentRating = Number(getSelectedEarlyAccessValue('earlyUseCase')) || null;
-  const likedMost = (earlyAccessFeedback?.value || '').trim();
+  const likedMost = getSelectedEarlyAccessValue('earlyMoment');
+  const feedbackText = (earlyAccessFeedback?.value || '').trim();
 
   const step1 = document.getElementById('earlyQuestionStep1');
   const step2 = document.getElementById('earlyQuestionStep2');
@@ -9418,15 +9434,15 @@ async function submitEarlyAccessQuestions() {
       user_id: currentUser.id,
       email: currentUser.email || null,
       source: 'trial_ended_popup',
-      pain,
-      use_case: null,
+      pain: pain || null,
       liked_most: likedMost || null,
-      moment_rating: momentRating,
+      use_case: feedbackText || null,
+      moment_rating: null,
       clicked_at: new Date().toISOString()
     },
     { onConflict: 'user_id' }
   );
-
+ 
   if (earlyAccessQuestionContinueBtn) {
     earlyAccessQuestionContinueBtn.disabled = false;
     earlyAccessQuestionContinueBtn.textContent = 'Continue';
