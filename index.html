@@ -4324,12 +4324,13 @@
   display: block;
   margin: 0 auto;
   opacity: 0;
-  transform: translateY(18px);
-  filter: blur(8px);
+  transform: translateY(24px);
+  filter: blur(10px);
+
   transition:
-    opacity 2.35s ease,
-    transform 2.35s cubic-bezier(0.22, 1, 0.36, 1),
-    filter 2.35s ease;
+    opacity 3.6s ease,
+    transform 3.6s cubic-bezier(0.22, 1, 0.36, 1),
+    filter 3.6s ease;
 }
 
 #founderStoryFlow .founder-story-screen.active .founder-story-line.show {
@@ -10078,7 +10079,7 @@ function clearFounderStoryTimers() {
 function showFounderStoryPause(onComplete) {
   const founderFlow = document.getElementById('founderStoryFlow');
   const pauseScreen = founderFlow ? founderFlow.querySelector('.founder-story-pause') : null;
-  const pauseHoldMs = 2200;
+  const pauseHoldMs = 4200;
   const pauseAudio = document.getElementById('breathingSound');
 
   if (!pauseScreen) {
@@ -10131,8 +10132,8 @@ function showFounderStoryFlow() {
   }
 
   let currentFounderScreenIndex = 0;
-  const lineDelay = 760;
-  const firstLineDelay = 380;
+  const lineDelay = 1750;
+  const firstLineDelay = 900;
   const buttonDelayAfterLastLine = 950;
 
   function resetFounderScreens() {
@@ -10185,7 +10186,7 @@ function showFounderStoryFlow() {
     const revealDoneDelay = firstLineDelay + (lines.length * lineDelay);
 
     if (index === 0) {
-      const firstScreenHoldAfterLastLine = 6200;
+      const firstScreenHoldAfterLastLine = 12000;
 
       founderStoryTimers.push(setTimeout(() => {
         if (!screen.classList.contains('active')) return;
@@ -10195,7 +10196,7 @@ function showFounderStoryFlow() {
 
         founderStoryTimers.push(setTimeout(() => {
           showFounderStoryPause(() => revealFounderScreen(1));
-        }, 1900));
+        }, 3000));
       }, revealDoneDelay + firstScreenHoldAfterLastLine));
 
       return;
