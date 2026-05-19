@@ -9685,13 +9685,13 @@ const onboardingQuestions = [
     subtitle: 'feels a bit like:',
     key: 'emotion_group',
     options: [
-      'Trying too hard to be happy.',
-      'Pretending to be okay for everyone else.',
-      "Tired... even when I'm doing nothing.",
-      'Wanting to disappear for just a while.',
-      'Feeling nothing lately.',
-      'Missing the person I used to be.'
-    ]
+  "I can’t stop thinking ahead.",
+  "Pretending to be okay for everyone else.",
+  "Not happy. Not sad. Just empty.",
+  "Tired... even when I'm doing nothing.",
+  "I don’t feel like myself lately.",
+  "Missing the person I used to be."
+]
   },
 
   {
@@ -9956,102 +9956,126 @@ function buildOnboardingAnalysisText() {
   const q5 = normalizeOnboardingText(onboardingAnswers.self_connection || onboardingAnswers.drift_level || onboardingAnswers.pattern);
 
   const insightMap = {
-    "Trying too hard to be happy.|Not sad enough to cry, not okay enough to smile.": [
-      "You’ve been trying to hold light over something that still feels heavy."
-    ],
-    "Trying too hard to be happy.|I don’t feel fully here anymore.": [
-      "Somewhere along the way… you started disappearing from your own moments."
-    ],
-    "Trying too hard to be happy.|I’ve been carrying too much alone.": [
-      "You’ve been trying to stay bright while carrying more than anyone sees."
-    ],
-    "Trying too hard to be happy.|I’m tired of pretending I’m okay.": [
-      "Smiling started feeling more like survival than happiness."
-    ],
-    "Trying too hard to be happy.|I feel myself fading away.": [
-      "You kept trying to be the light… until you could barely feel yourself anymore."
-    ],
+  "I can’t stop thinking ahead.|Not sad enough to cry, not okay enough to smile.": [
+    "Your mind is running a marathon to prevent a future, while your heart is stuck in the grey zone."
+  ],
 
-    "Pretending to be okay for everyone else.|Not sad enough to cry, not okay enough to smile.": [
-      "You’ve been surviving in between. not fully falling apart. not fully okay either."
-    ],
-    "Pretending to be okay for everyone else.|I don’t feel fully here anymore.": [
-      "You stayed present for everyone else… while quietly leaving yourself behind."
-    ],
-    "Pretending to be okay for everyone else.|I’ve been carrying too much alone.": [
-      "You’ve been holding everything together so quietly… no one noticed how heavy it became."
-    ],
-    "Pretending to be okay for everyone else.|I’m tired of pretending I’m okay.": [
-      "Pretending became so familiar… you almost forgot what honest feels like."
-    ],
-    "Pretending to be okay for everyone else.|I feel myself fading away.": [
-      "You kept becoming what everyone needed… until you started disappearing from yourself."
-    ],
+  "I can’t stop thinking ahead.|I don’t feel fully here anymore.": [
+    "Your thoughts are living so far ahead, it’s hard to find the person sitting here right now."
+  ],
 
-    "Tired... even when I'm doing nothing.|Not sad enough to cry, not okay enough to smile.": [
-      "This tiredness feels deeper than rest alone can fix."
-    ],
-    "Tired... even when I'm doing nothing.|I don’t feel fully here anymore.": [
-      "Your body stayed here… but something inside quietly drifted away."
-    ],
-    "Tired... even when I'm doing nothing.|I’ve been carrying too much alone.": [
-      "You’ve been carrying too much for too long without resting inside."
-    ],
-    "Tired... even when I'm doing nothing.|I’m tired of pretending I’m okay.": [
-      "Even resting doesn’t feel like rest when you’ve been holding this much inside."
-    ],
-    "Tired... even when I'm doing nothing.|I feel myself fading away.": [
-      "You’ve been exhausted for so long… it’s starting to blur who you are."
-    ],
+  "I can’t stop thinking ahead.|I’ve been carrying too much alone.": [
+    "You are exhausting yourself trying to build armor for battles that haven't even begun."
+  ],
 
-    "Wanting to disappear for just a while.|Not sad enough to cry, not okay enough to smile.": [
-      "You don’t want everything to end. you just want everything to stop for a moment."
-    ],
-    "Wanting to disappear for just a while.|I don’t feel fully here anymore.": [
-      "Part of you already feels far away from all of this."
-    ],
-    "Wanting to disappear for just a while.|I’ve been carrying too much alone.": [
-      "You’ve been carrying too much alone for too long… even silence started feeling comforting."
-    ],
-    "Wanting to disappear for just a while.|I’m tired of pretending I’m okay.": [
-      "Maybe you don’t want to disappear. maybe you just want the pressure to stop."
-    ],
-    "Wanting to disappear for just a while.|I feel myself fading away.": [
-      "You’ve been here for everyone else for so long… you almost disappeared from yourself."
-    ],
+  "I can’t stop thinking ahead.|I’m tired of pretending I’m okay.": [
+    "Inside, you are planning for a storm. Outside, you are pretending it’s just a clear day."
+  ],
 
-    "Feeling nothing lately.|Not sad enough to cry, not okay enough to smile.": [
-      "Everything feels strangely quiet inside… even your feelings."
-    ],
-    "Feeling nothing lately.|I don’t feel fully here anymore.": [
-      "Something in you has been slowly drifting further away."
-    ],
-    "Feeling nothing lately.|I’ve been carrying too much alone.": [
-      "Sometimes carrying too much for too long turns into silence inside."
-    ],
-    "Feeling nothing lately.|I’m tired of pretending I’m okay.": [
-      "Pretending for too long can make even your feelings go quiet."
-    ],
-    "Feeling nothing lately.|I feel myself fading away.": [
-      "It’s hard to hear yourself… when everything inside has gone this quiet."
-    ],
+  "I can’t stop thinking ahead.|I feel myself fading away.": [
+    "The noise in your head became so loud, it completely drowned out the person you used to be."
+  ],
 
-    "Missing the person I used to be.|Not sad enough to cry, not okay enough to smile.": [
-      "Part of you still remembers what it felt like to feel alive inside."
-    ],
-    "Missing the person I used to be.|I don’t feel fully here anymore.": [
-      "You miss a version of yourself that felt more present than this."
-    ],
-    "Missing the person I used to be.|I’ve been carrying too much alone.": [
-      "You miss the version of you that didn’t have to carry this much."
-    ],
-    "Missing the person I used to be.|I’m tired of pretending I’m okay.": [
-      "Maybe you’re not missing the old you. maybe you just miss feeling real again."
-    ],
-    "Missing the person I used to be.|I feel myself fading away.": [
-      "Somewhere underneath all this… you’re still trying to find yourself again."
-    ]
-  }
+  "Pretending to be okay for everyone else.|Not sad enough to cry, not okay enough to smile.": [
+    "You are stuck in the quiet middle—too numb to collapse, but too heavy to smile."
+  ],
+
+  "Pretending to be okay for everyone else.|I don’t feel fully here anymore.": [
+    "You showed up for everyone else, but you left yourself behind."
+  ],
+
+  "Pretending to be okay for everyone else.|I’ve been carrying too much alone.": [
+    "You held it together so perfectly that nobody even thought to ask if you were okay."
+  ],
+
+  "Pretending to be okay for everyone else.|I’m tired of pretending I’m okay.": [
+    "You wore the mask for so long, it started to feel like your real face."
+  ],
+
+  "Pretending to be okay for everyone else.|I feel myself fading away.": [
+    "You spent so long becoming what everyone needed… you slowly lost touch with yourself."
+  ],
+
+  "Not happy. Not sad. Just empty.|Not sad enough to cry, not okay enough to smile.": [
+    "You are not living; you are just watching your life happen from a distance."
+  ],
+
+  "Not happy. Not sad. Just empty.|I don’t feel fully here anymore.": [
+    "You’re physically here… but emotionally, you’ve felt distant from yourself."
+  ],
+
+  "Not happy. Not sad. Just empty.|I’ve been carrying too much alone.": [
+    "The heavy weight didn't break you. It just made you entirely silent."
+  ],
+
+  "Not happy. Not sad. Just empty.|I’m tired of pretending I’m okay.": [
+    "Faking a life for others eventually drains everything out of your own."
+  ],
+
+  "Not happy. Not sad. Just empty.|I feel myself fading away.": [
+    "It’s impossible to hear your own voice when everything inside has gone this numb."
+  ],
+
+  "Tired... even when I'm doing nothing.|Not sad enough to cry, not okay enough to smile.": [
+    "Your body is resting, but your mind is still fighting inside."
+  ],
+
+  "Tired... even when I'm doing nothing.|I don’t feel fully here anymore.": [
+    "You didn't just run out of physical sleep. You ran out of yourself."
+  ],
+
+  "Tired... even when I'm doing nothing.|I’ve been carrying too much alone.": [
+    "You are exhausted because you never allowed your mind a place to just lay down."
+  ],
+
+  "Tired... even when I'm doing nothing.|I’m tired of pretending I’m okay.": [
+    "Pretending to be fine is the most exhausting full-time job you never asked for."
+  ],
+
+  "Tired... even when I'm doing nothing.|I feel myself fading away.": [
+    "The fatigue has lasted so long, it’s blurring the edges of who you are."
+  ],
+
+  "I don’t feel like myself lately.|Not sad enough to cry, not okay enough to smile.": [
+    "You are operating on autopilot, moving through days without touching any of them."
+  ],
+
+  "I don’t feel like myself lately.|I don’t feel fully here anymore.": [
+    "You’ve become a stranger to yourself, and the distance is growing every night."
+  ],
+
+  "I don’t feel like myself lately.|I’ve been carrying too much alone.": [
+    "Carrying everyone’s expectations changed you into someone you don’t recognize."
+  ],
+
+  "I don’t feel like myself lately.|I’m tired of pretending I’m okay.": [
+    "You traded your honest feelings for their comfort, and now you look like a stranger."
+  ],
+
+  "I don’t feel like myself lately.|I feel myself fading away.": [
+    "You haven't been home to yourself in a long time. It’s okay to admit you miss it."
+  ],
+
+  "Missing the person I used to be.|Not sad enough to cry, not okay enough to smile.": [
+    "You still remember a version of you that didn’t have to think this hard just to exist."
+  ],
+
+  "Missing the person I used to be.|I don’t feel fully here anymore.": [
+    "You are homesick for a version of yourself that you left somewhere in the past."
+  ],
+
+  "Missing the person I used to be.|I’ve been carrying too much alone.": [
+    "You miss the days when your shoulders didn't feel this heavy, and your mind didn't feel this dark."
+  ],
+
+  "Missing the person I used to be.|I’m tired of pretending I’m okay.": [
+    "You don't miss the old you. You just miss a time when you didn't have to fake a smile."
+  ],
+
+  "Missing the person I used to be.|I feel myself fading away.": [
+    "Underneath everything you’ve been carrying… part of you is still trying to reconnect with yourself again."
+  ]
+}
 
   const key = `${q1}|${q5}`;
 
@@ -10123,11 +10147,11 @@ async function savePendingOnboardingAnswersToDb() {
   }
 
   const emotionTagMap = {
-  'Trying too hard to be happy.': 'self_worth',
+  "I can’t stop thinking ahead.": 'overthinking',
   'Pretending to be okay for everyone else.': 'self_worth',
+  "Not happy. Not sad. Just empty.": 'empty',
   "Tired... even when I'm doing nothing.": 'tired',
-  'Wanting to disappear for just a while.': 'grounding',
-  'Feeling nothing lately.': 'empty',
+  "I don’t feel like myself lately.": 'grounding',
   'Missing the person I used to be.': 'healing'
 };
 
