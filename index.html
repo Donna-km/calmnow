@@ -6521,20 +6521,14 @@
     </section>
 
     <section class="founder-story-screen" data-founder-screen="2">
-      <div class="founder-story-inner">
-        <div class="founder-story-text founder-story-final-text">
-          <div class="founder-story-line"><p>This space helped me.</p></div>
-          <div class="founder-story-line"><p>Maybe… it can be here for you too.</p></div>
-          <div class="founder-story-line">
-  <p>
-    Not to fix anything.
-    <span class="founder-soft-break">
-      Just to feel it. Be present.
-    </span>
-  </p>
-</div>
-          <div class="founder-story-line"><p>And listen to what’s inside.</p></div>
-        </div>
+  <div class="founder-story-inner">
+    <div class="founder-story-text founder-story-final-text">
+      <div class="founder-story-line"><p>This space helped me.</p></div>
+      <div class="founder-story-line"><p>Maybe… it can be here for you too.</p></div>
+      <div class="founder-story-line"><p>Not to fix anything.</p></div>
+      <div class="founder-story-line founder-soft-break"><p>Just to feel it. Be present.</p></div>
+      <div class="founder-story-line"><p>And listen to what’s inside.</p></div>
+    </div>
 
         <div class="founder-profile founder-story-line">
           <img
@@ -7761,25 +7755,9 @@ if (googleLoginBtn) {
 }
 
   async function loadUserProfile() {
-  console.log('loadUserProfile running');
-
   const { data: { user } } = await supabaseClient.auth.getUser();
 
-  console.log('Current user:', user);
-
   if (!user) return;
-
-  const userTimezone =
-    Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-
-  console.log('Detected timezone:', userTimezone);
-
-  const { error: timezoneError } = await supabaseClient
-    .from('profiles')
-    .update({ user_timezone: userTimezone })
-    .eq('id', user.id);
-
-  console.log('Timezone update error:', timezoneError);
 
   const { data, error } = await supabaseClient
     .from('profiles')
@@ -7793,6 +7771,8 @@ if (googleLoginBtn) {
   }
 
   console.log('Profile:', data);
+
+  // 👉 เอาไปใช้ตรง UI
   renderUserProfile(data);
 }
    
@@ -12084,6 +12064,8 @@ async function ensureProfileForUser(user) {
       null,
     provider: user.app_metadata?.provider || null,
     is_active: true,
+    user_timezone:
+    Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
     updated_at: new Date().toISOString()
   };
 
