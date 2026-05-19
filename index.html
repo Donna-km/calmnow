@@ -7761,20 +7761,25 @@ if (googleLoginBtn) {
 }
 
   async function loadUserProfile() {
+  console.log('loadUserProfile running');
+
   const { data: { user } } = await supabaseClient.auth.getUser();
+
+  console.log('Current user:', user);
 
   if (!user) return;
 
-  // 🌙 save user timezone
   const userTimezone =
     Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
 
-  await supabaseClient
+  console.log('Detected timezone:', userTimezone);
+
+  const { error: timezoneError } = await supabaseClient
     .from('profiles')
-    .update({
-      user_timezone: userTimezone
-    })
+    .update({ user_timezone: userTimezone })
     .eq('id', user.id);
+
+  console.log('Timezone update error:', timezoneError);
 
   const { data, error } = await supabaseClient
     .from('profiles')
@@ -7788,8 +7793,6 @@ if (googleLoginBtn) {
   }
 
   console.log('Profile:', data);
-
-  // 👉 เอาไปใช้ตรง UI
   renderUserProfile(data);
 }
    
