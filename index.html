@@ -7760,10 +7760,21 @@ if (googleLoginBtn) {
   });
 }
 
-   async function loadUserProfile() {
+  async function loadUserProfile() {
   const { data: { user } } = await supabaseClient.auth.getUser();
 
   if (!user) return;
+
+  // 🌙 save user timezone
+  const userTimezone =
+    Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+
+  await supabaseClient
+    .from('profiles')
+    .update({
+      user_timezone: userTimezone
+    })
+    .eq('id', user.id);
 
   const { data, error } = await supabaseClient
     .from('profiles')
