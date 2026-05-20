@@ -9292,8 +9292,6 @@ const mixData = {
   const cardSessionId = localStorage.getItem('currentCardSessionId');
 
   if (cardSessionId && currentUser?.id) {
-    await new Promise(resolve => setTimeout(resolve, 650));
-
     let loadingBubble = appendJourneyAiBubble('...', { loading: true });
 
     try {
@@ -9312,7 +9310,7 @@ const mixData = {
       const data = await res.json();
 
       const elapsed = Date.now() - startedAt;
-      const minDelay = 1400;
+      const minDelay = 300;
       if (elapsed < minDelay) {
         await new Promise(resolve => setTimeout(resolve, minDelay - elapsed));
       }
@@ -11522,8 +11520,6 @@ if (founderSupportBackBtn) {
     const cardSessionId = localStorage.getItem('currentCardSessionId');
 
     if (cardSessionId && currentUser?.id) {
-      await new Promise(resolve => setTimeout(resolve, 650));
-
       let loadingBubble = appendJourneyAiBubble('...', { loading: true });
 
       try {
@@ -11541,7 +11537,7 @@ if (founderSupportBackBtn) {
         const data = await res.json();
 
         const elapsed = Date.now() - startedAt;
-        const minDelay = 1400;
+        const minDelay = 300;
         if (elapsed < minDelay) {
           await new Promise(resolve => setTimeout(resolve, minDelay - elapsed));
         }
@@ -14278,7 +14274,7 @@ async function submitJourneyChat() {
     const data = await res.json();
 
     const elapsed = Date.now() - startedAt;
-    const minDelay = 1200;
+    const minDelay = 300;
     if (elapsed < minDelay) {
       await new Promise(resolve => setTimeout(resolve, minDelay - elapsed));
     }
