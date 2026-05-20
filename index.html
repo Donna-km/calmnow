@@ -14497,12 +14497,24 @@ function pickHomeReflectionLetter(rows = []) {
 function updateHomeReflectionLetter(rows = []) {
   const dock = document.getElementById('homeReflectionLetterDock');
   const title = document.getElementById('homeReflectionLetterTitle');
+
   if (!dock) return;
 
   const letter = pickHomeReflectionLetter(rows);
   currentHomeReflectionLetter = letter;
 
   if (!letter) {
+    dock.classList.remove('active');
+    dock.setAttribute('aria-hidden', 'true');
+    return;
+  }
+
+  // ✨ เช็คว่าอ่านแล้วหรือยัง
+  if (
+    localStorage.getItem(
+      getReflectionLetterStorageKey(currentHomeReflectionLetter)
+    ) === 'true'
+  ) {
     dock.classList.remove('active');
     dock.setAttribute('aria-hidden', 'true');
     return;
