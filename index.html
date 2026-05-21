@@ -14741,6 +14741,16 @@ function renderJourneyMonthlyHighlight(row) {
 
   wrap.style.display = 'block';
 }
+
+function fetchWithTimeout(url, options = {}, timeoutMs = 12000) {
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  return fetch(url, {
+    ...options,
+    signal: controller.signal
+  }).finally(() => clearTimeout(timeoutId));
+}   
    
 async function submitJourneyChat() {
   if (!currentUser?.id) {
@@ -14775,7 +14785,7 @@ async function submitJourneyChat() {
   try {
     const startedAt = Date.now();
 
-    const res = await fetch("https://primary-production-49d9.up.railway.app/webhook/d54a0cf0-9f9b-4d58-91d7-d2f29142f30f/chat", {
+    const res = await fetchWithTimeout("https://primary-production-49d9.up.railway.app/webhook/d54a0cf0-9f9b-4d58-91d7-d2f29142f30f/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -14791,7 +14801,7 @@ async function submitJourneyChat() {
         timezone: getUserTimezone(),
         card_session_id: localStorage.getItem('currentCardSessionId') || null
       })
-    });
+    }, 12000);
 
     const data = await res.json();
 
