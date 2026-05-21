@@ -11266,7 +11266,7 @@ setTimeout(() => {
     screenTwo.classList.remove('active');
 
     showFounderStoryFlow();
-  }, 15000);
+  }, 12000);
 }
 
 function showOnboardingFinalFlow() {
@@ -14742,7 +14742,7 @@ function renderJourneyMonthlyHighlight(row) {
   wrap.style.display = 'block';
 }
 
-function fetchWithTimeout(url, options = {}, timeoutMs = 12000) {
+function fetchWithTimeout(url, options = {}, timeoutMs = 20000) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
@@ -14801,7 +14801,7 @@ async function submitJourneyChat() {
         timezone: getUserTimezone(),
         card_session_id: localStorage.getItem('currentCardSessionId') || null
       })
-    }, 12000);
+    }, 20000);
 
     const data = await res.json();
 
