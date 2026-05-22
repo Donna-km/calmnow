@@ -14804,7 +14804,7 @@ async function submitJourneyChat() {
     const startedAt = Date.now();
     console.log('HTML before fetch:', new Date().toISOString());
 
-    const res = await fetchWithTimeout("https://primary-production-49d9.up.railway.app/webhook/d54a0cf0-9f9b-4d58-91d7-d2f29142f30f/chat", {
+    const res = await fetchWithTimeout("https://primary-production-49d9.up.railway.app/webhook/chat", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
