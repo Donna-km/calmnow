@@ -14182,7 +14182,7 @@ function isCardContextBubbleText(text) {
 function extractAiReplyText(value) {
   if (value == null) return '';
 
-  // รองรับ array จาก n8n
+  // รองรับ array จาก n8n เช่น [{ reply: "..." }]
   if (Array.isArray(value)) {
     for (const item of value) {
       const found = extractAiReplyText(item);
@@ -14191,6 +14191,7 @@ function extractAiReplyText(value) {
     return '';
   }
 
+  // รองรับ object หลายรูปแบบ
   if (typeof value === 'object') {
     return extractAiReplyText(
       value.reply ??
@@ -14199,6 +14200,7 @@ function extractAiReplyText(value) {
       value.content ??
       value.message ??
       value.response ??
+      value.data ??
       ''
     );
   }
@@ -14206,7 +14208,7 @@ function extractAiReplyText(value) {
   let text = String(value || '').trim();
   if (!text) return '';
 
-  // n8n sometimes returns JSON string
+  // รองรับกรณี n8n ส่ง JSON string กลับมา
   if (
     (text.startsWith('{') && text.endsWith('}')) ||
     (text.startsWith('[') && text.endsWith(']'))
@@ -14814,7 +14816,7 @@ async function submitJourneyChat() {
         timezone: getUserTimezone(),
         card_session_id: localStorage.getItem('currentCardSessionId') || null
       })
-    }, 20000);
+    }, 60000);
 
     const data = await res.json();
 
