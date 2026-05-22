@@ -14811,14 +14811,17 @@ async function submitJourneyChat() {
       await new Promise(resolve => setTimeout(resolve, minDelay - elapsed));
     }
 
-    let replyText = data?.reply || '';
+    let replyText = extractAiReplyText(data);
 
-    try {
-      const parsed = typeof replyText === 'string' ? JSON.parse(replyText) : replyText;
-      if (parsed?.reply) replyText = parsed.reply;
-    } catch (e) {}
+if (!replyText) {
+  console.warn('No reply field from n8n:', data);
+  replyText = calmyFallbackResponses[
+    Math.floor(Math.random() * calmyFallbackResponses.length)
+  ];
+}
 
-    loadingDiv.textContent = replyText || 'I’m here with you 🤍';
+loadingDiv.classList.remove('journey-ai-loading');
+loadingDiv.textContent = replyText;
 
     if (chatMessages) {
       chatMessages.scrollTop = chatMessages.scrollHeight;
