@@ -14182,6 +14182,15 @@ function isCardContextBubbleText(text) {
 function extractAiReplyText(value) {
   if (value == null) return '';
 
+  // รองรับ array จาก n8n
+  if (Array.isArray(value)) {
+    for (const item of value) {
+      const found = extractAiReplyText(item);
+      if (found) return found;
+    }
+    return '';
+  }
+
   if (typeof value === 'object') {
     return extractAiReplyText(
       value.reply ??
@@ -14189,6 +14198,7 @@ function extractAiReplyText(value) {
       value.text ??
       value.content ??
       value.message ??
+      value.response ??
       ''
     );
   }
@@ -14196,8 +14206,11 @@ function extractAiReplyText(value) {
   let text = String(value || '').trim();
   if (!text) return '';
 
-  // n8n sometimes returns a JSON string like {"reply":"..."}
-  if ((text.startsWith('{') && text.endsWith('}')) || (text.startsWith('[') && text.endsWith(']'))) {
+  // n8n sometimes returns JSON string
+  if (
+    (text.startsWith('{') && text.endsWith('}')) ||
+    (text.startsWith('[') && text.endsWith(']'))
+  ) {
     try {
       const parsed = JSON.parse(text);
       return extractAiReplyText(parsed);
