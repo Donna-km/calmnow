@@ -14757,15 +14757,18 @@ function renderJourneyMonthlyHighlight(row) {
   wrap.style.display = 'block';
 }
 
-function fetchWithTimeout(url, options = {}, timeoutMs = 20000) {
+function fetchWithTimeout(url, options = {}, timeoutMs = 60000) {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  const timeoutId = setTimeout(() => {
+    controller.abort('timeout');
+  }, timeoutMs);
 
   return fetch(url, {
     ...options,
     signal: controller.signal
   }).finally(() => clearTimeout(timeoutId));
-}   
+}
    
 async function submitJourneyChat() {
   if (!currentUser?.id) {
