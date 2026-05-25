@@ -15724,6 +15724,14 @@ function bindCalmyVoicePopup() {
   });
 }
 
+   document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) {
+    setTimeout(() => {
+      showSoftPaywallIfNeeded();
+    }, 300);
+  }
+});
+
 bindCalmyVoicePopup();
 
 bindChatSoundPopup();
