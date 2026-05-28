@@ -15587,6 +15587,7 @@ let journeySpeechIsListening = false;
 let journeyVoiceFinalTranscript = '';
 let journeyVoiceInterimTranscript = '';
 let journeyVoiceDraftText = '';
+let journeyVoiceAccepted = false;   
 
 function getSupportedCalmyAudioMimeType() {
   const preferredTypes = [
@@ -15792,6 +15793,8 @@ function sendJourneyVoiceDraft() {
   ).trim();
 
   if (journeySpeechIsListening) {
+    journeyVoiceAccepted = true;
+
     try {
       journeySpeechRecognition?.stop();
     } catch (err) {
@@ -15809,7 +15812,6 @@ function sendJourneyVoiceDraft() {
 
   moveJourneyVoiceDraftToInput();
 }
-
 function discardJourneyVoiceDraft() {
   try {
     if (journeySpeechRecognition && journeySpeechIsListening) {
@@ -15853,7 +15855,9 @@ async function startJourneySpeechListening() {
     journeyVoiceInterimTranscript = '';
     journeyVoiceStartedAt = Date.now();
     journeySpeechIsListening = true;
+    journeyVoiceAccepted = false;
 
+   
     setJourneyMicState('recording');
     setJourneyVoicePreview({
       active: true,
@@ -15898,6 +15902,15 @@ async function startJourneySpeechListening() {
     };
 
     journeySpeechRecognition.onend = () => {
+
+     if (journeyVoiceAccepted) {
+  journeySpeechIsListening = false;
+  journeyVoiceStartedAt = null;
+  journeyVoiceAccepted = false;
+  setJourneyMicState('idle');
+  clearJourneyVoicePreview();
+  return;
+}
       const durationSeconds = journeyVoiceStartedAt
         ? Math.max(1, Math.floor((Date.now() - journeyVoiceStartedAt) / 1000))
         : null;
