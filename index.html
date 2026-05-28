@@ -11706,7 +11706,7 @@ function showFounderStoryFlow() {
   }
 
   let currentFounderScreenIndex = 0;
-  const lineDelay = 2200;
+  const lineDelay = 3000;
   const firstLineDelay = 1000;
   const buttonDelayAfterLastLine = 950;
 
@@ -11760,7 +11760,7 @@ function showFounderStoryFlow() {
     const revealDoneDelay = firstLineDelay + (lines.length * lineDelay);
 
     if (index === 0) {
-      const firstScreenHoldAfterLastLine = 8600;
+      const firstScreenHoldAfterLastLine = 7500;
 
       founderStoryTimers.push(setTimeout(() => {
         if (!screen.classList.contains('active')) return;
