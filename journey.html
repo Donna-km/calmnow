@@ -99,11 +99,11 @@
     }
 
     .gentle-direction {
-      margin-top: 1rem;
-      font-style: italic;
-      font-size: 0.95rem;
-      color: #b3a28f;
-    }
+  font-style: italic;
+  font-size: 1rem;
+  color: #9c8b74;
+  margin-bottom: 1.25rem;
+}
     .reflection-tags {
       margin-top: 0.85rem;
       font-size: 0.72rem;
@@ -170,7 +170,7 @@
   class="canva-text text-4xl font-light"
   style="color:#5c4a32;"
 >
-  Journey
+  Reflection
 </h1>
 
 <p
@@ -278,11 +278,21 @@
           const entryId = `${selectedMonth}-${i}`;
           card.innerHTML = `
             <div>
-              <p class="text-sm font-medium mb-3" style="color:#8b7355;">${formatDate(p.date)}</p>
-              <h3 class="text-2xl font-semibold mb-4" style="color:#5c4a32;">Daily Reflection</h3>
-              <p class="leading-8 text-base mb-5" style="color:#75634f; line-height: 1.8;">${p.text}</p>
-              <p class="gentle-direction">— ${p.closing}</p>
-              <p class="reflection-tags">quiet · soft · morning</p>
+             <p class="text-sm font-medium mb-3" style="color:#8b7355;">
+  ${formatDate(p.date)}
+</p>
+
+<p class="gentle-direction mb-4">
+  — ${p.closing}
+</p>
+
+<p class="leading-8 text-base mb-5" style="color:#75634f; line-height: 1.8;">
+  ${p.text}
+</p>
+
+<p class="reflection-tags">
+  quiet · soft · morning
+</p>
             </div>
             <div class="note-section">
               <div class="note-trigger" data-trigger="${entryId}">
