@@ -15594,6 +15594,16 @@ let journeySpeechRestartTimer = null;
 let journeySpeechLastResultAt = 0;
 const JOURNEY_SPEECH_MOBILE_RESTART_DELAY = 220;
 
+let journeySpeechSeenFinalTexts = new Set();
+
+function cleanJourneySpeechDuplicate(text) {
+  return String(text || '')
+    .replace(/\b(\w+)\s+\1\b/gi, '$1')
+    .replace(/\b((?:\w+\s+){1,5}\w+)\s+\1\b/gi, '$1')
+    .replace(/\s+/g, ' ')
+    .trim();
+}   
+
 function getSupportedCalmyAudioMimeType() {
   const preferredTypes = [
     'audio/webm;codecs=opus',
@@ -15918,25 +15928,33 @@ async function startJourneySpeechListening() {
       }
 
       if (finalText) {
-        journeyVoiceFinalTranscript = `${journeyVoiceFinalTranscript} ${finalText}`
-          .replace(/\s+/g, ' ')
-          .trim();
-      }
+  const cleanFinal = cleanJourneySpeechDuplicate(finalText);
+  const key = cleanFinal.toLowerCase();
 
-      journeyVoiceInterimTranscript = interimText.replace(/\s+/g, ' ').trim();
-      const visibleText = `${journeyVoiceFinalTranscript} ${journeyVoiceInterimTranscript}`
-        .replace(/\s+/g, ' ')
-        .trim();
+  if (cleanFinal && !journeySpeechSeenFinalTexts.has(key)) {
+    journeySpeechSeenFinalTexts.add(key);
 
-      journeyVoiceDraftText = visibleText;
-      journeySpeechLastResultAt = Date.now();
+    journeyVoiceFinalTranscript = cleanJourneySpeechDuplicate(
+      `${journeyVoiceFinalTranscript} ${cleanFinal}`
+    );
+  }
+}
 
-      setJourneyVoicePreview({
-        active: true,
-        status: 'i am listening.....',
-        text: visibleText,
-        listening: true
-      });
+     journeyVoiceInterimTranscript = interimText.replace(/\s+/g, ' ').trim();
+
+const visibleText = cleanJourneySpeechDuplicate(
+  `${journeyVoiceFinalTranscript} ${journeyVoiceInterimTranscript}`
+);
+
+journeyVoiceDraftText = visibleText;
+journeySpeechLastResultAt = Date.now();
+
+setJourneyVoicePreview({
+  active: true,
+  status: 'i am listening.....',
+  text: visibleText,
+  listening: true
+});
     };
 
     journeySpeechRecognition.onerror = (event) => {
@@ -15983,7 +16001,9 @@ async function startJourneySpeechListening() {
             setJourneyVoicePreview({
               active: true,
               status: 'i am listening.....',
-              text: journeyVoiceDraftText || `${journeyVoiceFinalTranscript} ${journeyVoiceInterimTranscript}`.trim(),
+              text: journeyVoiceDraftText || cleanJourneySpeechDuplicate(
+  `${journeyVoiceFinalTranscript} ${journeyVoiceInterimTranscript}`
+),
               listening: true
             });
           } catch (err) {
@@ -16006,9 +16026,9 @@ async function startJourneySpeechListening() {
       clearJourneySpeechRestartTimer();
       setJourneyMicState('idle');
 
-      const cleanText = String(
-        journeyVoiceDraftText || `${journeyVoiceFinalTranscript} ${journeyVoiceInterimTranscript}`
-      ).replace(/\s+/g, ' ').trim();
+      const cleanText = cleanJourneySpeechDuplicate(
+  journeyVoiceDraftText || `${journeyVoiceFinalTranscript} ${journeyVoiceInterimTranscript}`
+);
 
       if (cleanText) {
         updateJourneyVoiceDraft(cleanText, 'listen back softly…');
