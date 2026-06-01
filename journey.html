@@ -374,7 +374,7 @@
       opacity: 0;
       visibility: hidden;
       pointer-events: none;
-      transition: opacity 0.42s ease, visibility 0.42s ease;
+      transition: opacity 1s ease, visibility 1s ease;
     }
 
     .monthly-letter-modal.visible {
@@ -399,27 +399,34 @@
       box-shadow: 0 16px 36px rgba(80, 65, 48, 0.12);
     }
 
-    .monthly-letter-paper {
-      width: min(92vw, 480px);
-      max-height: min(82vh, 760px);
-      overflow-y: auto;
-      border-radius: 28px;
-      background:
-        radial-gradient(circle at top center, rgba(255,255,255,0.86) 0%, rgba(255,255,255,0) 38%),
-        linear-gradient(180deg, #fffaf3 0%, #fbf2e7 100%);
-      border: 1px solid rgba(209, 191, 166, 0.5);
-      box-shadow:
-        0 28px 80px rgba(58, 49, 39, 0.22),
-        inset 0 1px 0 rgba(255,255,255,0.8);
-      padding: 2.7rem 2.25rem 2.35rem;
-      transform: translateY(18px) scale(0.96);
-      transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
-      color: #5c4a32;
-    }
+   .monthly-letter-paper {
+  width: min(92vw, 480px);
+  max-height: min(82vh, 760px);
+  overflow-y: auto;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top center, rgba(255,255,255,0.86) 0%, rgba(255,255,255,0) 38%),
+    linear-gradient(180deg, #fffaf3 0%, #fbf2e7 100%);
+  border: 1px solid rgba(209, 191, 166, 0.5);
+  box-shadow:
+    0 28px 80px rgba(58, 49, 39, 0.22),
+    inset 0 1px 0 rgba(255,255,255,0.8);
+  padding: 2.7rem 2.25rem 2.35rem;
+
+  transform: translateY(40px) scale(0.93);
+  opacity: 0;
+
+  transition:
+    transform 1.4s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 1.4s ease;
+
+  color: #5c4a32;
+}
 
     .monthly-letter-modal.visible .monthly-letter-paper {
-      transform: translateY(0) scale(1);
-    }
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
 
     .monthly-letter-seal {
       width: 54px;
