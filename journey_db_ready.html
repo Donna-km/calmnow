@@ -1,0 +1,731 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Journey</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&amp;family=Jost:wght@300;400;500&amp;display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Jost', sans-serif; }
+    h1, h2, h3 { font-family: 'Cormorant Garamond', serif; }
+    .month-pill { transition: all 0.2s ease; }
+    .month-pill.active { background: #8b7355; color: #faf6f0; }
+    .strip-wrapper { overflow: hidden; width: 100%; }
+    .page-strip {
+      display: flex;
+      transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+      align-items: center;
+    }
+    .page-card {
+      flex-shrink: 0;
+      width: 85%;
+      max-width: 420px;
+      margin: 0 8px;
+      transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+      transform: scale(0.82);
+      opacity: 0.45;
+      border-radius: 1.25rem;
+      background: #fffcf8;
+      padding: 2.5rem 2rem;
+      min-height: 420px;
+      box-shadow: 0 2px 12px rgba(140,115,80,0.06);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .page-card.active {
+      transform: scale(1);
+      opacity: 1;
+      box-shadow: 0 8px 32px rgba(140,115,80,0.13);
+    }
+    .note-section {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #f0e8df;
+    }
+    .note-trigger {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      color: #8b7355;
+      transition: opacity 0.2s ease;
+    }
+    .note-trigger:hover {
+      opacity: 0.7;
+    }
+    .note-form {
+      margin-top: 1rem;
+      display: none;
+    }
+    .note-form.visible {
+      display: block;
+    }
+    .note-input {
+      width: 100%;
+      min-height: 60px;
+      padding: 0.75rem;
+      border: 1px solid #e0d8cc;
+      border-radius: 0.5rem;
+      font-family: 'Jost', sans-serif;
+      font-size: 0.875rem;
+      color: #75634f;
+      background: #fefbf7;
+      resize: none;
+      margin-bottom: 0.75rem;
+    }
+    .note-input::placeholder {
+      color: #b8a990;
+    }
+    .note-input:focus {
+      outline: none;
+      border-color: #8b7355;
+      background: #fffcf8;
+    }
+    .note-save-btn {
+      padding: 0.5rem 1rem;
+      background: #8b7355;
+      color: #faf6f0;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    .note-save-btn:hover {
+      background: #6b5442;
+    }
+    .note-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+    }
+    .voice-note-btn {
+      padding: 0.5rem 0.85rem;
+      background: #f5efe7;
+      color: #8b7355;
+      border: 1px solid #e4d7c7;
+      border-radius: 0.5rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .voice-note-btn.listening {
+      background: #8b7355;
+      color: #faf6f0;
+    }
+    .note-status {
+      font-size: 0.76rem;
+      color: #b8a990;
+      line-height: 1.5;
+    }
+    .saved-note {
+      margin-top: 0.85rem;
+      padding: 0.75rem 0.85rem;
+      border-radius: 0.75rem;
+      background: #f8f2eb;
+      color: #75634f;
+      font-size: 0.85rem;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+    .empty-state {
+      width: 85%;
+      max-width: 420px;
+      min-height: 300px;
+      margin: 0 auto;
+      border-radius: 1.25rem;
+      background: #fffcf8;
+      padding: 2.25rem 2rem;
+      box-shadow: 0 8px 32px rgba(140,115,80,0.08);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: center;
+      color: #9c8b74;
+      line-height: 1.8;
+    }
+
+    .gentle-direction {
+  font-style: italic;
+  font-size: 1rem;
+  color: #9c8b74;
+  margin-bottom: 1.25rem;
+}
+    .reflection-tags {
+      margin-top: 0.85rem;
+      font-size: 0.72rem;
+      color: #b8a990;
+      font-style: italic;
+      letter-spacing: 0.02em;
+    }
+
+
+    .mobile-month-switcher {
+      display: none;
+      width: 100%;
+      max-width: 420px;
+      align-items: center;
+      justify-content: space-between;
+      margin: 0 auto 1.25rem;
+      padding: 0.15rem 0.25rem;
+      color: #5c4a32;
+    }
+
+    .mobile-month-arrow {
+      width: 42px;
+      height: 42px;
+      border: none;
+      background: transparent;
+      color: #5c4a32;
+      font-size: 2rem;
+      line-height: 1;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.95;
+    }
+
+    .mobile-month-title {
+      font-family: 'Jost', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: #5c4a32;
+      letter-spacing: 0.02em;
+      text-align: center;
+    }
+
+    @media (max-width: 640px) {
+      #month-nav {
+        display: none !important;
+      }
+
+      .mobile-month-switcher {
+        display: flex;
+      }
+    }
+
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="/_sdk/resizing_sdk.js" type="text/javascript"></script>
+ </head>
+ <body data-template-id="__page-root" class="min-h-screen flex flex-col items-center px-4 py-10" style="background:#f4efe8;">
+  <header class="text-center mb-6">
+   <h1
+  data-template-id="page-title"
+  class="canva-text text-4xl font-light"
+  style="color:#5c4a32;"
+>
+  Reflection
+</h1>
+
+<p
+  data-template-id="page-subtitle"
+  class="canva-text mt-2"
+  style="
+    color:#a99884;
+    font-size:0.95rem;
+    font-weight:300;
+  "
+>
+  A soft record of what your heart has been learning
+</p>
+  </header>
+  <div id="mobile-month-switcher" class="mobile-month-switcher" aria-label="Month navigation">
+   <button id="mobile-prev-month" class="mobile-month-arrow" type="button" aria-label="Previous month">‹</button>
+   <div id="mobile-month-title" class="mobile-month-title">May 2026</div>
+   <button id="mobile-next-month" class="mobile-month-arrow" type="button" aria-label="Next month">›</button>
+  </div>
+  <nav id="month-nav" class="flex flex-wrap justify-center gap-2 mb-6"></nav>
+  <main class="w-full max-w-2xl flex flex-col items-center">
+   <div class="strip-wrapper" id="strip-wrapper">
+    <div class="page-strip" id="page-strip"></div>
+   </div>
+   <div class="flex items-center gap-4 mt-6"><button id="prev-btn" class="px-4 py-2 rounded-full text-sm" style="background:#f5efe7;color:#8b7355;">← Prev</button> <span id="page-indicator" class="text-xs" style="color:#b8a990;"></span> <button id="next-btn" class="px-4 py-2 rounded-full text-sm" style="background:#f5efe7;color:#8b7355;">Next →</button>
+   </div>
+  </main>
+  <script src="/_sdk/editing_sdk.js"></script>
+  <script>
+    const SUPABASE_URL = 'https://foizrwegmdnekaxsahxu.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInJlZiI6ImZvaXpyd2VnbWRuZWtheHNhaHh1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzMyMjQwODEsImV4cCI6MjA4ODgwMDA4MX0._RbaB-OQd7AS48A3O50-CdQ7UaJZ6KGR8NCz56TUFtA';
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    const now = new Date();
+    let selectedMonth = now.getMonth();
+    let selectedYear = now.getFullYear();
+    let currentPage = 0;
+    let currentUser = null;
+    let sessionId = localStorage.getItem('calmnow_session_id');
+    let journalData = {};
+    let reflectionNotesById = {};
+    let activeRecognition = null;
+
+    if (!sessionId) {
+      sessionId = (crypto?.randomUUID && crypto.randomUUID()) || `guest-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+      localStorage.setItem('calmnow_session_id', sessionId);
+    }
+
+    function escapeHtml(value = '') {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function toLocalDateKey(date = new Date()) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function updateMobileMonthTitle() {
+      const title = document.getElementById('mobile-month-title');
+      if (!title) return;
+      title.textContent = `${months[selectedMonth]} ${selectedYear}`;
+    }
+
+    function getMonthRange(year, monthIndex) {
+      const start = new Date(year, monthIndex, 1);
+      const end = new Date(year, monthIndex + 1, 1);
+      return { start: toLocalDateKey(start), end: toLocalDateKey(end) };
+    }
+
+    async function initAuth() {
+      const { data } = await supabaseClient.auth.getUser();
+      currentUser = data?.user || null;
+    }
+
+    async function loadNotesForReflections(reflectionIds = []) {
+      reflectionNotesById = {};
+      if (!currentUser?.id || reflectionIds.length === 0) return;
+
+      const { data, error } = await supabaseClient
+        .from('journey_notes')
+        .select('id, reflection_id, note_text, voice_transcript, created_at, updated_at')
+        .eq('user_id', currentUser.id)
+        .in('reflection_id', reflectionIds)
+        .order('updated_at', { ascending: false });
+
+      if (error) {
+        console.error('load notes error:', error);
+        return;
+      }
+
+      (data || []).forEach(note => {
+        if (!reflectionNotesById[note.reflection_id]) reflectionNotesById[note.reflection_id] = [];
+        reflectionNotesById[note.reflection_id].push(note);
+      });
+    }
+
+    async function loadJourneyData() {
+      const strip = document.getElementById('page-strip');
+      if (strip) {
+        strip.innerHTML = `<div class="empty-state">Loading your reflections softly...</div>`;
+      }
+
+      const { start, end } = getMonthRange(selectedYear, selectedMonth);
+      let query = supabaseClient
+        .from('daily_reflections')
+        .select('id, user_id, session_id, reflection_date, reflection, tags, gentle_direction, created_at')
+        .gte('reflection_date', start)
+        .lt('reflection_date', end)
+        .order('reflection_date', { ascending: true });
+
+      if (currentUser?.id) {
+        query = query.eq('user_id', currentUser.id);
+      } else {
+        query = query.eq('session_id', sessionId);
+      }
+
+      const { data, error } = await query;
+
+      if (error) {
+        console.error('load daily reflections error:', error);
+        journalData[selectedMonth] = [];
+        renderMonths();
+        renderStrip('Could not load reflections yet. Please make sure the SQL update has been run.');
+        return;
+      }
+
+      journalData[selectedMonth] = (data || []).map(row => ({
+        id: row.id,
+        session_id: row.session_id,
+        user_id: row.user_id,
+        date: row.reflection_date,
+        text: row.reflection,
+        closing: row.gentle_direction || 'Stay close to what is true.',
+        tags: Array.isArray(row.tags) ? row.tags : []
+      }));
+
+      await loadNotesForReflections(journalData[selectedMonth].map(r => r.id));
+      renderMonths();
+      renderStrip();
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(`${dateStr}T00:00:00`);
+      const monthName = date.toLocaleString('en-US', { month: 'long' });
+      return `${date.getDate()} ${monthName} ${date.getFullYear()}`;
+    }
+
+    function getPages() {
+      const entries = journalData[selectedMonth] || [];
+      const pages = [{ type: 'cover', month: months[selectedMonth], count: entries.length }];
+      entries.forEach(e => pages.push({ type: 'entry', ...e }));
+      return pages;
+    }
+
+    function renderMonths() {
+      updateMobileMonthTitle();
+      const nav = document.getElementById('month-nav');
+      nav.innerHTML = '';
+      months.forEach((m, i) => {
+        const btn = document.createElement('button');
+        btn.textContent = m.slice(0, 3);
+        btn.className = `month-pill px-3 py-1.5 rounded-full text-sm cursor-pointer ${i === selectedMonth ? 'active' : ''}`;
+        if (i !== selectedMonth) btn.style.cssText = 'background:#f5efe7;color:#8b7355;';
+        btn.onclick = async () => { selectedMonth = i; currentPage = 0; await loadJourneyData(); };
+        nav.appendChild(btn);
+      });
+    }
+
+    function renderSavedNotes(reflectionId) {
+      const notes = reflectionNotesById[reflectionId] || [];
+      if (!notes.length) return '';
+
+      return notes.map(note => `
+        <div class="saved-note">
+          ${escapeHtml(note.note_text || note.voice_transcript || '')}
+        </div>
+      `).join('');
+    }
+
+    function renderStrip(emptyMessage = '') {
+      const pages = getPages();
+      const strip = document.getElementById('page-strip');
+      strip.innerHTML = '';
+
+      if (emptyMessage) {
+        strip.innerHTML = `<div class="empty-state">${escapeHtml(emptyMessage)}</div>`;
+        updateIndicator(1);
+        return;
+      }
+
+      pages.forEach((p, i) => {
+        const card = document.createElement('div');
+        card.className = 'page-card' + (i === currentPage ? ' active' : '');
+        if (p.type === 'cover') {
+          card.innerHTML = `
+            <div class="text-center py-8 flex-1 flex flex-col justify-center">
+              <h2 class="text-3xl font-semibold" style="color:#5c4a32;">${p.month}</h2>
+              <p class="mt-3 text-sm" style="color:#b3a28f;">${p.count} reflection${p.count !== 1 ? 's' : ''} this month</p>
+              <p class="mt-6 italic text-sm" style="color:#8b7355;">Swipe or use buttons to begin</p>
+            </div>`;
+        } else {
+          const entryId = `reflection-${p.id}`;
+          const tagText = (p.tags || []).map(t => typeof t === 'string' ? t : t?.label || t?.name || '').filter(Boolean).join(' · ');
+          card.innerHTML = `
+            <div>
+              <p class="text-sm font-medium mb-3" style="color:#8b7355;">${formatDate(p.date)}</p>
+              <p class="gentle-direction mb-4">— ${escapeHtml(p.closing)}</p>
+              <p class="leading-8 text-base mb-5" style="color:#75634f; line-height: 1.8;">${escapeHtml(p.text)}</p>
+              <p class="reflection-tags">${escapeHtml(tagText || 'quiet · soft · present')}</p>
+            </div>
+            <div class="note-section">
+              <div class="note-trigger" data-trigger="${entryId}">
+                <span>✎ᝰ.</span> <span>Add Note</span>
+              </div>
+              <form class="note-form" data-form="${entryId}" data-reflection-id="${p.id}">
+                <textarea class="note-input" placeholder="A note to this reflection..." data-textarea="${entryId}"></textarea>
+                <div class="note-actions">
+                  <button type="submit" class="note-save-btn">Save Note</button>
+                  <button type="button" class="voice-note-btn" data-voice-btn="${entryId}">🎙 Voice</button>
+                  <span class="note-status" data-status="${entryId}"></span>
+                </div>
+              </form>
+              <div data-saved-notes="${p.id}">${renderSavedNotes(p.id)}</div>
+            </div>`;
+        }
+        strip.appendChild(card);
+      });
+
+      positionStrip();
+      updateIndicator(pages.length);
+    }
+
+    function positionStrip() {
+      const strip = document.getElementById('page-strip');
+      const wrapper = document.getElementById('strip-wrapper');
+      const cards = strip.children;
+      if (!cards.length) return;
+      const wrapperW = wrapper.offsetWidth;
+      const cardW = cards[0].offsetWidth + 16;
+      const offset = (wrapperW / 2) - (cardW / 2) - (currentPage * cardW);
+      strip.style.transform = `translateX(${offset}px)`;
+      Array.from(cards).forEach((c, i) => c.classList.toggle('active', i === currentPage));
+    }
+
+    function updateIndicator(total) {
+      document.getElementById('page-indicator').textContent = `${currentPage + 1} / ${total}`;
+      document.getElementById('prev-btn').style.opacity = currentPage === 0 ? '0.4' : '1';
+      document.getElementById('prev-btn').style.pointerEvents = currentPage === 0 ? 'none' : 'auto';
+      document.getElementById('next-btn').style.opacity = currentPage >= total - 1 ? '0.4' : '1';
+      document.getElementById('next-btn').style.pointerEvents = currentPage >= total - 1 ? 'none' : 'auto';
+    }
+
+    function goTo(idx) {
+      const pages = getPages();
+      if (idx < 0 || idx >= pages.length) return;
+      currentPage = idx;
+      positionStrip();
+      updateIndicator(pages.length);
+    }
+
+    async function saveReflectionSource({ reflectionId, sourceType, sourceText, noteId = null, voiceTranscriptId = null }) {
+      if (!currentUser?.id || !reflectionId || !sourceText) return;
+
+      const { error } = await supabaseClient
+        .from('journey_reflection_sources')
+        .insert([{
+          user_id: currentUser.id,
+          reflection_id: Number(reflectionId),
+          source_type: sourceType,
+          source_text: sourceText,
+          note_id: noteId,
+          voice_transcript_id: voiceTranscriptId,
+          session_id: sessionId
+        }]);
+
+      if (error) console.error('save reflection source error:', error);
+    }
+
+    async function saveNote(noteForm, sourceType = 'note') {
+      if (!currentUser?.id) {
+        alert('Please log in first so CalmNow can keep your Journey safely.');
+        return;
+      }
+
+      const reflectionId = noteForm.dataset.reflectionId;
+      const textarea = noteForm.querySelector('textarea');
+      const status = noteForm.querySelector('.note-status');
+      const saveBtn = noteForm.querySelector('.note-save-btn');
+      const text = (textarea?.value || '').trim();
+
+      if (!text) return;
+      if (status) status.textContent = 'saving...';
+      if (saveBtn) saveBtn.disabled = true;
+
+      const notePayload = {
+        user_id: currentUser.id,
+        reflection_id: Number(reflectionId),
+        note_text: text,
+        source_type: sourceType,
+        session_id: sessionId,
+        updated_at: new Date().toISOString()
+      };
+
+      const { data: note, error } = await supabaseClient
+        .from('journey_notes')
+        .insert([notePayload])
+        .select('id, reflection_id, note_text, voice_transcript, created_at, updated_at')
+        .single();
+
+      if (saveBtn) saveBtn.disabled = false;
+
+      if (error) {
+        console.error('save note error:', error);
+        if (status) status.textContent = 'could not save yet';
+        return;
+      }
+
+      if (!reflectionNotesById[reflectionId]) reflectionNotesById[reflectionId] = [];
+      reflectionNotesById[reflectionId].unshift(note);
+
+      await saveReflectionSource({ reflectionId, sourceType, sourceText: text, noteId: note.id });
+
+      const savedWrap = document.querySelector(`[data-saved-notes="${reflectionId}"]`);
+      if (savedWrap) savedWrap.innerHTML = renderSavedNotes(reflectionId);
+
+      textarea.value = '';
+      noteForm.classList.remove('visible');
+      if (status) status.textContent = 'saved softly';
+      setTimeout(() => { if (status) status.textContent = ''; }, 1800);
+    }
+
+    async function saveVoiceTranscript(noteForm, transcript) {
+      if (!currentUser?.id || !transcript?.trim()) return;
+      const reflectionId = Number(noteForm.dataset.reflectionId);
+
+      const { data: voiceRow, error } = await supabaseClient
+        .from('journey_voice_transcripts')
+        .insert([{
+          user_id: currentUser.id,
+          reflection_id: reflectionId,
+          transcript: transcript.trim(),
+          session_id: sessionId,
+          language: navigator.language || 'en-US'
+        }])
+        .select('id')
+        .single();
+
+      if (error) {
+        console.error('save voice transcript error:', error);
+        return null;
+      }
+
+      await saveReflectionSource({
+        reflectionId,
+        sourceType: 'voice_transcript',
+        sourceText: transcript.trim(),
+        voiceTranscriptId: voiceRow.id
+      });
+
+      return voiceRow;
+    }
+
+    function startVoiceNote(noteForm, btn) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const textarea = noteForm.querySelector('textarea');
+      const status = noteForm.querySelector('.note-status');
+
+      if (!SpeechRecognition) {
+        if (status) status.textContent = 'voice is not supported on this browser';
+        return;
+      }
+
+      if (activeRecognition) {
+        activeRecognition.stop();
+        activeRecognition = null;
+        return;
+      }
+
+      let finalTranscript = '';
+      const recognition = new SpeechRecognition();
+      activeRecognition = recognition;
+      recognition.lang = navigator.language || 'en-US';
+      recognition.interimResults = true;
+      recognition.continuous = false;
+
+      btn.classList.add('listening');
+      btn.textContent = 'listening...';
+      if (status) status.textContent = 'speak softly';
+
+      recognition.onresult = event => {
+        let interim = '';
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const chunk = event.results[i][0].transcript;
+          if (event.results[i].isFinal) finalTranscript += chunk;
+          else interim += chunk;
+        }
+        textarea.value = `${finalTranscript}${interim}`.trim();
+      };
+
+      recognition.onerror = err => {
+        console.error('voice recognition error:', err);
+        if (status) status.textContent = 'voice stopped';
+      };
+
+      recognition.onend = async () => {
+        btn.classList.remove('listening');
+        btn.textContent = '🎙 Voice';
+        activeRecognition = null;
+        const transcript = (textarea.value || '').trim();
+        if (transcript) {
+          await saveVoiceTranscript(noteForm, transcript);
+          if (status) status.textContent = 'voice transcript saved';
+        } else if (status) {
+          status.textContent = '';
+        }
+      };
+
+      recognition.start();
+    }
+
+    document.getElementById('prev-btn').onclick = () => goTo(currentPage - 1);
+    document.getElementById('next-btn').onclick = () => goTo(currentPage + 1);
+
+    const mobilePrevMonth = document.getElementById('mobile-prev-month');
+    const mobileNextMonth = document.getElementById('mobile-next-month');
+
+    if (mobilePrevMonth) {
+      mobilePrevMonth.onclick = async () => {
+        if (selectedMonth === 0) { selectedMonth = 11; selectedYear -= 1; }
+        else selectedMonth -= 1;
+        currentPage = 0;
+        await loadJourneyData();
+      };
+    }
+
+    if (mobileNextMonth) {
+      mobileNextMonth.onclick = async () => {
+        if (selectedMonth === 11) { selectedMonth = 0; selectedYear += 1; }
+        else selectedMonth += 1;
+        currentPage = 0;
+        await loadJourneyData();
+      };
+    }
+
+    let startX = 0, isDragging = false;
+    const wrapper = document.getElementById('strip-wrapper');
+    wrapper.addEventListener('touchstart', e => { startX = e.touches[0].clientX; isDragging = true; });
+    wrapper.addEventListener('touchend', e => {
+      if (!isDragging) return;
+      isDragging = false;
+      const diff = e.changedTouches[0].clientX - startX;
+      if (Math.abs(diff) > 40) goTo(currentPage + (diff < 0 ? 1 : -1));
+    });
+    wrapper.addEventListener('mousedown', e => { startX = e.clientX; isDragging = true; });
+    wrapper.addEventListener('mouseup', e => {
+      if (!isDragging) return;
+      isDragging = false;
+      const diff = e.clientX - startX;
+      if (Math.abs(diff) > 40) goTo(currentPage + (diff < 0 ? 1 : -1));
+    });
+
+    document.getElementById('page-strip').addEventListener('click', async e => {
+      const noteTrigger = e.target.closest('[data-trigger]');
+      if (noteTrigger) {
+        const id = noteTrigger.dataset.trigger;
+        const form = document.querySelector(`[data-form="${id}"]`);
+        if (form) {
+          form.classList.toggle('visible');
+          if (form.classList.contains('visible')) {
+            const textarea = form.querySelector('textarea');
+            if (textarea) textarea.focus();
+          }
+        }
+        return;
+      }
+
+      const voiceBtn = e.target.closest('[data-voice-btn]');
+      if (voiceBtn) {
+        const noteForm = voiceBtn.closest('.note-form');
+        if (noteForm) startVoiceNote(noteForm, voiceBtn);
+        return;
+      }
+    });
+
+    document.getElementById('page-strip').addEventListener('submit', async e => {
+      const noteForm = e.target.closest('.note-form');
+      if (!noteForm) return;
+      e.preventDefault();
+      await saveNote(noteForm, 'note');
+    });
+
+    window.addEventListener('resize', positionStrip);
+
+    (async function initJourneyPage() {
+      await initAuth();
+      await loadJourneyData();
+    })();
+  </script></body>
+</html>
