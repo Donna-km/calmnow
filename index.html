@@ -13841,19 +13841,15 @@ async function handlePostLogin() {
   }
 
   const shouldOpenJourneyChat =
-    localStorage.getItem('calmnow_open_chat_from_journey') === 'true' ||
-    localStorage.getItem('calmnow_return_target') === 'chat' ||
-    localStorage.getItem('calmnow_open_section') === 'journey-chat';
+  localStorage.getItem('calmnow_open_section') === 'journey_chat';
 
-  if (shouldOpenJourneyChat) {
-    localStorage.removeItem('calmnow_open_chat_from_journey');
-    localStorage.removeItem('calmnow_return_target');
-    localStorage.removeItem('calmnow_open_section');
-    hideAllPaywalls();
-    closeAuthModal(true);
-    await openJourneySectionSoft('chat');
-    return;
-  }
+if (shouldOpenJourneyChat) {
+  localStorage.removeItem('calmnow_open_section');
+  hideAllPaywalls();
+  closeAuthModal(true);
+  await openJourneySectionSoft('chat');
+  return;
+}
 
   bootEntryFlow();
  }  
