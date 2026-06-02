@@ -34,7 +34,7 @@
       box-shadow: 0 2px 12px rgba(140,115,80,0.06);
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
+      justify-content: flex-start;
     }
     .page-card.active {
       transform: scale(1);
@@ -195,6 +195,15 @@
       resize: vertical;
       margin-bottom: 0.6rem;
     }
+   .saved-note {
+   display: block;
+   height: auto !important;
+   min-height: unset !important;
+   }
+
+  .saved-note-actions {
+   margin-top: 0.55rem;
+   }
     .empty-state {
       width: 85%;
       max-width: 420px;
