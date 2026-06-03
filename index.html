@@ -8329,6 +8329,23 @@ after early access, $3/month.
     height: 50px !important;
   }
 }
+.journey-monthly-subtitle{
+  margin-top:1.5rem;
+  margin-bottom:.75rem;
+  font-size:.82rem;
+  letter-spacing:.08em;
+  color:#B09F8C;
+}
+
+.journey-theme-item{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:.35rem 0;
+  color:#75634f;
+  font-size:.92rem;
+}
+   
 
 </style>
 
@@ -8687,8 +8704,18 @@ after early access, $3/month.
             A gentle reflection of what stayed with you this month
           </p>
           <p id="journeyMonthlySummary" class="journey-summary" style="margin:0;"></p>
-          <div id="journeyMonthlyTags" class="journey-tag-row"></div>
-          <div id="journeyMonthlyCloseBox" class="journey-close-box"></div>
+
+<div id="journeyMonthlyThemesWrap" style="display:none;">
+  <div class="journey-monthly-subtitle">
+    What stayed on your mind
+  </div>
+
+  <div id="journeyMonthlyThemes"></div>
+</div>
+
+<div id="journeyMonthlyTags" class="journey-tag-row"></div>
+
+<div id="journeyMonthlyCloseBox" class="journey-close-box"></div>
         </div>
 
         <div id="journeyTimelineList" class="journey-list mt-5">
@@ -15961,38 +15988,83 @@ async function loadMonthlyReviewFromDB(sessionId) {
   return data || null;
 }
 function renderJourneyMonthlyHighlight(row) {
-  const wrap = document.getElementById('journeyMonthlyHighlight');
-  const titleEl = document.getElementById('journeyMonthlyTitle');
-  const summaryEl = document.getElementById('journeyMonthlySummary');
-  const tagsWrap = document.getElementById('journeyMonthlyTags');
-  const closeBox = document.getElementById('journeyMonthlyCloseBox');
+const wrap = document.getElementById('journeyMonthlyHighlight');
+const titleEl = document.getElementById('journeyMonthlyTitle');
+const summaryEl = document.getElementById('journeyMonthlySummary');
+const tagsWrap = document.getElementById('journeyMonthlyTags');
+const closeBox = document.getElementById('journeyMonthlyCloseBox');
 
-  if (!wrap || !titleEl || !summaryEl || !tagsWrap || !closeBox) return;
+const themesWrap = document.getElementById('journeyMonthlyThemesWrap');
+const themesEl = document.getElementById('journeyMonthlyThemes');
 
-  if (!row) {
-    wrap.style.display = 'none';
-    titleEl.textContent = 'Monthly Reflection';
-    summaryEl.textContent = '';
-    tagsWrap.innerHTML = '';
-    closeBox.textContent = '';
-    return;
-  }
+if (!wrap || !titleEl || !summaryEl || !tagsWrap || !closeBox) return;
 
-  titleEl.textContent = row.title || 'Monthly Reflection';
-  summaryEl.textContent = row.summary || '';
-  closeBox.textContent = row.gentle_close || '';
-  tagsWrap.innerHTML = '';
+if (!row) {
+wrap.style.display = 'none';
+titleEl.textContent = 'Monthly Reflection';
+summaryEl.textContent = '';
+tagsWrap.innerHTML = '';
+closeBox.textContent = '';
 
-  const tags = Array.isArray(row.tags) ? row.tags : [];
+```
+if (themesEl) themesEl.innerHTML = '';
+if (themesWrap) themesWrap.style.display = 'none';
 
-  tags.forEach(tag => {
-    const tagEl = document.createElement('span');
-    tagEl.className = 'journey-tag';
-    tagEl.textContent = tag;
-    tagsWrap.appendChild(tagEl);
-  });
+return;
+```
 
-  wrap.style.display = 'block';
+}
+
+titleEl.textContent = row.title || 'Monthly Reflection';
+summaryEl.textContent = row.summary || '';
+closeBox.textContent = row.gentle_close || '';
+
+tagsWrap.innerHTML = '';
+
+if (themesEl) themesEl.innerHTML = '';
+
+const themes = Array.isArray(row.theme_percentages)
+? row.theme_percentages.filter(t => t.name !== 'other')
+: [];
+
+if (themes.length && themesWrap && themesEl) {
+
+```
+themes.forEach(theme => {
+
+  const div = document.createElement('div');
+  div.className = 'journey-theme-item';
+
+  div.innerHTML = `
+    <span>${theme.name}</span>
+    <span>${theme.percentage}%</span>
+  `;
+
+  themesEl.appendChild(div);
+
+});
+
+themesWrap.style.display = 'block';
+```
+
+} else if (themesWrap) {
+
+```
+themesWrap.style.display = 'none';
+```
+
+}
+
+const tags = Array.isArray(row.tags) ? row.tags : [];
+
+tags.forEach(tag => {
+const tagEl = document.createElement('span');
+tagEl.className = 'journey-tag';
+tagEl.textContent = tag;
+tagsWrap.appendChild(tagEl);
+});
+
+wrap.style.display = 'block';
 }
 
 function fetchWithTimeout(url, options = {}, timeoutMs = 60000) {
