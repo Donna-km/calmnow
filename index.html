@@ -7365,7 +7365,7 @@ text-shadow:
       <button id="homeReflectionLetterDock" class="home-reflection-letter-dock" type="button" aria-label="Open your reflection from yesterday">
         <span class="home-reflection-letter-icon" aria-hidden="true"></span>
         <span class="home-reflection-letter-copy">
-          <span id="homeReflectionLetterTitle" class="home-reflection-letter-title">a letter from last night<br>is waiting for you.</span>
+          <span id="homeReflectionLetterTitle" class="home-reflection-letter-title">last night's reflection<br>is waiting.</span>
           <span class="home-reflection-letter-sub">tap to open</span>
         </span>
         <span class="home-reflection-letter-badge" aria-hidden="true">1</span>
@@ -15775,10 +15775,10 @@ function updateHomeReflectionLetter(rows = []) {
   const todayKey = getLocalDateKey();
 
   if (title) {
-    title.innerHTML = letterDate && letterDate < todayKey
-      ? 'a letter from last night<br>is waiting for you.'
-      : 'a quiet letter<br>is waiting for you.';
-  }
+  title.innerHTML = letterDate && letterDate < todayKey
+    ? "last night's reflection<br>is waiting."
+    : "a quiet reflection<br>is waiting.";
+}
 
   dock.classList.add('active');
   dock.setAttribute('aria-hidden', 'false');
