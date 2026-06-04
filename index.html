@@ -16856,11 +16856,7 @@ async function submitJourneyChat() {
 
   loadingDiv.classList.remove('journey-ai-loading');
   loadingDiv.textContent = replyText;
-    response_ms: Date.now() - startedAt,
-    reply_length: String(replyText || '').length
-  });
-
-  if (chatMessages) {
+    if (chatMessages) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 }
