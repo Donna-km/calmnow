@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Success | CalmNow</title>
+  <link rel="icon" type="image/png" href="https://foizrwegmdnekaxsahxu.supabase.co/storage/v1/object/public/sound-images/Calmnow_logo.png" />
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Jost:wght@300;400&display=swap');
+
+:root {
+  --cn-bg-top: #F3ECE3;
+  --cn-bg-mid: #EFE4D8;
+  --cn-bg-bottom: #E7D8C9;
+  --cn-card-soft: rgba(246, 238, 229, 0.74);
+  --cn-text: #83674E;
+  --cn-text-soft: #A4876D;
+  --cn-muted: #B79F88;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(env(safe-area-inset-top, 0.75rem), 0.75rem)
+           1rem
+           max(env(safe-area-inset-bottom, 0.75rem), 0.75rem);
+  background:
+    radial-gradient(circle at 50% 14%, rgba(255,255,255,0.42) 0%, rgba(255,255,255,0) 36%),
+    radial-gradient(circle at 50% 80%, rgba(176,145,116,0.15) 0%, rgba(176,145,116,0) 50%),
+    linear-gradient(180deg, var(--cn-bg-top) 0%, var(--cn-bg-mid) 52%, var(--cn-bg-bottom) 100%);
+  color: var(--cn-text);
+  text-align: center;
+  overflow: hidden;
+}
+
+.payment-card {
+  width: min(92vw, 420px);
+  min-height: min(58vh, 520px);
+  max-height: min(92dvh, 700px);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1.05rem, 3.8vh, 1.65rem);
+  padding: clamp(2.25rem, 5.4vh, 3rem) clamp(1.35rem, 4vw, 2rem);
+  border-radius: 34px;
+  background:
+    radial-gradient(circle at top center, rgba(255,255,255,0.34) 0%, rgba(255,255,255,0) 48%),
+    linear-gradient(180deg, rgba(250,244,237,0.91) 0%, var(--cn-card-soft) 100%);
+  border: 1px solid rgba(178,151,124,0.22);
+  box-shadow:
+    0 34px 92px rgba(118,93,68,0.16),
+    0 0 0 1px rgba(255,255,255,0.20) inset,
+    inset 0 1px 0 rgba(255,255,255,0.48);
+  backdrop-filter: blur(14px);
+  overflow: hidden;
+  animation: cardIn 1.35s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.payment-card::before {
+  content: '';
+  position: absolute;
+  inset: 14px;
+  border-radius: inherit;
+  border: 1px solid rgba(184,158,132,0.15);
+  pointer-events: none;
+}
+
+.payment-card::after {
+  content: '';
+  position: absolute;
+  width: 210px;
+  height: 210px;
+  right: -76px;
+  bottom: -72px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(169, 134, 99, 0.12) 0%, rgba(169, 134, 99, 0) 70%);
+  filter: blur(4px);
+  pointer-events: none;
+}
+
+.payment-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.payment-kicker {
+  margin: 0;
+  font-family: 'Jost', system-ui, sans-serif;
+  font-size: 0.68rem;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--cn-muted);
+  animation: softIn 1.35s ease 0.12s both;
+}
+
+.payment-title {
+  max-width: 340px;
+  margin: 0;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(2rem, 7.6vw, 2.72rem);
+  font-weight: 300;
+  line-height: 1.22;
+  letter-spacing: 0.005em;
+  color: var(--cn-text);
+  text-wrap: balance;
+  animation: softIn 1.6s ease 0.32s both;
+}
+
+.payment-copy {
+  max-width: 320px;
+  margin: 0 auto;
+  font-family: 'Jost', system-ui, sans-serif;
+  font-size: 0.86rem;
+  font-weight: 300;
+  line-height: 1.8;
+  color: var(--cn-muted);
+  animation: softIn 1.6s ease 0.52s both;
+}
+
+.payment-action {
+  width: min(100%, 310px);
+  min-height: clamp(46px, 6.4vh, 54px);
+  margin-top: 0.2rem;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #A98868 0%, #8D704F 100%);
+  color: #FFF9F1;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: clamp(1.13rem, min(4.6vw, 2.7vh), 1.48rem);
+  font-weight: 300;
+  letter-spacing: 0.045em;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 14px 36px rgba(120, 95, 70, 0.18);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.28s ease, box-shadow 0.28s ease, filter 0.28s ease;
+  animation: softIn 1.6s ease 0.72s both;
+}
+
+.payment-action:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 18px 42px rgba(120, 95, 70, 0.22);
+  filter: brightness(1.02);
+}
+
+.payment-note {
+  margin: -0.2rem 0 0;
+  font-family: 'Jost', system-ui, sans-serif;
+  font-size: 0.76rem;
+  font-weight: 300;
+  color: #9E8974;
+  animation: softIn 1.6s ease 0.86s both;
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes softIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@media (max-width: 480px) {
+  .payment-card {
+    border-radius: 32px;
+    min-height: min(62vh, 540px);
+    padding: 2.25rem 1.25rem;
+  }
+
+  .payment-title {
+    font-size: clamp(2rem, 8.5vw, 2.56rem);
+  }
+}
+
+@media (max-height: 680px) {
+  .payment-card {
+    min-height: auto;
+    gap: 0.85rem;
+    padding-top: 1.65rem;
+    padding-bottom: 1.65rem;
+  }
+}
+
+  </style>
+
+
+  <!-- CalmNow Mixpanel Analytics -->
+  <script type="text/javascript">
+    (function(f,b){if(!b.__SV){var e,g,i,h;window.mixpanel=b;b._i=[];b.init=function(e,f,c){function g(a,d){var b=d.split('.');2==b.length&&(a=a[b[0]],d=b[1]);a[d]=function(){a.push([d].concat(Array.prototype.slice.call(arguments,0)))}}var a=b;typeof c!=="undefined"?a=b[c]=[]:c="mixpanel";a.people=a.people||[];a.toString=function(a){var d="mixpanel";"mixpanel"!==c&&(d+="."+c);a||(d+=" (stub)");return d};a.people.toString=function(){return a.toString(1)+".people"};i="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");for(h=0;h<i.length;h++)g(a,i[h]);b._i.push([e,f,c])};b.__SV=1.2;e=f.createElement("script");e.type="text/javascript";e.async=!0;e.src="https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";g=f.getElementsByTagName("script")[0];g.parentNode.insertBefore(e,g)}})(document,window.mixpanel||[]);
+
+    mixpanel.init('e067d676ba8f2713e20f0283d48d53a2', {
+      debug: false,
+      track_pageview: true,
+      persistence: 'localStorage'
+    });
+
+    window.calmTrack = function(eventName, properties) {
+      try {
+        if (!window.mixpanel || typeof window.mixpanel.track !== 'function') return;
+        window.mixpanel.track(eventName, Object.assign({
+          app: 'calmnow',
+          page_path: window.location.pathname,
+          page_title: document.title || '',
+          local_time: new Date().toISOString()
+        }, properties || {}));
+      } catch (err) {
+        console.warn('Mixpanel track skipped:', eventName, err);
+      }
+    };
+  </script>
+
+</head>
+<body>
+  <main class="payment-card" aria-labelledby="payment-title">
+    <p class="payment-kicker">thank you</p>
+    <h1 id="payment-title" class="payment-title">your quiet space<br>is open now.</h1>
+    <p class="payment-copy">
+      Your support helps keep CalmNow alive<br>for the quiet moments that need somewhere to land.
+    </p>
+    <a class="payment-action" href="/">enter CalmNow</a>
+    <p class="payment-note">come back softly</p>
+  </main>
+
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      try {
+        const activatedTrackKey = 'calmnow_founding_member_activated_tracked';
+
+        if (!localStorage.getItem(activatedTrackKey)) {
+          window.calmTrack?.('Founding Member Activated', {
+            plan_name: 'founding_monthly',
+            source: 'payment_success'
+          });
+
+          localStorage.setItem(activatedTrackKey, 'true');
+        }
+      } catch (err) {
+        console.warn('Founding Member Activated track skipped:', err);
+      }
+    });
+  </script>
+
+</body>
+</html>
