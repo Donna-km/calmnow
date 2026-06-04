@@ -7489,7 +7489,6 @@ text-shadow:
           <div class="founder-story-line"><p>I always had a question.</p></div>
           <div class="founder-story-line"><p>Why did I still feel...</p></div>
           <div class="founder-story-line"><p>Empty.</p></div>
-          <div class="founder-story-line"><p>In a way I couldn't explain</p></div>
           <div class="founder-story-line"><p>Like something inside me..</p></div>
           <div class="founder-story-line"><p>Had never really felt full.</p></div>
           <div class="founder-story-line"><p>Even when everything looked right.</p></div>
@@ -11919,7 +11918,7 @@ function showFounderStoryFlow() {
     const revealDoneDelay = firstLineDelay + (lines.length * lineDelay);
 
     if (index === 0) {
-      const firstScreenHoldAfterLastLine = 7500;
+      const firstScreenHoldAfterLastLine = 6000;
 
       founderStoryTimers.push(setTimeout(() => {
         if (!screen.classList.contains('active')) return;
