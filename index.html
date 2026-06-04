@@ -14901,11 +14901,16 @@ async function showTomorrowsChallenge() {
 }
 
   if (challengeStartBtn) {
+  if (challengeStartBtn) {
   challengeStartBtn.addEventListener('click', async () => {
+
+    window.calmTrack?.('Pause Started');
+
     currentMode = 'breathing';
     momentOverlay.classList.add('active');
 
     if (pauseSoundMode === 'silent') {
+     
       if (breathingSound) {
         breathingSound.pause();
         breathingSound.currentTime = 0;
