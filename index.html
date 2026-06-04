@@ -10829,8 +10829,7 @@ function showEarlyAccessQuestionPopup() {
 }
 
 async function joinEarlyAccess() {
-  window.calmTrack?.('Early Access Join Clicked');
-  if (!currentUser?.id) {
+    if (!currentUser?.id) {
     hideAllPaywalls();
     openAuthModal('login');
     return;
@@ -12766,7 +12765,6 @@ if (earlyAccessQuestionContinueBtn) {
 
 if (foundingMemberContinueBtn) {
   foundingMemberContinueBtn.addEventListener('click', () => {
-    window.calmTrack?.('Founding Member Popup Continued');
     showFounderSupportPopup();
   });
 }
@@ -12793,7 +12791,7 @@ if (founderSupportBackBtn) {
 }
    if (takeAMomentBtn) {
   takeAMomentBtn.addEventListener('click', async () => {
-    window.calmTrack?.('Share Feeling Clicked', {
+    window.calmTrack?.('Card To Chat', {
       card_session_id: localStorage.getItem('currentCardSessionId') || null,
       card_type: localStorage.getItem('currentCardType') || null,
       emotion_group: localStorage.getItem('currentCardEmotion') || null
@@ -14685,12 +14683,6 @@ function rotateChallengeCalmMessage() {
 
 function startChallengeTimer() {
   if (challengeTimerState === 'running') return;
-  window.calmTrack?.('Pause Started', {
-    selected_seconds: challengeSelectedSeconds || challengeTotalSeconds || null,
-    selected_minutes: Math.ceil((challengeSelectedSeconds || challengeTotalSeconds || 0) / 60) || null,
-    sound_mode: pauseSoundMode || challengeSelectedType || 'silent'
-  });
-
   challengeTimerState = 'running';
   challengeElapsedSeconds = 0;
 
@@ -14815,12 +14807,6 @@ if (completionTitle) {
 }
 
 async function completeChallenge() {
-window.calmTrack?.('Pause Completed', {
-  selected_seconds: challengeSelectedSeconds || challengeTotalSeconds || null,
-  elapsed_seconds: challengeElapsedSeconds || null,
-  selected_minutes: Math.ceil((challengeSelectedSeconds || challengeTotalSeconds || 0) / 60) || null,
-  sound_mode: pauseSoundMode || challengeSelectedType || 'silent'
-});
 if (currentChallengeDay) {
   await saveChallengeProgressStatus({
     challengeDayId: currentChallengeDay.id,
@@ -16011,7 +15997,6 @@ function openJourneyReflectionPage() {
 
 if (journeyTabSummary) {
   journeyTabSummary.addEventListener('click', () => {
-    window.calmTrack?.('Journey Link Clicked', { source: 'home_chat_reflection_button' });
     openJourneyReflectionPage();
   });
 }
@@ -16336,8 +16321,7 @@ function moveJourneyVoiceDraftToInput() {
 }
 
 function sendJourneyVoiceDraft() {
-  window.calmTrack?.('Voice Draft Accepted', { source: 'journey_chat' });
-  const currentText = String(
+   const currentText = String(
     journeyVoiceDraftText || `${journeyVoiceFinalTranscript} ${journeyVoiceInterimTranscript}`
   ).trim();
 
@@ -16387,8 +16371,7 @@ function discardJourneyVoiceDraft() {
 }
 
 async function startJourneySpeechListening() {
-  window.calmTrack?.('Voice Started', { source: 'journey_chat' });
-  if (!currentUser?.id) {
+    if (!currentUser?.id) {
     lockAppUntilLogin();
     return;
   }
@@ -16873,7 +16856,6 @@ async function submitJourneyChat() {
 
   loadingDiv.classList.remove('journey-ai-loading');
   loadingDiv.textContent = replyText;
-  window.calmTrack?.('Chat Reply Received', {
     response_ms: Date.now() - startedAt,
     reply_length: String(replyText || '').length
   });
