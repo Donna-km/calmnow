@@ -1051,13 +1051,11 @@
   <script>
 
     function goBackToMain() {
-      window.calmTrack?.('Journey Back Main Clicked');
-      window.location.href = './index.html';
+     window.location.href = './index.html';
     }
 
     function goBackToChat() {
-      window.calmTrack?.('Journey Back Chat Clicked');
-      try {
+     try {
         localStorage.setItem('calmnow_open_section', 'journey_chat');
       } catch (err) {}
       window.location.href = './index.html';
@@ -1119,7 +1117,6 @@
     }
 
     async function initAuth() {
-      window.calmTrack?.('Journey Auth Checked');
       const { data, error } = await supabaseClient.auth.getSession();
       if (error) console.warn('auth session error:', error);
       currentUser = data?.session?.user || null;
@@ -1178,10 +1175,6 @@
     }
 
     async function loadJourneyData() {
-      window.calmTrack?.('Journey Data Loaded', {
-        selected_month: `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}`,
-        user_logged_in: !!currentUser?.id
-      });
       const strip = document.getElementById('page-strip');
       if (strip) {
         strip.classList.add('loading');
@@ -1252,18 +1245,28 @@
     }
 
     function renderMonths() {
-      updateMobileMonthTitle();
-      const nav = document.getElementById('month-nav');
-      nav.innerHTML = '';
-      months.forEach((m, i) => {
-        const btn = document.createElement('button');
-        btn.textContent = m.slice(0, 3);
-        btn.className = `month-pill px-3 py-1.5 rounded-full text-sm cursor-pointer ${i === selectedMonth ? 'active' : ''}`;
-        if (i !== selectedMonth) btn.style.cssText = 'background:#f5efe7;color:#8b7355;';
-        btn.onclick = async () => { window.calmTrack?.('Journey Month Changed', { month: i + 1, month_name: m, year: selectedYear }); selectedMonth = i; currentPage = 0; await loadJourneyData(); };
-        nav.appendChild(btn);
-      });
+  updateMobileMonthTitle();
+  const nav = document.getElementById('month-nav');
+  nav.innerHTML = '';
+
+  months.forEach((m, i) => {
+    const btn = document.createElement('button');
+    btn.textContent = m.slice(0, 3);
+    btn.className = `month-pill px-3 py-1.5 rounded-full text-sm cursor-pointer ${i === selectedMonth ? 'active' : ''}`;
+
+    if (i !== selectedMonth) {
+      btn.style.cssText = 'background:#f5efe7;color:#8b7355;';
     }
+
+    btn.onclick = async () => {
+      selectedMonth = i;
+      currentPage = 0;
+      await loadJourneyData();
+    };
+
+    nav.appendChild(btn);
+  });
+}
 
     function renderSavedNotes(reflectionId) {
       const notes = reflectionNotesById[reflectionId] || [];
@@ -1460,10 +1463,8 @@
 
     function openMonthlyLetter() {
       if (!currentMonthlyReview) return;
-      window.calmTrack?.('Monthly Review Opened', {
-        review_month: getSelectedReviewMonthKey(),
-        has_theme_percentages: !!currentMonthlyReview?.theme_percentages
-      });
+
+      window.calmTrack?.('Monthly Review Opened');
 
       const modal = document.getElementById('monthlyLetterModal');
       const title = document.getElementById('monthlyLetterTitle');
@@ -1524,7 +1525,6 @@
     }
 
     async function saveNote(noteForm, sourceType = 'note') {
-      window.calmTrack?.('Journey Note Save Clicked', { source_type: sourceType || 'note' });
       if (!currentUser?.id) {
         alert('Please log in first so CalmNow can keep your Journey safely.');
         return;
@@ -1566,11 +1566,7 @@
       if (!reflectionNotesById[reflectionId]) reflectionNotesById[reflectionId] = [];
       reflectionNotesById[reflectionId].unshift(note);
 
-      window.calmTrack?.('Journey Note Saved', {
-        reflection_id: Number(reflectionId),
-        source_type: sourceType || 'note',
-        note_length: text.length
-      });
+      window.calmTrack?.('Journey Note Saved');
 
       await saveReflectionSource({ reflectionId, sourceType, sourceText: text, noteId: note.id });
 
