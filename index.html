@@ -14032,6 +14032,18 @@ function lockAppUntilLogin() {
 async function ensureProfileForUser(user) {
   if (!user?.id) return false;
 
+  const { data: existingProfile, error: profileCheckError } = await supabaseClient
+    .from('profiles')
+    .select('id')
+    .eq('id', user.id)
+    .maybeSingle();
+
+  if (profileCheckError) {
+    console.error('profile check error:', profileCheckError);
+  }
+
+  const isNewProfile = !existingProfile;
+
   const profilePayload = {
     id: user.id,
     email: user.email || null,
@@ -14047,7 +14059,7 @@ async function ensureProfileForUser(user) {
     provider: user.app_metadata?.provider || null,
     is_active: true,
     user_timezone:
-    Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
+      Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC',
     updated_at: new Date().toISOString()
   };
 
@@ -14058,6 +14070,12 @@ async function ensureProfileForUser(user) {
   if (error) {
     console.error('ensureProfileForUser error:', error);
     return false;
+  }
+
+  if (isNewProfile) {
+    window.calmTrack?.('Profile Created', {
+      method: profilePayload.provider || 'email'
+    });
   }
 
   return true;
