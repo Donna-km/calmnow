@@ -11917,13 +11917,15 @@ function clearFounderStoryTimers() {
   }
 }
 
-
+const founderPauseBell = new Audio(
+  'https://foizrwegmdnekaxsahxu.supabase.co/storage/v1/object/public/sounds/bell_short.m4a'
+);
 
 function showFounderStoryPause(onComplete) {
   const founderFlow = document.getElementById('founderStoryFlow');
   const pauseScreen = founderFlow ? founderFlow.querySelector('.founder-story-pause') : null;
   const pauseHoldMs = 6800;
-  const pauseAudio = document.getElementById('breathingSound');
+  const pauseAudio = founderPauseBell;
 
   if (!pauseScreen) {
     if (typeof onComplete === 'function') onComplete();
