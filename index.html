@@ -11935,7 +11935,7 @@ function showFounderStoryPause(onComplete) {
     try {
       pauseAudio.pause();
       pauseAudio.currentTime = 0;
-      pauseAudio.volume = 0.055;
+      pauseAudio.volume = 0.035;
       playAudioForIOS(pauseAudio, { reset: true, volume: 0.055 });
     } catch (err) {}
   }
@@ -11973,7 +11973,7 @@ function showFounderStoryFlow() {
   }
 
   let currentFounderScreenIndex = 0;
-  const lineDelay = 3500;
+  const lineDelay = 3000;
   const firstLineDelay = 1000;
   const buttonDelayAfterLastLine = 950;
 
@@ -12027,7 +12027,7 @@ function showFounderStoryFlow() {
     const revealDoneDelay = firstLineDelay + (lines.length * lineDelay);
 
     if (index === 0) {
-      const firstScreenHoldAfterLastLine = 6000;
+      const firstScreenHoldAfterLastLine = 5000;
 
       founderStoryTimers.push(setTimeout(() => {
         if (!screen.classList.contains('active')) return;
