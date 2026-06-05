@@ -13107,13 +13107,12 @@ if (personalBack) {
     const playMixBtn = document.getElementById('playMixBtn');
     let currentMode = 'breathing'; // Track which mode we're in
     
-    if (playMixBtn) {
-      playMixBtn.addEventListener('click', async () => {
+   if (playMixBtn) {
+  playMixBtn.addEventListener('click', async () => {
 
-       window.calmTrack?.('Mix Started', {
-  sound_count: selectedSounds.length || 0
-});
-  currentMode = 'mix';
+    window.calmTrack?.('Mix Started');
+
+    currentMode = 'mix';
 
   const blueCircle = document.querySelector('.breathing-circle');
   if (blueCircle) {
