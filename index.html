@@ -10150,18 +10150,28 @@ if (detailAddToChallengeBtn) {
 }
 
   document.getElementById('detailPlayBtn').onclick = async () => {
-    const audioUrl = getAudioUrl(sound.audio_path);
+  const audioUrl = getAudioUrl(sound.audio_path);
 
-    if (!audioUrl) {
-      alert('No audio file found');
-      return;
-    }
+  if (!audioUrl) {
+    alert('No audio file found');
+    return;
+  }
 
-    currentSoundAudio = destroyController(currentSoundAudio);
-    currentSoundAudio = enableSeamlessSoundLoop(new Audio(audioUrl));
-    playAudioForIOS(currentSoundAudio, { reset: false });
-  };
- currentDetailSound = sound;
+  if (window.mixpanel) {
+    mixpanel.track('Sound Play Clicked', {
+      sound_id: sound.id || null,
+      sound_title: sound.title || '',
+      sound_category: sound.category || '',
+      audio_path: sound.audio_path || ''
+    });
+  }
+
+  currentSoundAudio = destroyController(currentSoundAudio);
+  currentSoundAudio = enableSeamlessSoundLoop(new Audio(audioUrl));
+  playAudioForIOS(currentSoundAudio, { reset: false });
+};
+
+currentDetailSound = sound;
 
 const detailAddToMixBtn = document.getElementById('detailAddToMixBtn');
 if (detailAddToMixBtn) {
