@@ -13109,6 +13109,10 @@ if (personalBack) {
     
     if (playMixBtn) {
       playMixBtn.addEventListener('click', async () => {
+
+       window.calmTrack?.('Mix Started', {
+  sound_count: selectedSounds.length || 0
+});
   currentMode = 'mix';
 
   const blueCircle = document.querySelector('.breathing-circle');
