@@ -10149,7 +10149,7 @@ if (detailAddToChallengeBtn) {
   };
 }
 
-  document.getElementById('detailPlayBtn').onclick = async () => {
+ document.getElementById('detailPlayBtn').onclick = async () => {
   const audioUrl = getAudioUrl(sound.audio_path);
 
   if (!audioUrl) {
@@ -10157,14 +10157,12 @@ if (detailAddToChallengeBtn) {
     return;
   }
 
-  if (window.mixpanel) {
-    mixpanel.track('Sound Play Clicked', {
-      sound_id: sound.id || null,
-      sound_title: sound.title || '',
-      sound_category: sound.category || '',
-      audio_path: sound.audio_path || ''
-    });
-  }
+  window.calmTrack?.('Sound Play Clicked', {
+    sound_id: sound.id || null,
+    sound_title: sound.title || '',
+    sound_category: sound.category || '',
+    audio_path: sound.audio_path || ''
+  });
 
   currentSoundAudio = destroyController(currentSoundAudio);
   currentSoundAudio = enableSeamlessSoundLoop(new Audio(audioUrl));
