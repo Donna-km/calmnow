@@ -12665,11 +12665,16 @@ if (entryWelcomeText) {
 
 function bootEntryFlow() {
   const hasSeenIntro = localStorage.getItem(INTRO_SEEN_KEY) === 'true';
+
   if (!hasSeenIntro) {
     hideHomeScreen();
+
+    window.calmTrack?.('Landing Opened');
+
     if (introScreen) introScreen.classList.add('active');
     return;
   }
+
   startEntryGate();
 }
     
@@ -12744,10 +12749,15 @@ if (stage.text === 'HoldBig') {
     }
 
     if (introTakeMomentBtn) {
-      introTakeMomentBtn.addEventListener('click', () => {
-        startFirstTimeIntroFlow();
-      });
+  introTakeMomentBtn.addEventListener('click', () => {
+
+    if (window.mixpanel) {
+      mixpanel.track('Intro Started');
     }
+
+    startFirstTimeIntroFlow();
+  });
+}
 
     
 if (paywallStartTrialBtn) {
