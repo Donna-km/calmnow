@@ -12621,7 +12621,7 @@ async function showCalmyNightWhisperCloudTransition() {
 
   const entryWelcomeText = document.getElementById('entryWelcomeText');
   if (entryWelcomeText) {
-    entryWelcomeText.innerHTML = String(whisper.display_text || 'gentle\nfrom calmy').replace(/\n/g, '<br>');
+    entryWelcomeText.innerHTML = String(whisper.voice_text || 'gentle\nfrom calmy').replace(/\n/g, '<br>');
   }
 
   entryGate.classList.remove('leaving');
