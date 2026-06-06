@@ -25,10 +25,49 @@
         .carousel-dots { display: flex; justify-content: center; gap: 0.75rem; margin-top: 2rem; }
         .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(61,54,50,0.2); cursor: pointer; transition: background 0.3s ease; }
         .dot.active { background: rgba(61,54,50,0.6); }
-        .feature-card { position: absolute; width: 280px; height: 320px; transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94); flex-shrink: 0; top: 50%; left: 50%; transform: translateX(-50%) translateY(-50%); display: flex; flex-direction: column; }
-        .feature-card.prev { transform: translateX(calc(-50% - 280px)) translateY(-50%) scale(0.85); opacity: 0.5; z-index: 1; }
-        .feature-card.active { transform: translateX(-50%) translateY(-50%) scale(1); opacity: 1; z-index: 10; box-shadow: 0 30px 60px rgba(60,50,40,0.15); }
-        .feature-card.next { transform: translateX(calc(-50% + 280px)) translateY(-50%) scale(0.85); opacity: 0.5; z-index: 1; }
+       .feature-card {
+  position: absolute;
+  width: 280px;
+  height: 320px;
+  transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  flex-shrink: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.feature-card.prev {
+  transform: translate(calc(-50% - 340px), -50%) scale(0.84);
+  opacity: 0.34;
+  z-index: 1;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.feature-card.active {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  z-index: 100;
+  background: #fffdf9;
+  border: 1px solid rgba(180, 165, 145, 0.16);
+  box-shadow: 0 30px 60px rgba(60,50,40,0.15);
+}
+
+.feature-card.next {
+  transform: translate(calc(-50% + 340px), -50%) scale(0.84);
+  opacity: 0.34;
+  z-index: 1;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
         .card-icon { width: 52px; height: 52px; margin-bottom: 1.5rem; color: #E8DDD3; }
         .breathing-cloud {
           position: absolute;
