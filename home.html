@@ -85,16 +85,81 @@
         }
 
         @media (max-width: 768px) {
-            .breathing-cloud { width: 350px; height: 350px; }
-            .card-carousel { height: 380px; }
-            .feature-card { width: 240px; height: 300px; }
-            .feature-card.prev { transform: translateX(calc(-50% - 200px)) translateY(-50%) scale(0.75); }
-            .feature-card.next { transform: translateX(calc(-50% + 200px)) translateY(-50%) scale(0.75); }
-            .carousel-nav-btn { width: 36px; height: 36px; font-size: 16px; }
-            .carousel-nav-btn.prev { left: -8px; }
-            .carousel-nav-btn.next { right: -8px; }
-            .carousel-wrapper { gap: 0; }
-        }
+.breathing-cloud {
+width: 320px;
+height: 320px;
+}
+
+.card-carousel {
+    height: 340px;
+}
+
+.feature-card {
+    width: 210px;
+    height: 270px;
+    text-align: center;
+    align-items: center;
+}
+
+.feature-card.active {
+    background: #fffdf9;
+    opacity: 1;
+    z-index: 100;
+    border: 1px solid rgba(180, 165, 145, 0.16);
+    box-shadow: 0 24px 50px rgba(60,50,40,0.12);
+}
+
+.feature-card.prev {
+    transform: translate(calc(-50% - 170px), -50%) scale(0.72);
+    opacity: 0.18;
+    z-index: 1;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.feature-card.next {
+    transform: translate(calc(-50% + 170px), -50%) scale(0.72);
+    opacity: 0.18;
+    z-index: 1;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.feature-card h3,
+.feature-card p {
+    text-align: center;
+}
+
+.feature-card button {
+    align-self: center;
+}
+
+.card-icon {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.carousel-nav-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+}
+
+.carousel-nav-btn.prev {
+    left: -8px;
+}
+
+.carousel-nav-btn.next {
+    right: -8px;
+}
+
+.carousel-wrapper {
+    gap: 0;
+}
+}
+
     </style>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
