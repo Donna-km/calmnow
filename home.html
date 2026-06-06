@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CalmNow</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=DM+Sans:wght@400;500&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&amp;family=Jost:wght@300;400&amp;display=swap" rel="stylesheet">
   <style>
         :root { --ivory: #FDFBF7; --beige: #F5EDE4; --warm: #E8DDD3; --text: #3D3632; --muted: #8C7E74; }
         body { font-family: 'DM Sans', sans-serif; background: var(--ivory); color: var(--text); }
@@ -67,22 +67,35 @@
     <div class="breathing-cloud" style="top:50%;left:50%;"></div>
     <div class="relative z-10 text-center max-w-3xl mx-auto fade-in">
   <h2
-    data-template-id="headline"
-    class="canva-text serif text-4xl md:text-6xl leading-tight md:leading-snug mb-6"
-    style="color:#3D3632;"
-  >
-    The more you share,<br>
-    the more you'll understand<br>
-    what's going on inside.
-  </h2>
+  data-template-id="headline"
+  class="canva-text serif mb-6"
+  style="
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.4rem, 5vw, 4rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: #3D3632;
+    font-weight: 500;
+  "
+>
+  The more you share,<br>
+  the more you'll understand<br>
+  what's going on inside.
+</h2>
 
-  <p
-    data-template-id="subheadline"
-    class="canva-text italic text-lg md:text-xl mb-10"
-    style="color:var(--muted);"
-  >
-    built for your 2am version.
-  </p>
+<p
+  data-template-id="subheadline"
+  style="
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(1rem, 1.8vw, 1.25rem);
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+    font-style: italic;
+    font-weight: 400;
+  "
+>
+  built for your 2am version.
+</p>
 
   <a
     data-template-id="cta-button"
