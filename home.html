@@ -467,15 +467,29 @@
           videoModal.setAttribute('aria-hidden', 'true');
         }
 
-        cards.forEach((card) => {
-          card.addEventListener('click', () => {
-            const demoType = card.dataset.demo;
+       cards.forEach((card) => {
+  card.addEventListener('click', () => {
 
-            if (demoType !== 'reflection') return;
+    const demoType = card.dataset.demo;
 
-            openVideoModal();
-          });
-        });
+    if (demoType === 'reflection') {
+      demoVideo.src =
+        'https://foizrwegmdnekaxsahxu.supabase.co/storage/v1/object/public/sound-images/Copy%20of%20Blue%20White%20UIUX%20Modern%20Daily%20Vlog%20TikTok%20Video.mp4';
+    }
+
+    else if (demoType === 'pause') {
+      demoVideo.src =
+        'https://foizrwegmdnekaxsahxu.supabase.co/storage/v1/object/public/sound-images/vdo_pause.mp4';
+    }
+
+    else {
+      return;
+    }
+
+    openVideoModal();
+
+  });
+});
 
         if (closeVideoModal) {
           closeVideoModal.addEventListener('click', closeVideo);
