@@ -211,6 +211,62 @@
   }
 }
 
+   .video-modal{
+  position:fixed;
+  inset:0;
+  z-index:9999;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  opacity:0;
+  visibility:hidden;
+  transition:0.35s ease;
+}
+
+.video-modal.active{
+  opacity:1;
+  visibility:visible;
+}
+
+.video-backdrop{
+  position:absolute;
+  inset:0;
+  background:rgba(0,0,0,.72);
+  backdrop-filter:blur(8px);
+}
+
+.video-container{
+  position:relative;
+  width:min(92vw,420px);
+  z-index:2;
+}
+
+.video-container video{
+  width:100%;
+  border-radius:24px;
+  display:block;
+  box-shadow:0 30px 80px rgba(0,0,0,.35);
+}
+
+.video-close{
+  position:absolute;
+  top:-48px;
+  right:0;
+
+  width:38px;
+  height:38px;
+
+  border:none;
+  border-radius:50%;
+  cursor:pointer;
+
+  background:rgba(255,255,255,.2);
+  color:white;
+  font-size:18px;
+}
+
     </style>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
   <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
@@ -365,14 +421,47 @@
         });
 
 
-        // Card image click — ready for future video modal
-        cards.forEach((card) => {
-          card.addEventListener('click', () => {
-            const demoType = card.dataset.demo;
-            console.log('CalmNow demo card clicked:', demoType);
-            // Next step: open the matching demo video modal here.
-          });
-        });
+        const videoModal = document.getElementById('videoModal');
+const demoVideo = document.getElementById('demoVideo');
+const closeVideoModal = document.getElementById('closeVideoModal');
+
+cards.forEach((card) => {
+
+  card.addEventListener('click', () => {
+
+    const demoType = card.dataset.demo;
+
+    if (demoType !== 'reflection') return;
+
+    videoModal.classList.add('active');
+
+    demoVideo.currentTime = 0;
+    demoVideo.play();
+
+  });
+
+});
+
+closeVideoModal.addEventListener('click', () => {
+
+  demoVideo.pause();
+  videoModal.classList.remove('active');
+
+});
+
+videoModal.addEventListener('click', (e) => {
+
+  if (
+    e.target === videoModal ||
+    e.target.classList.contains('video-backdrop')
+  ) {
+
+    demoVideo.pause();
+    videoModal.classList.remove('active');
+
+  }
+
+});
 
         // Mobile swipe support
         let touchStartX = 0;
@@ -402,5 +491,27 @@
 
         lucide.createIcons();
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a0795d8a092ffdaf',t:'MTc4MDc2OTMzNw=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<div id="videoModal" class="video-modal">
+  <div class="video-backdrop"></div>
+
+  <div class="video-container">
+    <button id="closeVideoModal" class="video-close">
+      ✕
+    </button>
+
+    <video
+      id="demoVideo"
+      playsinline
+      controls
+      preload="metadata"
+    >
+      <source
+        src="https://foizrwegmdnekaxsahxu.supabase.co/storage/v1/object/public/sound-images/Copy%20of%20Blue%20White%20UIUX%20Modern%20Daily%20Vlog%20TikTok%20Video.mp4"
+        type="video/mp4"
+      >
+    </video>
+  </div>
+</div>
+  
+ </body>
 </html>
