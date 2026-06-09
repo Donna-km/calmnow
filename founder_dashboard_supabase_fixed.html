@@ -86,9 +86,9 @@
       border-radius: 999px;
       display: inline-block;
     }
-    .legend-total { background: #7b6046; }
-    .legend-chat { background: #b98055; }
-    .legend-card { background: #9f8468; }
+    .legend-total { background:#6B4F3B; }
+    .legend-chat  { background:#C2703A; }
+    .legend-card  { background:#6FA8A1; }
     .trend-chart-wrap {
       width: 100%;
       min-height: 300px;
@@ -398,10 +398,22 @@
       const yFor = (value) => top + chartHeight - (Number(value || 0) / niceMax) * chartHeight;
 
       const series = [
-        { key: 'total_users', label: 'Total', color: '#7b6046' },
-        { key: 'chat_users', label: 'Chat', color: '#b98055' },
-        { key: 'card_users', label: 'Card', color: '#9f8468' }
-      ];
+  {
+    key: 'total_users',
+    label: 'Total',
+    color: '#6B4F3B'
+  },
+  {
+    key: 'chat_users',
+    label: 'Chat',
+    color: '#C2703A'
+  },
+  {
+    key: 'card_users',
+    label: 'Card',
+    color: '#6FA8A1'
+  }
+];
 
       const gridValues = [0, Math.round(niceMax * 0.25), Math.round(niceMax * 0.5), Math.round(niceMax * 0.75), niceMax];
       const grid = gridValues.map(value => {
