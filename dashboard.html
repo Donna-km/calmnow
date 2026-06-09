@@ -148,9 +148,28 @@
     <div data-template-id="card-status" class="canva-card stat-card p-5">
      <p data-template-id="card-status-label" class="canva-text text-sm opacity-70 mb-2"></p>
      <div class="space-y-1">
-      <div class="flex justify-between items-center">
-       <span data-template-id="status-active-label" class="canva-text text-sm"></span><span data-template-id="status-active-value" class="canva-text font-bold">—</span>
-      </div>
+      <div class="space-y-1">
+  <div class="flex justify-between items-center">
+    <span data-template-id="status-paid-label" class="canva-text text-sm"></span>
+    <span data-template-id="status-paid-value" class="canva-text font-bold">—</span>
+  </div>
+  <div class="flex justify-between items-center">
+    <span data-template-id="status-trial-label" class="canva-text text-sm"></span>
+    <span data-template-id="status-trial-value" class="canva-text font-bold">—</span>
+  </div>
+  <div class="flex justify-between items-center">
+    <span data-template-id="status-early-label" class="canva-text text-sm"></span>
+    <span data-template-id="status-early-value" class="canva-text font-bold">—</span>
+  </div>
+  <div class="flex justify-between items-center">
+    <span data-template-id="status-past-due-label" class="canva-text text-sm"></span>
+    <span data-template-id="status-past-due-value" class="canva-text font-bold">—</span>
+  </div>
+  <div class="flex justify-between items-center">
+    <span data-template-id="status-cancelled-label" class="canva-text text-sm"></span>
+    <span data-template-id="status-cancelled-value" class="canva-text font-bold">—</span>
+  </div>
+</div>
       <div class="flex justify-between items-center">
        <span data-template-id="status-inactive-label" class="canva-text text-sm"></span><span data-template-id="status-inactive-value" class="canva-text font-bold">—</span>
       </div>
@@ -245,9 +264,11 @@
       'card-total-label': 'Total Users',
       'card-new-label': 'New Users This Month',
       'card-status-label': 'User Status',
-      'status-active-label': 'Active / Trial',
-      'status-inactive-label': 'Inactive / Past Due',
-      'status-churned-label': 'Expired / Deleted',
+      'status-paid-label': 'Paid / Active',
+      'status-trial-label': 'Trial',
+      'status-early-label': 'Early Access',
+      'status-past-due-label': 'Past Due',
+      'status-cancelled-label': 'Cancelled',
       'health-title': 'Conversion & Product Health',
       'rate-onboarding-label': 'Onboarding Completion',
       'rate-reflection-label': 'Chat Users',
@@ -262,7 +283,7 @@
     Object.entries(labels).forEach(([id, value]) => setText(id, value));
 
     const metricIds = [
-      'card-total-value','card-new-value','status-active-value','status-inactive-value','status-churned-value',
+      'card-total-value','card-new-value','status-paid-value','status-trial-value','status-early-value','status-past-due-value','status-cancelled-value',
       'rate-onboarding-value','rate-reflection-value','rate-review-value','rate-journey-value',
       'card-onboarding-value','card-chat-value','card-review-value','card-card-value'
     ];
@@ -296,9 +317,11 @@
     function renderMetrics(m = {}) {
       const totalUsers = Number(m.total_users || 0);
       const newUsers = Number(m.new_users || 0);
-      const activeUsers = Number(m.active_users || 0);
-      const inactiveUsers = Number(m.inactive_users || 0);
-      const churnedUsers = Number(m.churned_users || 0);
+     const paidUsers = Number(m.paid_users || 0);
+     const trialUsers = Number(m.trial_users || 0);
+     const earlyUsers = Number(m.early_users || 0);
+     const pastDueUsers = Number(m.past_due_users || 0);
+     const cancelledUsers = Number(m.cancelled_users || 0);
       const onboardedUsers = Number(m.onboarded_users || 0);
       const chatUsers = Number(m.chat_users || 0);
       const reviewUsers = Number(m.review_users || 0);
@@ -306,9 +329,11 @@
 
       setText('card-total-value', fmt(totalUsers));
       setText('card-new-value', fmt(newUsers));
-      setText('status-active-value', fmt(activeUsers));
-      setText('status-inactive-value', fmt(inactiveUsers));
-      setText('status-churned-value', fmt(churnedUsers));
+      setText('status-paid-value', fmt(paidUsers));
+      setText('status-trial-value', fmt(trialUsers));
+      setText('status-early-value', fmt(earlyUsers));
+      setText('status-past-due-value', fmt(pastDueUsers));
+      setText('status-cancelled-value', fmt(cancelledUsers));
       setText('card-onboarding-value', fmt(onboardedUsers));
       setText('card-chat-value', fmt(chatUsers));
       setText('card-review-value', fmt(reviewUsers));
