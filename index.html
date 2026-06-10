@@ -7841,7 +7841,7 @@ after early access, $3/month.
     </p>
 
     <div class="payment-issue-actions">
-      <button id="paymentIssueRetryBtn" class="payment-issue-cta" type="button">continue on Stripe</button>
+      <button id="paymentIssueRetryBtn" class="payment-issue-cta" type="button">Update Payment Method</button>
       <button id="paymentIssueBackBtn" class="payment-issue-back" type="button">not now</button>
     </div>
   </div>
@@ -12885,8 +12885,38 @@ if (founderSupportStripeBtn) {
   founderSupportStripeBtn.addEventListener('click', createFoundingMemberCheckout);
 }
 
+async function openCustomerPortalSession() {
+  if (!currentUser?.id) {
+    openAuthModal('login');
+    return;
+  }
+
+  const originalText = paymentIssueRetryBtn.textContent;
+  paymentIssueRetryBtn.disabled = true;
+  paymentIssueRetryBtn.textContent = 'opening softly...';
+
+  try {
+    const res = await fetch('https://primary-production-49d9.up.railway.app/webhook/create-portal-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ user_id: currentUser.id })
+    });
+
+    const data = await res.json();
+
+    if (!data?.url) throw new Error('No portal URL returned');
+
+    window.location.href = data.url;
+  } catch (err) {
+    console.error('open customer portal error:', err);
+    showNotification('Could not open payment settings. Please try again.');
+    paymentIssueRetryBtn.disabled = false;
+    paymentIssueRetryBtn.textContent = originalText || 'Update Payment Method';
+  }
+}
+
 if (paymentIssueRetryBtn) {
-  paymentIssueRetryBtn.addEventListener('click', createFoundingMemberCheckout);
+  paymentIssueRetryBtn.addEventListener('click', openCustomerPortalSession);
 }
 
 if (paymentIssueBackBtn) {
