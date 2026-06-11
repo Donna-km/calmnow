@@ -238,6 +238,44 @@
     <div id="monthlyTrendNote" class="trend-note">Chart appears even before DB data loads. After RPC runs, it will show live monthly values.</div>
    </section>
 
+   <section class="canva-section stat-card p-6 mt-6">
+  <h2 class="font-bold mb-4">Support Requests</h2>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+
+    <div class="canva-card stat-card p-4">
+      <p class="text-sm opacity-70">Open Requests</p>
+      <p id="help-open-value" class="text-3xl font-bold mt-1">—</p>
+    </div>
+
+    <div class="canva-card stat-card p-4">
+      <p class="text-sm opacity-70">Closed Requests</p>
+      <p id="help-closed-value" class="text-3xl font-bold mt-1">—</p>
+    </div>
+
+    <div class="canva-card stat-card p-4">
+      <p class="text-sm opacity-70">Total Requests</p>
+      <p id="help-total-value" class="text-3xl font-bold mt-1">—</p>
+    </div>
+
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b">
+          <th class="text-left py-2">Date</th>
+          <th class="text-left py-2">Email</th>
+          <th class="text-left py-2">Message</th>
+          <th class="text-left py-2">Status</th>
+        </tr>
+      </thead>
+      <tbody id="help-requests-table">
+      </tbody>
+    </table>
+  </div>
+</section>
+
   </main>
   <div id="dashboardStatus" class="max-w-5xl mx-auto mt-4 text-xs" style="color:#9c8b74;font-family:'DM Sans', sans-serif;">Connecting to Supabase...</div>
   <script>
@@ -366,6 +404,75 @@
       return Array.isArray(data) && data.length ? data : emptyTrendRows(year);
     }
 
+   async function loadHelpRequests() {
+
+  const { data, error } = await supabaseClient
+    .from('user_help_requests')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(10);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  const openCount = data.filter(x => x.status === 'open').length;
+  const closedCount = data.filter(x => x.status === 'closed').length;
+
+  document.getElementById('help-open-value').textContent = openCount;
+  document.getElementById('help-closed-value').textContent = closedCount;
+  document.getElementById('help-total-value').textContent = data.length;
+
+  const tbody = document.getElementById('help-requests-table');
+
+  tbody.innerHTML = data.map(row => `
+    <tr class="border-b">
+      <td class="py-2">
+        ${new Date(row.created_at).toLocaleDateString()}
+      </td>
+
+      <td class="py-2">
+        ${row.email || '-'}
+      </td>
+
+      <td class="py-2">
+        ${row.message}
+      </td>
+
+      <td class="py-2">
+        <button
+          onclick="toggleHelpStatus(${row.id}, '${row.status}')"
+          class="px-2 py-1 rounded border"
+        >
+          ${row.status}
+        </button>
+      </td>
+    </tr>
+  `).join('');
+}
+
+   async function toggleHelpStatus(id, currentStatus) {
+
+  const nextStatus =
+    currentStatus === 'open'
+      ? 'closed'
+      : 'open';
+
+  const { error } = await supabaseClient
+    .from('user_help_requests')
+    .update({
+      status: nextStatus
+    })
+    .eq('id', id);
+
+  if (error) {
+    console.error(error);
+    return;
+  }
+
+  await loadHelpRequests();
+}
     function normalizeTrendRows(rows, year) {
       const byMonthNumber = new Map();
       const byMonthName = new Map();
@@ -483,7 +590,10 @@
         const metrics = await fetchMetricsFromRpc(startDate, endDate);
         renderMetrics(metrics);
         const trendRows = await fetchMonthlyTrendFromRpc(year);
-        renderMonthlyTrendChart(trendRows, year);
+renderMonthlyTrendChart(trendRows, year);
+
+await loadHelpRequests();
+       
         if (status) status.textContent = `Live DB data · ${startDate} to ${endDate} · ${new Date().toLocaleString()} · % = users ÷ total users`;
       } catch (err) {
         console.error('Founder dashboard error:', err);
