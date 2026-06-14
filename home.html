@@ -499,6 +499,54 @@
           }
         }
 
+   .step-inside-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 8vw, 3.25rem);
+  line-height: 1.05;
+  font-weight: 300;
+  color: #6f5a45;
+  letter-spacing: 0.02em;
+
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(10px);
+}
+
+.step-inside-subtitle {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 300;
+  color: #a4876d;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+
+  opacity: 0;
+  transform: translateY(18px);
+  filter: blur(8px);
+}
+
+   .step-inside-transition.active .step-inside-title {
+  animation: welcomeFade 2.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.step-inside-transition.active .step-inside-subtitle {
+  animation: welcomeFade 2s ease 0.8s forwards;
+}
+
+@keyframes welcomeFade {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
     </style>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
     </head>
