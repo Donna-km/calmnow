@@ -1,0 +1,849 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CalmNow</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&amp;family=Jost:wght@300;400&amp;display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="https://foizrwegmdnekaxsahxu.supabase.co/storage/v1/object/public/sound-images/Calmnow_logo.png">
+  <!-- CalmNow Mixpanel Analytics -->
+  <script type="text/javascript">
+    (function(f,b){if(!b.__SV){var e,g,i,h;window.mixpanel=b;b._i=[];b.init=function(e,f,c){function g(a,d){var b=d.split('.');2==b.length&&(a=a[b[0]],d=b[1]);a[d]=function(){a.push([d].concat(Array.prototype.slice.call(arguments,0)))}}var a=b;typeof c!=="undefined"?a=b[c]=[]:c="mixpanel";a.people=a.people||[];a.toString=function(a){var d="mixpanel";"mixpanel"!==c&&(d+="."+c);a||(d+=" (stub)");return d};a.people.toString=function(){return a.toString(1)+".people"};i="disable time_event track track_pageview track_links track_forms register register_once alias unregister identify name_tag set_config reset people.set people.set_once people.unset people.increment people.append people.union people.track_charge people.clear_charges people.delete_user".split(" ");for(h=0;h<i.length;h++)g(a,i[h]);b._i.push([e,f,c])};b.__SV=1.2;e=f.createElement("script");e.type="text/javascript";e.async=!0;e.src="https://cdn.mxpnl.com/libs/mixpanel-2-latest.min.js";g=f.getElementsByTagName("script")[0];g.parentNode.insertBefore(e,g)}})(document,window.mixpanel||[]);
+
+    mixpanel.init('e067d676ba8f2713e20f0283d48d53a2', {
+      debug: false,
+      track_pageview: false,
+      persistence: 'localStorage'
+    });
+
+    window.calmnowMixpanelReady = true;
+
+    window.calmTrack = function(eventName, properties) {
+      try {
+        if (!window.mixpanel || typeof window.mixpanel.track !== 'function') return;
+        window.mixpanel.track(eventName, Object.assign({
+          app: 'calmnow',
+          page_path: window.location.pathname,
+          page_title: document.title || '',
+          local_time: new Date().toISOString()
+        }, properties || {}));
+      } catch (err) {
+        console.warn('Mixpanel track skipped:', eventName, err);
+      }
+    };
+
+    window.calmIdentifyUser = function(user) {
+      try {
+        if (!user || !user.id || !window.mixpanel) return;
+        window.mixpanel.identify(user.id);
+        window.mixpanel.people.set({
+          $email: user.email || null,
+          name: user.user_metadata?.full_name || user.user_metadata?.name || null,
+          provider: user.app_metadata?.provider || null,
+          calmnow_user_id: user.id
+        });
+        window.mixpanel.register({
+          calmnow_user_id: user.id,
+          user_email: user.email || null
+        });
+      } catch (err) {
+        console.warn('Mixpanel identify skipped:', err);
+      }
+    };
+
+    document.addEventListener('DOMContentLoaded', function() {
+      window.calmTrack?.('Landing Opened');
+    });
+  </script>
+  <style>
+        :root { --ivory: #FDFBF7; --beige: #F5EDE4; --warm: #E8DDD3; --text: #3D3632; --muted: #8C7E74; }
+        html, body {
+          width: 100%;
+          max-width: 100%;
+          overflow-x: hidden;
+          overscroll-behavior-x: none;
+        }
+        body { font-family: 'DM Sans', sans-serif; background: var(--ivory); color: var(--text); }
+        main {
+          width: 100%;
+          max-width: 100vw;
+          overflow-x: hidden;
+        }
+        .serif { font-family: 'Playfair Display', serif; }
+
+
+
+        .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.8s ease, transform 0.8s ease; }
+        .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+        .carousel-wrapper { position: relative; display: flex; align-items: center; justify-content: center; gap: 0; overflow: visible; }
+        .card-carousel { position: relative; width: 100%; max-width: 1000px; height: 320px; perspective: 1200px; }
+        .carousel-nav-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(61,54,50,0.15); border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text); transition: background 0.3s ease; z-index: 20; }
+        .carousel-nav-btn:hover { background: rgba(61,54,50,0.3); }
+        .carousel-nav-btn.prev { left: 0; }
+        .carousel-nav-btn.next { right: 0; }
+        .carousel-dots { display: flex; justify-content: center; gap: 0.75rem; margin-top: 2rem; }
+        .dot { width: 10px; height: 10px; border-radius: 50%; background: rgba(61,54,50,0.2); cursor: pointer; transition: background 0.3s ease; }
+        .dot.active { background: rgba(61,54,50,0.6); }
+       .feature-card {
+  position: absolute;
+  width: 280px;
+  height: 320px;
+  transition: all 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  flex-shrink: 0;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  background: transparent;
+  border: 1px solid transparent;
+}
+
+.feature-card.prev {
+  transform: translate(calc(-50% - 340px), -50%) scale(0.84);
+  opacity: 0.18;
+  z-index: 1;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.feature-card.active {
+  transform: translate(-50%, -50%) scale(1);
+  opacity: 1;
+  z-index: 100;
+  background: #fffdf9;
+  border: 1px solid rgba(180, 165, 145, 0.16);
+  box-shadow: 0 30px 60px rgba(60,50,40,0.15);
+}
+
+.feature-card.next {
+  transform: translate(calc(-50% + 340px), -50%) scale(0.84);
+  opacity: 0.18;
+  z-index: 1;
+  background: transparent;
+  border-color: transparent;
+  box-shadow: none;
+}
+
+
+.feature-card.image-card {
+  padding: 0 !important;
+  cursor: pointer;
+  border-radius: 1.5rem;
+  background: transparent;
+}
+
+.feature-card.image-card:focus-visible {
+  outline: 2px solid rgba(139, 115, 85, 0.55);
+  outline-offset: 4px;
+}
+
+.feature-card-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: contain;
+  border-radius: inherit;
+  pointer-events: none;
+  user-select: none;
+}
+        .card-icon { width: 52px; height: 52px; margin-bottom: 1.5rem; color: #E8DDD3; }
+        .breathing-cloud {
+          position: absolute;
+          width: 600px;
+          height: 500px;
+          background: radial-gradient(ellipse 70% 60% at 45% 40%, rgba(180,140,100,0.85), rgba(160,110,70,0.5) 40%, rgba(140,90,50,0.15) 70%, transparent);
+          border-radius: 45% 55% 50% 48% / 48% 45% 52% 50%;
+          filter: blur(90px);
+          animation: breatheCloud 6s ease-in-out infinite;
+          opacity: 0.98;
+        }
+        @keyframes breatheCloud {
+          0%, 100% { transform: scale(1) translate(-50%, -50%); opacity: 0.9; }
+          50% { transform: scale(1.18) translate(-50%, -50%); opacity: 1; }
+        }
+
+      @media (max-width: 768px) {
+  .breathing-cloud {
+    width: 300px;
+    height: 300px;
+  }
+
+  .card-carousel {
+    height: 300px;
+    width: 100%;
+    max-width: min(100%, 430px);
+    overflow: hidden;
+    touch-action: pan-y;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+ .feature-card {
+  width: 250px;
+  height: 286px;
+  padding: 0 !important;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  will-change: transform, opacity;
+  transition:
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.8s ease,
+    box-shadow 0.8s ease;
+}
+
+  .feature-card.active {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+    z-index: 100;
+    background: #fffdf9;
+    border: 1px solid rgba(180, 165, 145, 0.16);
+    box-shadow: 0 22px 46px rgba(60,50,40,0.11);
+  }
+
+  .feature-card.prev {
+    transform: translate(calc(-50% - 118px), -50%) scale(0.58);
+    opacity: 0.08;
+    z-index: 1;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .feature-card.next {
+    transform: translate(calc(-50% + 118px), -50%) scale(0.58);
+    opacity: 0.08;
+    z-index: 1;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+  }
+
+  .feature-card h3 {
+    text-align: center;
+    font-size: 1.35rem !important;
+    line-height: 1.15;
+    margin-bottom: 0.75rem !important;
+  }
+
+  .feature-card p {
+    text-align: center;
+    font-size: 0.9rem !important;
+    line-height: 1.55;
+    margin-bottom: 1rem !important;
+  }
+
+  .feature-card button {
+    align-self: center;
+    font-size: 0.82rem !important;
+  }
+
+  .card-icon {
+    width: 38px;
+    height: 38px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 1rem;
+  }
+
+  .carousel-nav-btn {
+    width: 34px;
+    height: 34px;
+    font-size: 16px;
+  }
+
+  .carousel-nav-btn.prev {
+    left: 0;
+  }
+
+  .carousel-nav-btn.next {
+    right: 0;
+  }
+
+  .carousel-wrapper {
+    gap: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .carousel-dots {
+    margin-top: 1.2rem;
+  }
+}
+
+
+        .video-modal {
+          position: fixed;
+          inset: 0;
+          z-index: 9999;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+          transition: opacity 0.35s ease, visibility 0.35s ease;
+        }
+
+        .video-modal.active {
+          opacity: 1;
+          visibility: visible;
+          pointer-events: auto;
+        }
+
+        .video-backdrop {
+          position: absolute;
+          inset: 0;
+          background: rgba(20, 18, 16, 0.72);
+          backdrop-filter: blur(10px);
+          -webkit-backdrop-filter: blur(10px);
+        }
+
+        .video-container {
+          position: relative;
+          z-index: 2;
+          width: min(88vw, 380px);
+          aspect-ratio: 9 / 16;
+          border-radius: 28px;
+          overflow: hidden;
+          box-shadow: 0 30px 90px rgba(40, 30, 20, 0.38);
+          background: #0f0f0f;
+        }
+
+        .video-container video {
+          width: 100%;
+          height: 100%;
+          display: block;
+          object-fit: cover;
+        }
+
+        .video-close {
+          position: fixed;
+          top: max(1.25rem, env(safe-area-inset-top));
+          right: 1.25rem;
+          z-index: 3;
+          width: 42px;
+          height: 42px;
+          border: 1px solid rgba(255, 255, 255, 0.24);
+          border-radius: 999px;
+          background: rgba(255, 255, 255, 0.16);
+          color: #fff;
+          cursor: pointer;
+          font-size: 1.2rem;
+          line-height: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+
+        /* Step inside transition */
+        body.entering-calmnow {
+          overflow: hidden;
+        }
+
+       body.entering-calmnow main {
+  transform: scale(1.025);
+  opacity: 0.18;
+  filter: blur(12px);
+  transition:
+    transform 2.8s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 2.8s ease,
+    filter 2.8s ease;
+}
+
+.step-inside-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(255,255,255,0.72) 0%, rgba(255,252,247,0.42) 28%, rgba(232,221,211,0.16) 58%, rgba(253,251,247,0) 76%),
+    linear-gradient(180deg, rgba(253,251,247,0.12) 0%, rgba(245,237,228,0.42) 100%);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition:
+    opacity 2.2s ease,
+    visibility 2.2s ease;
+}
+
+.step-inside-transition.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.step-inside-transition::before,
+.step-inside-transition::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: min(90vw, 520px);
+  height: min(90vw, 520px);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle, rgba(255,255,255,0.72) 0%, rgba(245,237,228,0.38) 38%, rgba(232,221,211,0) 72%);
+  filter: blur(34px);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.68);
+}
+
+.step-inside-transition.active::before {
+  animation: stepCloudOpen 3.2s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.step-inside-transition.active::after {
+  animation: stepCloudOpen 3.5s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+}
+
+.step-inside-message {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.85rem;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(16px);
+  filter: blur(8px);
+  transition:
+    opacity 2s ease 0.5s,
+    transform 2s cubic-bezier(0.22, 1, 0.36, 1) 0.5s,
+    filter 2s ease 0.5s;
+}
+
+.step-inside-transition.active .step-inside-message {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+}
+        .step-inside-title {
+          font-family: 'Cormorant Garamond', serif;
+          font-size: clamp(2rem, 8vw, 3.25rem);
+          line-height: 1.05;
+          font-weight: 300;
+          color: #6f5a45;
+          letter-spacing: 0.02em;
+        }
+
+        .step-inside-subtitle {
+          font-family: 'Jost', sans-serif;
+          font-size: 0.76rem;
+          font-weight: 300;
+          color: #a4876d;
+          letter-spacing: 0.18em;
+          text-transform: uppercase;
+        }
+
+        @keyframes stepCloudOpen {
+          0% {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(0.58);
+          }
+          34% {
+            opacity: 0.88;
+          }
+          100% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.55);
+          }
+        }
+
+        @media (max-width: 480px) {
+          .step-inside-title {
+            font-size: clamp(2.1rem, 10vw, 2.8rem);
+          }
+
+          .step-inside-subtitle {
+            font-size: 0.68rem;
+            letter-spacing: 0.16em;
+          }
+        }
+
+        /* Mobile width fix: prevent carousel from widening the page and keep modal centered */
+        @media (max-width: 768px) {
+          section,
+          .max-w-6xl,
+          .carousel-wrapper,
+          .card-carousel {
+            max-width: 100% !important;
+          }
+
+          .feature-card {
+            left: 50% !important;
+          }
+
+          .video-modal {
+            width: 100vw;
+            max-width: 100vw;
+            left: 0;
+            right: 0;
+          }
+
+          .video-container {
+            width: min(88vw, 360px);
+            max-width: calc(100vw - 2rem);
+          }
+        }
+
+   .step-inside-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 8vw, 3.25rem);
+  line-height: 1.05;
+  font-weight: 300;
+  color: #6f5a45;
+  letter-spacing: 0.02em;
+
+  opacity: 0;
+  transform: translateY(24px);
+  filter: blur(10px);
+}
+
+.step-inside-subtitle {
+  font-family: 'Jost', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 300;
+  color: #a4876d;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+
+  opacity: 0;
+  transform: translateY(18px);
+  filter: blur(8px);
+}
+
+   .step-inside-transition.active .step-inside-title {
+  animation: welcomeFade 2.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.step-inside-transition.active .step-inside-subtitle {
+  animation: welcomeFade 2s ease 0.8s forwards;
+}
+
+@keyframes welcomeFade {
+  0% {
+    opacity: 0;
+    transform: translateY(24px);
+    filter: blur(10px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+    </style>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js" type="text/javascript"></script>
+    </head>
+ <body data-template-id="__page-root" class="min-h-screen overflow-x-hidden">
+  <main><!-- Hero -->
+   <section class="relative flex flex-col items-center justify-center px-6 pt-0 md:pt-0" style="min-height:calc(35 * min(var(--vh,1vh),1vh)); padding-top: clamp(1rem, 5vh, 3rem);">
+    <div class="breathing-cloud" style="top:50%;left:50%;"></div>
+    <div class="relative z-10 text-center max-w-6xl mx-auto fade-in">
+  <h2
+  data-template-id="headline"
+  class="canva-text serif mb-6"
+  style="
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(3.2rem, 8.8vw, 7.2rem);
+    line-height: 0.88;
+    letter-spacing: -0.045em;
+    color: #FFFFFF;
+    font-weight: 500;
+    text-shadow:
+      0 10px 26px rgba(80, 58, 40, 0.28),
+      0 3px 8px rgba(80, 58, 40, 0.18),
+      0 1px 0 rgba(255,255,255,0.35);
+  "
+>
+  Some feelings<br>
+  are hard to name.
+</h2>
+
+<p
+  data-template-id="subheadline"
+  style="
+    font-family: 'DM Sans', sans-serif;
+    font-size: clamp(1rem, 1.8vw, 1.25rem);
+    color: var(--muted);
+    margin-bottom: 2.5rem;
+    font-style: italic;
+    font-weight: 400;
+  "
+>
+  The more you share, the more you'll understand what's going on inside.
+</p>
+
+  <a
+    id="stepInsideBtn"
+    data-template-id="cta-button"
+    href="https://calmnow.club"
+    class="canva-button inline-block px-10 py-4 rounded-full text-lg font-medium shadow-lg cursor-pointer transition-all hover:shadow-xl hover:scale-105"
+    style="background:#E8DDD3;color:#3D3632;"
+  >
+    Step inside →
+  </a>
+</div>
+   </section><!-- Features -->
+<section class="py-12 px-6 md:px-16 fade-in">
+  <div class="max-w-6xl mx-auto">
+    <div class="carousel-wrapper">
+      <button class="carousel-nav-btn prev" id="prev-btn" aria-label="Previous card">
+        <i data-lucide="chevron-left" style="width: 20px; height: 20px;"></i>
+      </button>
+
+      <div class="card-carousel" id="card-carousel">
+        <button data-template-id="card-1" class="canva-card feature-card image-card" type="button" data-demo="reflection" aria-label="Open Reflection demo">
+          <img
+            class="feature-card-image"
+            src="https://foizrwegmdnekaxsahxu.supabase.co/storage/v1/object/public/sound-images/1.Reflection%20(2).png"
+            alt="Reflection card"
+            loading="eager"
+          />
+        </button>
+
+        <button data-template-id="card-2" class="canva-card feature-card image-card" type="button" data-demo="pause" aria-label="Open Pause demo">
+          <img
+            class="feature-card-image"
+            src="https://foizrwegmdnekaxsahxu.supabase.co/storage/v1/object/public/sound-images/2.Pause.png"
+            alt="Pause card"
+            loading="lazy"
+          />
+        </button>
+
+        <button data-template-id="card-3" class="canva-card feature-card image-card" type="button" data-demo="calmy" aria-label="Open Calmy demo">
+          <img
+            class="feature-card-image"
+            src="https://foizrwegmdnekaxsahxu.supabase.co/storage/v1/object/public/sound-images/4.card.png"
+            alt="Calmy card"
+            loading="lazy"
+          />
+        </button>
+      </div>
+
+      <button class="carousel-nav-btn next" id="next-btn" aria-label="Next card">
+        <i data-lucide="chevron-right" style="width: 20px; height: 20px;"></i>
+      </button>
+    </div>
+
+    <div class="carousel-dots" id="carousel-dots">
+      <div class="dot active" data-index="0"></div>
+      <div class="dot" data-index="1"></div>
+      <div class="dot" data-index="2"></div>
+    </div>
+  </div>
+</section>
+  </main>
+
+  <div id="stepInsideTransition" class="step-inside-transition" aria-hidden="true">
+    <div class="step-inside-message">
+      <div class="step-inside-title">welcome home.</div>
+      <div class="step-inside-subtitle">a quiet place to land</div>
+    </div>
+  </div>
+
+  <div id="videoModal" class="video-modal" aria-hidden="true">
+    <div class="video-backdrop"></div>
+    <div class="video-container">
+      <button id="closeVideoModal" class="video-close" type="button" aria-label="Close video">×</button>
+      <video id="demoVideo" playsinline controls preload="metadata">
+        <source src="https://foizrwegmdnekaxsahxu.supabase.co/storage/v1/object/public/sound-images/Copy%20of%20Blue%20White%20UIUX%20Modern%20Daily%20Vlog%20TikTok%20Video.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <script>
+        // Fade-in on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.15 });
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // Step inside transition to CalmNow
+        const stepInsideBtn = document.getElementById('stepInsideBtn');
+        const stepInsideTransition = document.getElementById('stepInsideTransition');
+
+        if (stepInsideBtn && stepInsideTransition) {
+          stepInsideBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            window.calmTrack?.('Step Inside Clicked');
+
+            stepInsideTransition.classList.add('active');
+            stepInsideTransition.setAttribute('aria-hidden', 'false');
+            document.body.classList.add('entering-calmnow');
+
+            window.setTimeout(() => {
+              window.location.href = stepInsideBtn.href || 'https://calmnow.club';
+            }, 3000);
+          });
+        }
+
+
+        // Infinite circular carousel
+        const cards = document.querySelectorAll('.feature-card');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const dots = document.querySelectorAll('.dot');
+        let currentIndex = 0;
+        const totalCards = 3;
+
+        function updateCarousel() {
+          cards.forEach((card, i) => {
+            card.classList.remove('prev', 'active', 'next');
+            
+            const relativeIndex = (i - currentIndex + totalCards) % totalCards;
+            
+            if (relativeIndex === 0) {
+              card.classList.add('active');
+            } else if (relativeIndex === 1) {
+              card.classList.add('next');
+            } else {
+              card.classList.add('prev');
+            }
+          });
+          
+          dots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === currentIndex);
+          });
+        }
+
+        prevBtn.addEventListener('click', () => {
+          currentIndex = (currentIndex - 1 + totalCards) % totalCards;
+          updateCarousel();
+        });
+
+        nextBtn.addEventListener('click', () => {
+          currentIndex = (currentIndex + 1) % totalCards;
+          updateCarousel();
+        });
+
+        dots.forEach((dot, i) => {
+          dot.addEventListener('click', () => {
+            currentIndex = i;
+            updateCarousel();
+          });
+        });
+
+
+        // Reflection card video modal
+        const videoModal = document.getElementById('videoModal');
+        const demoVideo = document.getElementById('demoVideo');
+        const closeVideoModal = document.getElementById('closeVideoModal');
+
+        function openVideoModal() {
+          if (!videoModal || !demoVideo) return;
+
+          videoModal.classList.add('active');
+          videoModal.setAttribute('aria-hidden', 'false');
+
+          demoVideo.currentTime = 0;
+          const playPromise = demoVideo.play();
+
+          if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.catch(() => {
+              // Some browsers require the user to tap play manually.
+            });
+          }
+        }
+
+        function closeVideo() {
+          if (!videoModal || !demoVideo) return;
+
+          demoVideo.pause();
+          videoModal.classList.remove('active');
+          videoModal.setAttribute('aria-hidden', 'true');
+        }
+
+       cards.forEach((card) => {
+  card.addEventListener('click', () => {
+
+    const demoType = card.dataset.demo;
+
+   if (demoType === 'reflection') {
+  demoVideo.src =
+    'https://foizrwegmdnekaxsahxu.supabase.co/storage/v1/object/public/sound-images/Copy%20of%20Blue%20White%20UIUX%20Modern%20Daily%20Vlog%20TikTok%20Video.mp4';
+}
+
+else if (demoType === 'pause') {
+  demoVideo.src =
+    'https://foizrwegmdnekaxsahxu.supabase.co/storage/v1/object/public/sound-images/vdo_pause.mp4';
+}
+
+else if (demoType === 'calmy') {
+  demoVideo.src =
+    'https://foizrwegmdnekaxsahxu.supabase.co/storage/v1/object/public/sound-images/Card.mp4';
+}
+
+else {
+  return;
+}
+
+    openVideoModal();
+
+  });
+});
+
+        if (closeVideoModal) {
+          closeVideoModal.addEventListener('click', closeVideo);
+        }
+
+        if (videoModal) {
+          videoModal.addEventListener('click', (e) => {
+            if (e.target === videoModal || e.target.classList.contains('video-backdrop')) {
+              closeVideo();
+            }
+          });
+        }
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            closeVideo();
+          }
+        });
+
+        // Mobile swipe support
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const carouselEl = document.getElementById('card-carousel');
+
+        carouselEl.addEventListener('touchstart', (e) => {
+          touchStartX = e.changedTouches[0].screenX;
+        }, false);
+
+        carouselEl.addEventListener('touchend', (e) => {
+          touchEndX = e.changedTouches[0].screenX;
+          const diff = touchStartX - touchEndX;
+          
+          if (Math.abs(diff) > 50) {
+            if (diff > 0) {
+              currentIndex = (currentIndex + 1) % totalCards;
+            } else {
+              currentIndex = (currentIndex - 1 + totalCards) % totalCards;
+            }
+            updateCarousel();
+          }
+        }, false);
+
+        // Initialize
+        updateCarousel();
+
+        lucide.createIcons();
+    </script>
+</body>
+</html>
