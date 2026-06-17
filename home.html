@@ -555,38 +555,52 @@
    <section class="relative flex flex-col items-center justify-center px-6 pt-0 md:pt-0" style="min-height:calc(35 * min(var(--vh,1vh),1vh)); padding-top: clamp(1rem, 5vh, 3rem);">
     <div class="breathing-cloud" style="top:50%;left:50%;"></div>
     <div class="relative z-10 text-center max-w-6xl mx-auto fade-in">
-  <h2
+ <h2
   data-template-id="headline"
   class="canva-text serif mb-6"
   style="
     font-family: 'Cormorant Garamond', serif;
-    font-size: clamp(2rem, 6.8vw, 5rem);
-    line-height: 0.92;
-    letter-spacing: -0.03em;
+    font-size: clamp(2.35rem, 6.4vw, 5.2rem);
+    line-height: 1.02;
+    letter-spacing: -0.035em;
     color: #3D3632;
-    font-weight: 500;
-    text-shadow:
-      0 4px 12px rgba(80,58,40,.08);
-      "
+    font-weight: 400;
+    text-shadow: 0 4px 12px rgba(80,58,40,.06);
+  "
 >
-  Tonight...<br>
-  Some feelings are hard to name.
+  <span
+    style="
+      display:block;
+      font-size:0.48em;
+      line-height:1.05;
+      opacity:.72;
+      margin-bottom:.18em;
+      font-weight:400;
+      letter-spacing:-0.02em;
+    "
+  >
+    Tonight...
+  </span>
+
+  Some feelings<br>
+  are hard to name.
 </h2>
 
 <p
   data-template-id="subheadline"
   style="
     font-family: 'DM Sans', sans-serif;
-    font-size: clamp(1rem, 1.8vw, 1.25rem);
+    font-size: clamp(0.95rem, 1.55vw, 1.15rem);
     color: var(--muted);
     margin-bottom: 2.5rem;
-    font-style: italic;
+    font-style: normal;
     font-weight: 400;
+    letter-spacing: -0.01em;
+    opacity: .76;
   "
 >
   Some thoughts keep returning for a reason.
 </p>
-
   <a
     id="stepInsideBtn"
     data-template-id="cta-button"
