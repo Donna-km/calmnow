@@ -8627,6 +8627,25 @@ after early access, $5/month.
   }
 }
 
+   /* iPad/Safari fix: keep founder title glyph and underline rendering together */
+@supports (-webkit-touch-callout: none) {
+  @media (min-width: 768px) and (max-width: 1180px) {
+    #founderStoryFlow .founder-story-title.founder-story-line {
+      -webkit-transform: translateY(24px) translateZ(0);
+      transform: translateY(24px) translateZ(0);
+      will-change: opacity, transform, filter;
+      -webkit-font-smoothing: antialiased;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    #founderStoryFlow .founder-story-screen.active .founder-story-title.founder-story-line.show {
+      -webkit-transform: translateY(0) translateZ(0);
+      transform: translateY(0) translateZ(0);
+    }
+  }
+}
+
 </style>
 
   <!-- Sound Detail Section -->
